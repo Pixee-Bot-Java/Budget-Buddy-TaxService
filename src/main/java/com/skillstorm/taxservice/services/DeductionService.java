@@ -4,8 +4,6 @@ import com.skillstorm.taxservice.exceptions.NotFoundException;
 import com.skillstorm.taxservice.models.Deduction;
 import com.skillstorm.taxservice.repositories.DeductionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,12 +12,10 @@ import java.util.List;
 public class DeductionService {
 
     private final DeductionRepository deductionRepository;
-    private final MessageSource messageSource;
 
     @Autowired
-    public DeductionService(DeductionRepository deductionRepository, MessageSource messageSource) {
+    public DeductionService(DeductionRepository deductionRepository) {
         this.deductionRepository = deductionRepository;
-        this.messageSource = messageSource;
     }
 
     // Add new Deduction:
