@@ -20,7 +20,7 @@ public class SecurityConfig {
         // Define authorization needed for incoming requests:
         http.authorizeHttpRequests(authorizeRequests ->
                 authorizeRequests
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
         ).httpBasic(Customizer.withDefaults());
 
         // Defining endpoints that are exempt from csrf tokens:
