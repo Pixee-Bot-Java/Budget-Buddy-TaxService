@@ -33,7 +33,7 @@ spring:
     hibernate:
       # To have JPA create a new database upon start up, set to create. If you
       # want the database to persist between sessions, set to none:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         format-sql: true

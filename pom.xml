@@ -20,14 +20,24 @@
 		<spring-cloud.version>2023.0.1</spring-cloud.version>
 	</properties>
 
-	<!-- Ensures that we only import Spring Cloud dependencies compatible with our
-	version of Spring Cloud -->
 	<dependencyManagement>
 		<dependencies>
+			<!-- Ensures that we only import Spring Cloud dependencies compatible with our
+			version of Spring Cloud -->
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-dependencies</artifactId>
 				<version>${spring-cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
+			<!-- Ensures that we only import AWS SDK dependencies compatible with our
+			version of the AWS SDK -->
+			<dependency>
+				<groupId>software.amazon.awssdk</groupId>
+				<artifactId>bom</artifactId>
+				<version>2.17.0</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -46,6 +56,19 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+		</dependency>
+
+		<!-- AWS S3 SDK. Lets us programmatically access S3 buckets  -->
+		<dependency>
+			<groupId>software.amazon.awssdk</groupId>
+			<artifactId>s3</artifactId>
+		</dependency>
+
+		<!-- Used to parse a file to determine it's contentType (image/png, application/pdf, etc -->
+		<dependency>
+			<groupId>org.apache.tika</groupId>
+			<artifactId>tika-core</artifactId>
+			<version>2.4.1</version>
 		</dependency>
 
 		<!-- Spring Data JPA for data persistence and annotations -->
