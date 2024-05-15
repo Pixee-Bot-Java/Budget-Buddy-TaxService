@@ -17,9 +17,37 @@
 
 	<properties>
 		<java.version>17</java.version>
+		<spring-cloud.version>2023.0.1</spring-cloud.version>
 	</properties>
 
+	<!-- Ensures that we only import Spring Cloud dependencies compatible with our
+	version of Spring Cloud -->
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
 	<dependencies>
+
+		<!-- Provides embedded Tomcat server and Spring MVC annotations -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<!-- Needed to register with Eureka server -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+		</dependency>
+
 		<!-- Spring Data JPA for data persistence and annotations -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

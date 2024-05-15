@@ -20,9 +20,7 @@ public class SecurityConfig {
         // Define authorization needed for incoming requests:
         http.authorizeHttpRequests(authorizeRequests ->
                 authorizeRequests
-                        .anyRequest().permitAll()
-                // We are not using httpBasic. Will replace with JWT's later or remove entirely
-                // because it may not be necessary in this service:
+                        .anyRequest().authenticated()
         ).httpBasic(Customizer.withDefaults());
 
         // Defining endpoints that are exempt from csrf tokens:
@@ -33,8 +31,6 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // Probably unnecessary in this service since registration will be handled elsewhere,
-    // but leaving it here for now just in case:
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(4);
