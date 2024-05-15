@@ -1,1 +1,53 @@
 
+# Configure Tomcat server:
+server:
+  port: 8080
+
+# Point to the Eureka discovery client to it knows where to register:
+eureka:
+  client:
+    service-url:
+      # Sets the url for the eureka server to the value of the EUREKA_URL env variable if
+      # it has been set, or to http://localhost:8761/eureka if it has not:
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka}
+
+  #Configure hearbeat interval:
+  instance:
+    leaseRenewalIntervalInSeconds: 60
+
+# Assign a key to register with Discovery Service:
+spring:
+  application:
+    name: tax-service
+
+  # Configure Postgres:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/tax-service}
+    username: ${DATABASE_USER:postgres}
+    password: ${DATABASE_PASS:postgres}
+
+  # Configure the way JPA interacts with the database:
+  jpa:
+    show-sql: true
+    hibernate:
+      # To have JPA create a new database upon start up, set to create. If you
+      # want the database to persist between sessions, set to none:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format-sql: true
+        globally-quoted-identifies: true
+
+  # Configure terminal output:
+  output:
+    ansi:
+      enabled: always
+logging:
+  level:
+    com:
+      skillstorm: TRACE
+    org:
+      springframework: INFO
+      apache:
+        tomcat: ERROR
