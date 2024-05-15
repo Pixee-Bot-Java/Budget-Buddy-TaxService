@@ -1,12 +1,13 @@
-package com.skillstorm.taxdemo.services;
+package com.skillstorm.taxservice.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.skillstorm.taxdemo.models.MarriedFilerTaxBracket;
-import com.skillstorm.taxdemo.models.SingleFilerTaxBracket;
-import com.skillstorm.taxdemo.repositories.MarriedFilerTaxBracketRepository;
-import com.skillstorm.taxdemo.repositories.SingleFilerTaxBracketRepository;
+import com.skillstorm.taxservice.models.MarriedFilerTaxBracket;
+import com.skillstorm.taxservice.models.SingleFilerTaxBracket;
+import com.skillstorm.taxservice.repositories.MarriedFilerTaxBracketRepository;
+import com.skillstorm.taxservice.repositories.SingleFilerTaxBracketRepository;
+import com.skillstorm.taxservice.repositories.TaxBracketRepository;
 
 import java.util.List;
 
@@ -18,6 +19,15 @@ public class TaxCalculatorService {
 
     @Autowired
     private MarriedFilerTaxBracketRepository marriedFilerTaxBracketRepository;
+
+    @Autowired
+    private TaxBracketRepository taxBracketRepository;
+
+    
+
+
+
+
 
     public double calculateSingleFilerTax(int taxableIncome, int creditsApplied) {
         if (taxableIncome <= 0) {

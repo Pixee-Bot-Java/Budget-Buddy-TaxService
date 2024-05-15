@@ -1,4 +1,4 @@
-package com.skillstorm.taxdemo.models;
+package com.skillstorm.taxservice.models;
 
 import jakarta.persistence.*;
 
