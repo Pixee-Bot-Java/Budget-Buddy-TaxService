@@ -53,7 +53,93 @@ public class TaxCreditCalculator {
         }
 
 
+/*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+        
+//EARNED INCOME CREDIT
+        public static double calculateEITC(int numQualifyingChildren, double agi, String filingStatus, double investmentIncome, double earnedIncome) {
+            if (investmentIncome > 11000 || earnedIncome <= 0) {  // Check initial conditions (removed earnedIncome > 1)
+                return 0;
+            }
+    
+    
+            // Determine AGI limit based on filing status and number of children
+            double agiLimit;
+            if (filingStatus.equalsIgnoreCase("joint")) {
+                agiLimit = (numQualifyingChildren >= 3) ? 63398 :
+                          (numQualifyingChildren == 2) ? 59478 :
+                          (numQualifyingChildren == 1) ? 53120 :
+                                                      24210;
+            } else {
+                agiLimit = (numQualifyingChildren >= 3) ? 56838 :
+                          (numQualifyingChildren == 2) ? 52918 :
+                          (numQualifyingChildren == 1) ? 46560 :
+                                                      17640;
+            }
+    
+            if (agi > agiLimit) {  // Check AGI limit
+                return 0;
+            }
+    
+            // Determine credit amount based on number of children
+            double creditAmount;
+            switch (numQualifyingChildren) {
+                case 0:
+                    creditAmount = 600;
+                    break;
+                case 1:
+                    creditAmount = 3995;
+                    break;
+                case 2:
+                    creditAmount = 6604;
+                    break;
+                default:  // 3 or more children
+                    creditAmount = 7430;
+                    break;
+            }
+    
+            return creditAmount; 
+        }
+
+
+        /*TEST CASES
+             * run in seperate java project's main method *
+
+                double result;
+
+                // Test Case 1: Single filer, 1 child, AGI below limit
+                result = calculateEITC(1, 45000, "single", 10000, 15000);
+                System.out.println("Test Case 1: " + (result == 3995 ? "Passed" : "Failed") + " (Expected: 3995, Actual: " + result + ")");
+
+                // Test Case 2: Joint filers, 3 children, AGI below limit
+                result = calculateEITC(3, 60000, "joint", 8000, 25000);
+                System.out.println("Test Case 2: " + (result == 7430 ? "Passed" : "Failed") + " (Expected: 7430, Actual: " + result + ")");
+
+                // Test Case 3: Single filer, no children, AGI below limit
+                result = calculateEITC(0, 15000, "single", 5000, 10000);
+                System.out.println("Test Case 3: " + (result == 600 ? "Passed" : "Failed") + " (Expected: 600, Actual: " + result + ")");
+
+                // Test Case 4: Joint filers, 2 children, AGI at limit (should get credit)
+                result = calculateEITC(2, 59478, "joint", 10000, 20000);
+                System.out.println("Test Case 4: " + (result == 6604 ? "Passed" : "Failed") + " (Expected: 6604, Actual: " + result + ")");
+
+                // Test Case 5: Single filer, 1 child, AGI above limit
+                result = calculateEITC(1, 48000, "single", 10000, 15000);
+                System.out.println("Test Case 5: " + (result == 0 ? "Passed" : "Failed") + " (Expected: 0, Actual: " + result + ")");
+
+                // Test Case 6: Investment income too high
+                result = calculateEITC(2, 50000, "joint", 12000, 20000);
+                System.out.println("Test Case 6: " + (result == 0 ? "Passed" : "Failed") + " (Expected: 0, Actual: " + result + ")");
+
+                // Test Case 7: No earned income
+                result = calculateEITC(1, 40000, "single", 8000, 0);
+                System.out.println("Test Case 7: " + (result == 0 ? "Passed" : "Failed") + " (Expected: 0, Actual: " + result + ")");
+         
+             */
+
  
+/*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
+
 
 
 }
