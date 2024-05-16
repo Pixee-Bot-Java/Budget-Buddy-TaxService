@@ -32,7 +32,7 @@ public class EducationTaxCreditAotc {
   private int partialCreditIncomeThreshold;
 
   // Rate of full credit amount which partial credit amount is reduced to
-  @Column(name = "income_partial_credit_rate")
+  //@Column(name = "income_partial_credit_rate")
   private BigDecimal incomePartialCreditRate;
 
 
@@ -52,6 +52,4 @@ public class EducationTaxCreditAotc {
   // Expenses are reduced to this rate before being applied as partial credit amount
   @Column(name = "partial_credit_expenses_rate")
   private BigDecimal expensesPartialCreditRate;
-
-  
 }
