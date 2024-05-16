@@ -8,7 +8,6 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Data
-@NoArgsConstructor
 @Entity
 @Table
 public class TaxReturn {
@@ -46,4 +45,8 @@ public class TaxReturn {
     private List<W2> w2s;
 
     private BigDecimal refund;
+
+    public TaxReturn() {
+        w2s = List.of();
+    }
 }
