@@ -53,7 +53,7 @@ class DeductionsServiceTest {
 
     // Test find Deduction by ID Success:
     @Test
-    public void findDeductionByIdSuccessTest() {
+    void findDeductionByIdSuccessTest() {
 
         // Define stubbing:
         when(deductionRepository.findById(1)).thenReturn(java.util.Optional.of(returnedDeduction));
@@ -69,7 +69,7 @@ class DeductionsServiceTest {
 
     // Test find Deduction by ID Failure:
     @Test
-    public void findDeductionByIdFailureTest() {
+    void findDeductionByIdFailureTest() {
 
         // Define stubbing:
         when(deductionRepository.findById(1)).thenReturn(Optional.empty());
@@ -80,7 +80,7 @@ class DeductionsServiceTest {
 
     // Test find all Deductions Success:
     @Test
-    public void findAllDeductionsSuccessTest() {
+    void findAllDeductionsSuccessTest() {
 
         // Define stubbing:
         when(deductionRepository.findAll()).thenReturn(deductionList);
