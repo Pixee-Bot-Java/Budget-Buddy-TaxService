@@ -18,11 +18,6 @@ public class DeductionService {
         this.deductionRepository = deductionRepository;
     }
 
-    // Add new Deduction:
-    public Deduction addDeduction(Deduction newDeduction) {
-        return deductionRepository.saveAndFlush(newDeduction);
-    }
-
     // Find Deduction by ID:
     public Deduction findById(int id) {
         return deductionRepository.findById(id)
@@ -32,20 +27,5 @@ public class DeductionService {
     // Find list of all Deductions:
     public List<Deduction> findAll() {
         return deductionRepository.findAll();
-    }
-
-    // Update Deduction by ID:
-    public Deduction updateById(int id, Deduction updatedDeduction) {
-        // Verify Deduction exists in the database:
-        findById(id);
-        updatedDeduction.setId(id);
-        return deductionRepository.saveAndFlush(updatedDeduction);
-    }
-
-    // Delete Deduction by ID:
-    public void deleteById(int id) {
-        // Verify Deduction exists in the database:
-        findById(id);
-        deductionRepository.deleteById(id);
     }
 }
