@@ -30,13 +30,13 @@ public class TaxReturnController {
 
     // Get TaxReturn by id:
     @GetMapping("/{id}")
-    public ResponseEntity<TaxReturn> findById(int id) {
+    public ResponseEntity<TaxReturn> findById(@PathVariable("id") int id) {
         return ResponseEntity.ok(taxReturnService.findById(id));
     }
 
     // Get all TaxReturns by userId:
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<TaxReturn>> findAllByUserId(int userId) {
+    public ResponseEntity<List<TaxReturn>> findAllByUserId(@PathVariable("userId") int userId) {
         return ResponseEntity.ok(taxReturnService.findAllByUserId(userId));
     }
 
@@ -48,7 +48,7 @@ public class TaxReturnController {
 
     // Delete TaxReturn:
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTaxReturn(int id) {
+    public ResponseEntity<Void> deleteTaxReturn(@PathVariable("id") int id) {
         taxReturnService.deleteTaxReturn(id);
         return ResponseEntity.noContent().build();
     }
