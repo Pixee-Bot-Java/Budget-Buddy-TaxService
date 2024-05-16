@@ -1,5 +1,6 @@
 package com.skillstorm.taxservice.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.skillstorm.taxservice.models.taxcredits.ChildTaxCredit;
 import com.skillstorm.taxservice.models.taxcredits.EarnedIncomeTaxCredit;
 import com.skillstorm.taxservice.models.taxcredits.EducationTaxCreditAotc;
@@ -31,22 +32,27 @@ public class FilingStatus {
   private String status;
 
   @ManyToOne
+  @JsonIgnore
   @JoinColumn(name = "child_tax_credit_id")
   private ChildTaxCredit childTaxCredit;
 
   @ManyToOne
+  @JsonIgnore
   @JoinColumn(name = "earned_income_tax_credit_id")
   private EarnedIncomeTaxCredit earnedIncomeTaxCredit;
 
   @ManyToOne
+  @JsonIgnore
   @JoinColumn(name = "education_tax_credit_aotc_id")
   private EducationTaxCreditAotc educationTaxCreditAotc;
 
   @ManyToOne
+  @JsonIgnore
   @JoinColumn(name = "education_tax_credit_llc_id")
   private EducationTaxCreditLlc educationTaxCreditLlc;
 
   @ManyToOne
+  @JsonIgnore
   @JoinColumn(name = "savers_tax_credit_id")
   private SaversTaxCredit saversTaxCredit;
 }
