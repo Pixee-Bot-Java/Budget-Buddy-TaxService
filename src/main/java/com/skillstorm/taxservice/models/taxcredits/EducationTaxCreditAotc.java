@@ -1,4 +1,4 @@
-package com.skillstorm.taxservice.models;
+package com.skillstorm.taxservice.models.taxcredits;
 
 import java.math.BigDecimal;
 
@@ -24,41 +24,33 @@ public class EducationTaxCreditAotc {
   private int id;
 
   // Income threshold for joint filers below which full credit amount is applied
-  @Column(columnDefinition = "INT DEFAULT 160000")
-  private int fullCreditIncomeThresholdJointFiler;
+  @Column(name = "full_credit_income_threshold")
+  private int fullCreditIncomeThreshold;
 
   // Range of income for joint filers past the full credit threshold within which partial credit amount is applied
-  @Column(columnDefinition = "INT DEFAULT 20000")
-  private int partialCreditIncomeThresholdJointFiler;
-
-  // Income threshold for other filers below which full credit amount is applied
-  @Column(columnDefinition = "INT DEFAULT 80000")
-  private int fullCreditIncomeThresholdOtherFiler;
-
-  // Range of income for other filers past the full credit threshold within which partial credit amount is applied
-  @Column(columnDefinition = "INT DEFAULT 10000")
-  private int partialCreditIncomeThresholdOtherFiler;
+  @Column(name = "partial_credit_income_threshold")
+  private int partialCreditIncomeThreshold;
 
   // Rate of full credit amount which partial credit amount is reduced to
-  @Column(columnDefinition = "DECIMAL(5, 2) DEFAULT 0.75")
+  @Column(name = "income_partial_credit_rate")
   private BigDecimal incomePartialCreditRate;
 
 
   // Maximum allowed credit amount to be applied for each student (each tax credit)
-  @Column(columnDefinition = "INT DEFAULT 2500")
+  @Column(name = "max_credit_amount")
   private int maxCreditAmountPerStudent;
 
 
   // Expenses threshold under which 100% of the expenses are applied as credit
-  @Column(columnDefinition = "INT DEFAULT 2000")
+  @Column(name = "full_credit_expenses_threshold")
   private int expensesThresholdFullCredit;
 
   // Expenses Range past the full credit expenses threshold within which partial expenses are applied as credit
-  @Column(columnDefinition = "INT DEFAULT 2000")
+  @Column(name = "partial_credit_expenses_threshold")
   private int expensesThresholdPartialCredit;
 
   // Expenses are reduced to this rate before being applied as partial credit amount
-  @Column(columnDefinition = "DECIMA(5, 2) DEFAULT 0.04")
+  @Column(name = "partial_credit_expenses_rate")
   private BigDecimal expensesPartialCreditRate;
 
   

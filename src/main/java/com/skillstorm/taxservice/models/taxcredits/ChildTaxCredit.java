@@ -1,4 +1,4 @@
-package com.skillstorm.taxservice.models;
+package com.skillstorm.taxservice.models.taxcredits;
 
 import java.math.BigDecimal;
 
@@ -23,19 +23,16 @@ public class ChildTaxCredit {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
 
-  @Column(columnDefinition = "INT DEFAULT 2000")
+  @Column(name = "per_qualifying_child")
   private int perQualifyingChild;
 
-  @Column(columnDefinition = "INT DEFAULT 500")
+  @Column(name = "per_other_child")
   private int perOtherChild;
 
-  @Column(columnDefinition = "INT DEFAULT 400000")
-  private int jointThreshold;
+  @Column(name = "income_threshold")
+  private int incomeThreshold;
 
-  @Column(columnDefinition = "INT DEFAULT 200000")
-  private int otherThreshold;
-
-  @Column(columnDefinition = "DECIMAL(5, 2) DEFAULT 0.05")
+  @Column(name = "rate_factor")
   private BigDecimal rateFactor;
   
 }
