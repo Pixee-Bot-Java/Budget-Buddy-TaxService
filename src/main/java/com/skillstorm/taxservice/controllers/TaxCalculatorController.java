@@ -21,7 +21,7 @@ public class TaxCalculatorController {
     private final TaxBracketService taxBracketService;
     private final TaxCalculatorService taxCalculatorService;
     private final SingleFilerTaxBracketRepository singleFilerTaxBracketRepository;
-    MarriedFilerTaxBracketRepository marriedFilerTaxBracketRepository;
+    private final MarriedFilerTaxBracketRepository marriedFilerTaxBracketRepository;
 
     @Autowired
     public TaxCalculatorController(TaxBracketService taxBracketService, TaxCalculatorService taxCalculatorService,
