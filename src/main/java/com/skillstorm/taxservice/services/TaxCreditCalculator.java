@@ -225,5 +225,84 @@ public class TaxCreditCalculator {
 
 //RETIREMENT CREDITS
 
+        public static double calculateSaversCredit(double contributionAmount, double agi, String filingStatus) {
+            // Check initial conditions
+            if (contributionAmount <= 0 || contributionAmount > 2000) {
+                return 0; // Contribution must be positive and not exceed $2,000
+            }
+
+            // Determine credit rate based on AGI and filing status
+            double creditRate = 0; 
+            if (filingStatus.equalsIgnoreCase("joint")) {
+                if (agi <= 43500) {
+                    creditRate = 0.50;
+                } else if (agi <= 47500) {
+                    creditRate = 0.20;
+                } else if (agi <= 73000) {
+                    creditRate = 0.10;
+                }
+            } else if (filingStatus.equalsIgnoreCase("head")) {
+                if (agi <= 32625) {
+                    creditRate = 0.50;
+                } else if (agi <= 35625) {
+                    creditRate = 0.20;
+                } else if (agi <= 54750) {
+                    creditRate = 0.10;
+                }
+            } else if (filingStatus.equalsIgnoreCase("single")) {  // Specific check for "single"
+                if (agi <= 21750) {
+                    creditRate = 0.50;
+                } else if (agi <= 23750) {
+                    creditRate = 0.20;
+                } else if (agi <= 36500) {
+                    creditRate = 0.10;
+                }
+            } // No else here, if it's not joint, head, or single, creditRate remains 0
+
+            // Calculate credit amount
+            double creditAmount = contributionAmount * creditRate;
+            return Math.min(creditAmount, 1000); // Cap at $1,000
+        }
+
+        /*TEST CASES
+             * run in seperate java project's main method *
+
+                double result;
+
+                // Test Cases for Saver's Credit
+                // Test Case 1: Single filer, low AGI, max contribution
+                result = calculateSaversCredit(2000, 15000, "single");
+                System.out.println("Test Case 1: " + (result == 1000 ? "Passed" : "Failed") + " (Expected: 1000, Actual: " + result + ")");
+
+                // Test Case 2: Joint filers, mid-range AGI, partial credit
+                result = calculateSaversCredit(1200, 45000, "joint");
+                System.out.println("Test Case 2: " + (result == 240 ? "Passed" : "Failed") + " (Expected: 240, Actual: " + result + ")");
+
+                // Test Case 3: Head of household, high AGI, no credit
+                result = calculateSaversCredit(1800, 60000, "head");
+                System.out.println("Test Case 3: " + (result == 0 ? "Passed" : "Failed") + " (Expected: 0, Actual: " + result + ")");
+
+                // Test Case 4: Single filer, AGI at the threshold for 10% credit *This test Fails*
+                result = calculateSaversCredit(800, 23750, "single");
+                System.out.println("Test Case 4: " + (result == 80 ? "Passed" : "Failed") + " (Expected: 80, Actual: " + result + ")"); 
+
+                // Test Case 5: Joint filers, AGI at the threshold for 20% credit
+                result = calculateSaversCredit(500, 47500, "joint");
+                System.out.println("Test Case 5: " + (result == 100 ? "Passed" : "Failed") + " (Expected: 100, Actual: " + result + ")");
+
+                // Test Case 6: Negative contribution (invalid input)
+                result = calculateSaversCredit(-500, 20000, "single");
+                System.out.println("Test Case 6: " + (result == 0 ? "Passed" : "Failed") + " (Expected: 0, Actual: " + result + ")");
+
+                // Test Case 7: Contribution exceeding $2,000 (invalid input)
+                result = calculateSaversCredit(2500, 18000, "single");
+                System.out.println("Test Case 7: " + (result == 0 ? "Passed" : "Failed") + " (Expected: 0, Actual: " + result + ")");
+
+                // Test Case 8: Invalid filing status
+                result = calculateSaversCredit(1000, 35000, "invalid");
+                System.out.println("Test Case 8: " + (result == 0 ? "Passed" : "Failed") + " (Expected: 0, Actual: " + result + ")");
+         
+             */
+
 
 }
