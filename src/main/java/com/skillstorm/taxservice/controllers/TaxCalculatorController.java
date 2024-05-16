@@ -31,7 +31,7 @@ public class TaxCalculatorController {
     }
 
     @GetMapping("/taxBrackets/test/{id}")
-    public List<TaxBracket> getTaxBrackets(@PathVariable int id) {
+    public List<TaxBracket> getTaxBrackets(@PathVariable("id") int id) {
       return taxBracketService.findByFilingStatusID(id);
     }
 
