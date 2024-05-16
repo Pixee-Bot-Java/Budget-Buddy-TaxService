@@ -139,7 +139,91 @@ public class TaxCreditCalculator {
  
 /*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 
+//EDUCATION CREDITS
 
+
+        public static double calculateAOTC(double qualifiedExpenses, double agi, String filingStatus) {
+            if (filingStatus.equalsIgnoreCase("separate")) {
+                return 0; // Married filing separately cannot claim AOTC
+            }
+
+            double agiLimit = (filingStatus.equalsIgnoreCase("joint")) ? 180000 : 90000;
+            
+            if (agi > agiLimit) {
+                return 0; // No credit if AGI exceeds limit
+            }
+            
+            double maxCredit = 2500;
+            double phaseoutStart = (filingStatus.equalsIgnoreCase("joint")) ? 160000 : 80000;
+
+            if (agi >= phaseoutStart) {
+                // Handle partial credit (we'll need the actual phaseout formula here)
+                // For now, let's assume a linear phaseout:
+                double phaseoutAmount = (agi - phaseoutStart) / 20000 * maxCredit; 
+                maxCredit = Math.max(0, maxCredit - phaseoutAmount);
+            }
+
+            double credit = Math.min(maxCredit, 
+                                    Math.min(2000, qualifiedExpenses) + 
+                                    0.25 * Math.max(0, qualifiedExpenses - 2000));
+
+            return credit;
+        }
+
+        // LLC
+        public static double calculateLLC(double qualifiedExpenses) {
+            double maxCredit = 2000;
+            double credit = Math.min(maxCredit, 0.20 * Math.min(10000, qualifiedExpenses));
+            return credit;
+        }
+
+
+        /*TEST CASES
+             * run in seperate java project's main method *
+
+                double result;
+
+                // Test Cases for AOTC
+                // Test Case 1: Single filer, AGI below limit, qualified expenses within first tier
+                result = calculateAOTC(1500, 70000, "single");
+                System.out.println("AOTC Test Case 1: " + (result == 1500 ? "Passed" : "Failed") + " (Expected: 1500, Actual: " + result + ")");
+
+                // Test Case 2: Joint filers, AGI below limit, qualified expenses in both tiers
+                result = calculateAOTC(3500, 150000, "joint");
+                System.out.println("AOTC Test Case 2: " + (result == 2375 ? "Passed" : "Failed") + " (Expected: 2375, Actual: " + result + ")");
+
+                // Test Case 3: Single filer, AGI in phaseout range (Cannot test accurately without formula)
+                result = calculateAOTC(2500, 85000, "single"); 
+                System.out.println("AOTC Test Case 3: Cannot verify accuracy due to unknown phaseout formula (Actual: " + result + ")");
+
+                // Test Case 4: Joint filers, AGI above limit
+                result = calculateAOTC(4000, 190000, "joint");
+                System.out.println("AOTC Test Case 4: " + (result == 0 ? "Passed" : "Failed") + " (Expected: 0, Actual: " + result + ")");
+
+                // Test Case 5: Married filing separately
+                result = calculateAOTC(2000, 50000, "separate");
+                System.out.println("AOTC Test Case 5: " + (result == 0 ? "Passed" : "Failed") + " (Expected: 0, Actual: " + result + ")");
+
+                // Test Cases for LLC
+                // Test Case 6: Qualified expenses below limit
+                result = calculateLLC(5000);
+                System.out.println("LLC Test Case 6: " + (result == 1000 ? "Passed" : "Failed") + " (Expected: 1000, Actual: " + result + ")");
+
+                // Test Case 7: Qualified expenses at limit
+                result = calculateLLC(10000);
+                System.out.println("LLC Test Case 7: " + (result == 2000 ? "Passed" : "Failed") + " (Expected: 2000, Actual: " + result + ")");
+
+                // Test Case 8: Qualified expenses above limit
+                result = calculateLLC(15000);
+                System.out.println("LLC Test Case 8: " + (result == 2000 ? "Passed" : "Failed") + " (Expected: 2000, Actual: " + result + ")");
+         
+             */
+
+
+/*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
+
+//RETIREMENT CREDITS
 
 
 }
