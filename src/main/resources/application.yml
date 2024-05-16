@@ -2,6 +2,8 @@
 # Configure Tomcat server:
 server:
   port: 8084
+  servlet:
+    context-path: /taxes
 
 # Point to the Eureka discovery client to it knows where to register:
 eureka:

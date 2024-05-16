@@ -21,7 +21,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(authorizeRequests ->
                 authorizeRequests
                         .anyRequest().permitAll()
-        ).httpBasic(Customizer.withDefaults());
+        );
 
         // Defining endpoints that are exempt from csrf tokens:
         http.csrf(csrf ->
@@ -29,10 +29,5 @@ public class SecurityConfig {
                         .ignoringRequestMatchers("/**"));
 
         return http.build();
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(4);
     }
 }

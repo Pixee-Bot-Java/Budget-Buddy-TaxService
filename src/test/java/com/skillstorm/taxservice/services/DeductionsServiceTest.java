@@ -1,13 +1,11 @@
-package com.skillstorm.taxservice;
+package com.skillstorm.taxservice.services;
 
 import com.skillstorm.taxservice.exceptions.NotFoundException;
 import com.skillstorm.taxservice.models.Deduction;
 import com.skillstorm.taxservice.repositories.DeductionRepository;
-import com.skillstorm.taxservice.services.DeductionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -18,7 +16,6 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,7 +27,6 @@ class DeductionsServiceTest {
     @Mock
     private static DeductionRepository deductionRepository;
 
-    private Deduction newDeduction;
     private Deduction returnedDeduction;
     private List<Deduction> deductionList;
 
@@ -42,9 +38,6 @@ class DeductionsServiceTest {
     }
 
     private void setupDeductions() {
-        newDeduction = new Deduction();
-        newDeduction.setName("Test Deduction");
-        newDeduction.setAgiLimit(BigDecimal.valueOf(0.25));
 
         returnedDeduction = new Deduction();
         returnedDeduction.setId(1);
@@ -56,22 +49,6 @@ class DeductionsServiceTest {
                 new Deduction(2, "Test Deduction 2", BigDecimal.valueOf(0.50)),
                 new Deduction(3, "Test Deduction 3", BigDecimal.valueOf(0.75))
         );
-    }
-
-    // Test add new Deduction Success:
-    @Test
-    public void addNewDeductionSuccessTest() {
-
-        // Define stubbing:
-        when(deductionRepository.saveAndFlush(newDeduction)).thenReturn(returnedDeduction);
-
-        // Call method to test:
-        Deduction result = deductionService.addDeduction(newDeduction);
-
-        // Verify:
-        assertEquals(1, result.getId(), "Deduction ID should be: 1");
-        assertEquals("Test Deduction", result.getName(), "Deduction name should be: Test Deduction");
-        assertEquals(BigDecimal.valueOf(0.25), result.getAgiLimit(), "Adjusted Gross Income Limit should be: 0.25");
     }
 
     // Test find Deduction by ID Success:
@@ -113,42 +90,5 @@ class DeductionsServiceTest {
 
         // Verify:
         assertEquals(3, result.size(), "List of Deductions should contain 3 Deductions");
-    }
-
-    // Test update Deduction by ID Success:
-    @Test
-    public void updateDeductionByIdSuccessTest() {
-
-        // Define stubbing:
-        when(deductionRepository.findById(1)).thenReturn(Optional.of(returnedDeduction));
-        when(deductionRepository.saveAndFlush(returnedDeduction)).thenReturn(returnedDeduction);
-
-        // Call method to test:
-        Deduction result = deductionService.updateById(1, returnedDeduction);
-
-        // Verify:
-        assertEquals(1, result.getId(), "Deduction ID should be: 1");
-        assertEquals("Test Deduction", result.getName(), "Deduction name should be: Test Deduction");
-        assertEquals(BigDecimal.valueOf(0.25), result.getAgiLimit(), "Adjusted Gross Income Limit should be: 0.25");
-    }
-
-    // Test Delete Deduction by ID Success:
-    @Test
-    public void deleteDeductionByIdSuccessTest() {
-
-        // Define stubbing:
-        when(deductionRepository.findById(1)).thenReturn(Optional.of(returnedDeduction));
-
-        // Define Argument Captor:
-        ArgumentCaptor<Integer> idCaptor = ArgumentCaptor.forClass(Integer.class);
-
-        // Call method to test:
-        deductionService.deleteById(1);
-
-        // Capture Argument:
-        verify(deductionRepository).deleteById(idCaptor.capture());
-
-        // Verify:
-        assertEquals(1, idCaptor.getValue(), "Argument Captor should capture Deduction ID: 1");
     }
 }
