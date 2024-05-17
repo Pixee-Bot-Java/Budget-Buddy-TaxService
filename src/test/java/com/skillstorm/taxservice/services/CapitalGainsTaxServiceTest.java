@@ -22,7 +22,7 @@ import com.skillstorm.taxservice.models.CapitalGainsTax;
 import com.skillstorm.taxservice.repositories.CapitalGainsTaxRepository;
 
 @ExtendWith(MockitoExtension.class)
-public class CapitalGainsTaxServiceTest {
+class CapitalGainsTaxServiceTest {
 
     @Mock
     private CapitalGainsTaxRepository capitalGainsTaxRepository;
@@ -31,7 +31,7 @@ public class CapitalGainsTaxServiceTest {
     private CapitalGainsTaxService capitalGainsTaxService;
 
     @Test
-    public void testFindByFilingStatusID_WhenTaxInfoExists_ShouldReturnTaxInfoList() {
+    void testFindByFilingStatusID_WhenTaxInfoExists_ShouldReturnTaxInfoList() {
         // Mocking the repository method to return a list of tax info
         List<CapitalGainsTax> mockTaxInfoList = new ArrayList<>();
         mockTaxInfoList.add(new CapitalGainsTax());
@@ -49,7 +49,7 @@ public class CapitalGainsTaxServiceTest {
     }
 
     @Test
-    public void testFindByFilingStatusID_WhenTaxInfoDoesNotExist_ShouldThrowNotFoundException() {
+    void testFindByFilingStatusID_WhenTaxInfoDoesNotExist_ShouldThrowNotFoundException() {
       // Mocking the repository method to return an empty list
       when(capitalGainsTaxRepository.findByFilingStatus_Id(anyInt())).thenReturn(Collections.emptyList());
 

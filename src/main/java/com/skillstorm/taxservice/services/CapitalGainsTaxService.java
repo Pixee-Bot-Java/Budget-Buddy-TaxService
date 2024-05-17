@@ -2,7 +2,6 @@ package com.skillstorm.taxservice.services;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.skillstorm.taxservice.exceptions.NotFoundException;
@@ -12,8 +11,11 @@ import com.skillstorm.taxservice.repositories.CapitalGainsTaxRepository;
 @Service
 public class CapitalGainsTaxService {
   
-  @Autowired
-  CapitalGainsTaxRepository capitalGainsTaxRepository;
+  private final CapitalGainsTaxRepository capitalGainsTaxRepository;
+
+  public CapitalGainsTaxService(CapitalGainsTaxRepository capitalGainsTaxRepository) {
+    this.capitalGainsTaxRepository = capitalGainsTaxRepository;
+  }
 
   // Get the tax bracket by filing status id
   public List<CapitalGainsTax> findByFilingStatusID(int id) {
