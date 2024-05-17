@@ -173,3 +173,321 @@ INSERT INTO tax_brackets (rate, min_income, max_income, filing_status_id) VALUES
 INSERT INTO tax_brackets (rate, min_income, max_income, filing_status_id) VALUES (0.35, 462501, 693750, 5);
 INSERT INTO tax_brackets (rate, min_income, max_income, filing_status_id) VALUES (0.37, 693751, 2147483647, 5);
 COMMIT;
+
+
+BEGIN;
+INSERT INTO states (state_code, state_name) VALUES
+-- 1
+('AL', 'Alabama'),
+-- 2
+('AK', 'Alaska'),
+-- 3
+('AZ', 'Arizona'),
+-- 4
+('AR', 'Arkansas'),
+-- 5
+('CA', 'California'),
+-- 6
+('CO', 'Colorado'),
+-- 7
+('CT', 'Connecticut'),
+-- 8
+('DE', 'Delaware'),
+-- 9
+('FL', 'Florida'),
+-- 10
+('GA', 'Georgia'),
+-- 11
+('HI', 'Hawaii'),
+-- 12
+('ID', 'Idaho'),
+-- 13
+('IL', 'Illinois'),
+-- 14
+('IN', 'Indiana'),
+-- 15
+('IA', 'Iowa'),
+-- 16
+('KS', 'Kansas'),
+-- 17
+('KY', 'Kentucky'),
+-- 18
+('LA', 'Louisiana'),
+-- 19
+('ME', 'Maine'),
+-- 20
+('MD', 'Maryland'),
+-- 21
+('MA', 'Massachusetts'),
+-- 22
+('MI', 'Michigan'),
+-- 23
+('MN', 'Minnesota'),
+-- 24
+('MS', 'Mississippi'),
+-- 25
+('MO', 'Missouri'),
+-- 26
+('MT', 'Montana'),
+-- 27
+('NE', 'Nebraska'),
+-- 28
+('NV', 'Nevada'),
+-- 29
+('NH', 'New Hampshire'),
+-- 30
+('NJ', 'New Jersey'),
+-- 31
+('NM', 'New Mexico'),
+-- 32
+('NY', 'New York'),
+-- 33
+('NC', 'North Carolina'),
+-- 34
+('ND', 'North Dakota'),
+-- 35
+('OH', 'Ohio'),
+-- 36
+('OK', 'Oklahoma'),
+-- 36
+('OR', 'Oregon'),
+-- 38
+('PA', 'Pennsylvania'),
+-- 39
+('RI', 'Rhode Island'),
+-- 40
+('SC', 'South Carolina'),
+-- 41
+('SD', 'South Dakota'),
+-- 42
+('TN', 'Tennessee'),
+-- 43
+('TX', 'Texas'),
+-- 44
+('UT', 'Utah'),
+-- 45
+('VT', 'Vermont'),
+-- 46
+('VA', 'Virginia'),
+-- 47
+('WA', 'Washington'),
+-- 48
+('WV', 'West Virginia'),
+-- 49
+('WI', 'Wisconsin'),
+-- 50
+('WY', 'Wyoming');
+COMMIT;
+
+
+BEGIN;
+-- Alabama
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (1, 0.02, 500);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (1, 0.04, 2500);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (1, 0.05, 0);
+-- Alaska
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (2, 0.00, 0);
+-- Arizona
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (3, 0.025, 0);
+-- Arkansas
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (4, 0.02, 4400);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (4, 0.04, 4400);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (4, 0.044, 0);
+-- California
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (5, 0.01, 10412);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (5, 0.02, 14272);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (5, 0.04, 14275);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (5, 0.06, 15122);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (5, 0.08, 14269);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (5, 0.093, 280787);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (5, 0.103, 69824);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (5, 0.113, 279310);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (5, 0.123, 301729);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (5, 0.133, 0);
+-- Colorado
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (6, 0.044, 0);
+-- Connecticut
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (7, 0.02, 10000);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (7, 0.045, 40000);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (7, 0.055, 50000);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (7, 0.06, 100000);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (7, 0.065, 50000);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (7, 0.069, 250000);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (7, 0.0699, 0);
+-- Delaware
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (8, 0.022, 5000);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (8, 0.039, 5000);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (8, 0.048, 10000);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (8, 0.052, 5000);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (8, 0.0555, 35000);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (8, 0.066, 0);
+-- Florida
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (9, 0.0, 0);
+-- Georgia
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (10, 0.0549, 0);
+-- Hawaii
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (11, 0.014, 2400);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (11, 0.032, 2400);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (11, 0.055, 4800);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (11, 0.064, 4800);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (11, 0.068, 4800);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (11, 0.072, 4800);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (11, 0.076, 12000);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (11, 0.079, 12000);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (11, 0.0825, 102000);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (11, 0.09, 25000);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (11, 0.1, 25000);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (11, 0.11, 0);
+-- Idaho
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (12, 0.058, 0);
+-- Illinois
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (13, 0.0495, 0);
+-- Indiana
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (14, 0.0305, 0);
+-- Iowa
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (15, 0.00, 6210);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (15, 0.00, 24840);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (15, 0.00, 0);
+-- Kansas
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (16, 0.031, 15000);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (16, 0.0525, 15000);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (16, 0.057, 0);
+-- Kentucky
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (17, 0.04, 0);
+-- Louisiana
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (18, 0.0185, 12500);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (18, 0.035, 37500);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (18, 0.0425, 0);
+-- Maine
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (19, 0.058, 26050);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (19, 0.0675, 35550);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (19, 0.0715, 0);
+-- Maryland
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (20, 0.02, 1000);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (20, 0.03, 1000);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (20, 0.04, 1000);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (20, 0.0475, 97000);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (20, 0.05, 25000);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (20, 0.0525, 25000);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (20, 0.055, 100000);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (20, 0.0575, 0);
+-- Massachusetts
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (21, 0.05, 1000000);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (21, 0.09, 0);
+-- Michigan
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (22, 0.0425, 0);
+-- Minnesota
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (23, 0.0535, 31690);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (23, 0.068, 72400);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (23, 0.0785, 89150);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (23, 0.0985, 0);
+-- Mississippi
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (24, 0.047, 0);
+-- Missouri
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (25, 0.02, 2546);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (25, 0.025, 1273);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (25, 0.03, 1273);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (25, 0.035, 1273);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (25, 0.04, 1273);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (25, 0.045, 1273);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (25, 0.048, 0);
+-- Montana
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (26, 0.047, 20500);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (26, 0.059, 0);
+-- Nebraska
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (27, 0.0246, 3700);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (27, 0.0351, 18470);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (27, 0.0501, 13560);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (27, 0.0584, 0);
+-- Nevada
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (28, 0.00, 0);
+-- New Hampshire
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (29, 0.00, 0);
+-- New Jersey
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (30, 0.014, 20000);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (30, 0.0175, 15000);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (30, 0.035, 5000);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (30, 0.05525, 35000);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (30, 0.0637, 425000);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (30, 0.0897, 500000);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (30, 0.1075, 0);
+-- New Mexico
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (31, 0.017, 5500);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (31, 0.032, 4500);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (31, 0.047, 5000);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (31, 0.049, 194000);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (31, 0.059, 0);
+-- New York
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (32, 0.04, 8500);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (32, 0.045, 3200);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (32, 0.0525, 2200);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (32, 0.055, 66750);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (32, 0.06, 134750);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (32, 0.0685, 862150);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (32, 0.0965, 3922450);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (32, 0.103, 20000000);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (32, 0.109, 0);
+-- North Carolina
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (33, 0.045, 0);
+-- North Dakota
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (34, 0.0195, 225975);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (34, 0.025, 0);
+-- Ohio
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (35, 0.025, 92150);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (35, 0.035, 0);
+-- Oklahoma
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (36, 0.0025, 1000);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (36, 0.0075, 1500);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (36, 0.0175, 1250);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (36, 0.0275, 1150);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (36, 0.0375, 2300);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (36, 0.0475, 0);
+-- Oregon
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (37, 0.0475, 4300);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (37, 0.0675, 6450);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (37, 0.0875, 114250);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (37, 0.099, 0);
+-- Pennsylvania
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (38, 0.0307, 0);
+-- Rhode Island
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (39, 0.0375, 77450);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (39, 0.0475, 98600);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (39, 0.0599, 0);
+-- South Carolina
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (40, 0.00, 3460);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (40, 0.03, 13870);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (40, 0.00, 0);
+-- South Dakota
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (41, 0.00, 0);
+-- Tennessee
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (42, 0.00, 0);
+-- Texas
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (43, 0.00, 0);
+-- Utah
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (44, 0.0465, 0);
+-- Vermont
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (45, 0.0335, 45400);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (45, 0.066, 64650);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (45, 0.076, 119500);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (45, 0.0875, 0);
+-- Virginia
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (46, 0.02, 3000);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (46, 0.03, 2000);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (46, 0.05, 12000);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (46, 0.0575, 0);
+-- Washington
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (47, 0.00, 0);
+-- West Virginia
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (48, 0.0236, 10000);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (48, 0.0315, 15000);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (48, 0.0354, 15000);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (48, 0.0472, 20000);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (48, 0.0512, 0);
+-- Wisconsin
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (49, 0.035, 14320);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (49, 0.044, 14320);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (49, 0.053, 286670);
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (49, 0.0765, 0);
+-- Wyoming
+INSERT INTO state_tax (state_id, rate, income_range) VALUES (50, 0.00, 0);
+COMMIT;

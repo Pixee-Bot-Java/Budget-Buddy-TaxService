@@ -5,6 +5,8 @@ DROP TABLE IF EXISTS earned_income_tax_credit CASCADE;
 DROP TABLE IF EXISTS education_tax_credit_aotc CASCADE;
 DROP TABLE IF EXISTS education_tax_credit_llc CASCADE;
 DROP TABLE IF EXISTS savers_tax_credit CASCADE;
+DROP TABLE IF EXISTS state_tax CASCADE;
+DROP TABLE IF EXISTS states CASCADE;
 
 
 CREATE TABLE IF NOT EXISTS child_tax_credit (
@@ -82,4 +84,18 @@ CREATE TABLE IF NOT EXISTS tax_brackets (
   min_income INT NOT NULL,
   max_income INT NOT NULL,
   FOREIGN KEY (filing_status_id) REFERENCES filing_status(id)
+);
+
+CREATE TABLE IF NOT EXISTS states (
+  id SERIAL PRIMARY KEY,
+  state_name VARCHAR(50),
+  state_code VARCHAR(2)
+);
+
+CREATE TABLE IF NOT EXISTS state_tax (
+  id SERIAL PRIMARY KEY,
+  state_id INT NOT NULL,
+  income_range INT NOT NULL,
+  rate DECIMAL(6, 5) NOT NULL,
+  FOREIGN KEY (state_id) REFERENCES states(id)
 );
