@@ -27,12 +27,7 @@ public class TaxCreditController {
 
   @GetMapping("/child-tax-credit/{id}")
   public ResponseEntity<?> getChildTaxCreditById(@PathVariable int id) {
-    try {
-      ChildTaxCredit credit = taxCreditService.getChildTaxCreditById(id);
-      return ResponseEntity.ok(credit);
-    } catch (NotFoundException e) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.singletonMap("message", e.getMessage()));
-    }
+    return ResponseEntity.ok(taxCreditService.getChildTaxCreditById(id));
   }
 
   @GetMapping("/earned-income-tax-credit/{id}")

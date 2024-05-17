@@ -1,8 +1,5 @@
 package com.skillstorm.taxservice.services;
 
-import java.util.List;
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -44,22 +41,22 @@ public class TaxCreditService {
 
   public EarnedIncomeTaxCredit getEarnedIncomeTaxCreditById(int id) {
     return earnedIncomeTaxCreditRepository.findById(id)
-      .orElseThrow(() -> new NotFoundException("child tax credit with id: " + id + " not found"));
+      .orElseThrow(() -> new NotFoundException("earned income tax credit with id: " + id + " not found"));
   }
 
   public EducationTaxCreditAotc getEducationTaxCreditAotcById(int id) {
     return educationTaxCreditAotcRepository.findById(id)
-      .orElseThrow(() -> new NotFoundException("child tax credit with id: " + id + " not found"));
+      .orElseThrow(() -> new NotFoundException("education tax credit aotc with id: " + id + " not found"));
   }
 
   public EducationTaxCreditLlc getEducationTaxCreditLlcById(int id) {
     return educationTaxCreditLlcRepository.findById(id)
-      .orElseThrow(() -> new NotFoundException("child tax credit with id: " + id + " not found"));
+      .orElseThrow(() -> new NotFoundException("education tax credit llc with id: " + id + " not found"));
   }
 
   public SaversTaxCredit getSaversTaxCreditById(int id) {
     return saversTaxCreditRepository.findById(id)
-      .orElseThrow(() -> new NotFoundException("child tax credit with id: " + id + " not found"));
+      .orElseThrow(() -> new NotFoundException("savers tax credit with id: " + id + " not found"));
   }
   
 }
