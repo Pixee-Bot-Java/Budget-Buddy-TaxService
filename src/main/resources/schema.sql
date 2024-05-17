@@ -1,4 +1,5 @@
 DROP TABLE IF EXISTS tax_brackets CASCADE;
+DROP TABLE IF EXISTS standard_deduction CASCADE;
 DROP TABLE IF EXISTS filing_status CASCADE;
 DROP TABLE IF EXISTS child_tax_credit CASCADE;
 DROP TABLE IF EXISTS earned_income_tax_credit CASCADE;
@@ -75,6 +76,13 @@ CREATE TABLE IF NOT EXISTS filing_status (
   FOREIGN KEY (education_tax_credit_aotc_id) REFERENCES education_tax_credit_aotc(id),
   FOREIGN KEY (education_tax_credit_llc_id) REFERENCES education_tax_credit_llc(id),
   FOREIGN KEY (savers_tax_credit_id) REFERENCES savers_tax_credit(id)
+);
+
+CREATE TABLE IF NOT EXISTS standard_deduction (
+  id SERIAL PRIMARY KEY,
+  filing_status_id INT NOT NULL,
+  deduction_amount INT NOT NULL,
+  FOREIGN KEY (filing_status_id) REFERENCES filing_status(id)
 );
 
 CREATE TABLE IF NOT EXISTS tax_brackets (

@@ -131,6 +131,14 @@ INSERT INTO filing_status (status,
                           VALUES ('Qualifying Surviving Spouse', 2, 2, 2, 2, 3);
 COMMIT;
 
+BEGIN;
+INSERT INTO standard_deduction (filing_status_id, deduction_amount) VALUES (1, 12950);
+INSERT INTO standard_deduction (filing_status_id, deduction_amount) VALUES (2, 25900);
+INSERT INTO standard_deduction (filing_status_id, deduction_amount) VALUES (3, 12950);
+INSERT INTO standard_deduction (filing_status_id, deduction_amount) VALUES (4, 19400);
+INSERT INTO standard_deduction (filing_status_id, deduction_amount) VALUES (5, 25900);
+COMMIT;
+
 
 BEGIN;
 INSERT INTO tax_brackets (rate, min_income, max_income, filing_status_id) VALUES (0.10, 0, 11000, 1);
