@@ -132,11 +132,40 @@ INSERT INTO filing_status (status,
 COMMIT;
 
 BEGIN;
+-- Single
 INSERT INTO standard_deduction (filing_status_id, deduction_amount) VALUES (1, 12950);
+-- Married filing jointly
 INSERT INTO standard_deduction (filing_status_id, deduction_amount) VALUES (2, 25900);
+-- Marries filing separately
 INSERT INTO standard_deduction (filing_status_id, deduction_amount) VALUES (3, 12950);
+-- Head of household
 INSERT INTO standard_deduction (filing_status_id, deduction_amount) VALUES (4, 19400);
+-- Qualifying surviving spouse
 INSERT INTO standard_deduction (filing_status_id, deduction_amount) VALUES (5, 25900);
+COMMIT;
+
+
+BEGIN;
+-- Single
+INSERT INTO capital_gains_tax (filing_status_id, rate, income_range) VALUES (1, 0.0, 47025);
+INSERT INTO capital_gains_tax (filing_status_id, rate, income_range) VALUES (1, 0.15, 471874);
+INSERT INTO capital_gains_tax (filing_status_id, rate, income_range) VALUES (1, 0.2, 0);
+-- Married filing jointly
+INSERT INTO capital_gains_tax (filing_status_id, rate, income_range) VALUES (2, 0.0, 94050);
+INSERT INTO capital_gains_tax (filing_status_id, rate, income_range) VALUES (2, 0.15, 489699);
+INSERT INTO capital_gains_tax (filing_status_id, rate, income_range) VALUES (2, 0.2, 0);
+-- Marries filing separately
+INSERT INTO capital_gains_tax (filing_status_id, rate, income_range) VALUES (3, 0.0, 47025);
+INSERT INTO capital_gains_tax (filing_status_id, rate, income_range) VALUES (3, 0.15, 244824);
+INSERT INTO capital_gains_tax (filing_status_id, rate, income_range) VALUES (3, 0.2, 0);
+-- Head of household
+INSERT INTO capital_gains_tax (filing_status_id, rate, income_range) VALUES (4, 0.0, 63000);
+INSERT INTO capital_gains_tax (filing_status_id, rate, income_range) VALUES (4, 0.15, 488349);
+INSERT INTO capital_gains_tax (filing_status_id, rate, income_range) VALUES (4, 0.2, 0);
+-- Qualifying surviving spouse
+INSERT INTO capital_gains_tax (filing_status_id, rate, income_range) VALUES (5, 0.0, 94050);
+INSERT INTO capital_gains_tax (filing_status_id, rate, income_range) VALUES (5, 0.15, 489699);
+INSERT INTO capital_gains_tax (filing_status_id, rate, income_range) VALUES (5, 0.2, 0);
 COMMIT;
 
 

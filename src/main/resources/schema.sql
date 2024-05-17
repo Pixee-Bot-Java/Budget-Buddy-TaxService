@@ -1,5 +1,6 @@
 DROP TABLE IF EXISTS tax_brackets CASCADE;
 DROP TABLE IF EXISTS standard_deduction CASCADE;
+DROP TABLE IF EXISTS capital_gains_tax;
 DROP TABLE IF EXISTS filing_status CASCADE;
 DROP TABLE IF EXISTS child_tax_credit CASCADE;
 DROP TABLE IF EXISTS earned_income_tax_credit CASCADE;
@@ -82,6 +83,14 @@ CREATE TABLE IF NOT EXISTS standard_deduction (
   id SERIAL PRIMARY KEY,
   filing_status_id INT NOT NULL,
   deduction_amount INT NOT NULL,
+  FOREIGN KEY (filing_status_id) REFERENCES filing_status(id)
+);
+
+CREATE TABLE IF NOT EXISTS capital_gains_tax (
+  id SERIAL PRIMARY KEY,
+  filing_status_id INT NOT NULL,
+  rate DECIMAL(5, 2) NOT NULL,
+  income_range INT NOT NULL,
   FOREIGN KEY (filing_status_id) REFERENCES filing_status(id)
 );
 
