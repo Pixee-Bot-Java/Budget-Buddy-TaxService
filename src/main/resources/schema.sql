@@ -16,7 +16,20 @@ CREATE TABLE IF NOT EXISTS child_tax_credit (
   per_qualifying_child INT NOT NULL,
   per_other_child INT NOT NULL,
   income_threshold INT NOT NULL,
-  rate_factor DECIMAL(5, 2) DEFAULT 0.05
+  rate_factor DECIMAL(5, 2) NOT NULL DEFAULT 0.05,
+  refund_limit
+);
+
+CREATE TABLE IF NOT EXISTS dependent_care_tax_credit (
+  id SERIAL PRIMARY KEY,
+  income_range INT NOT NULL,
+  rate DECIMAL(5, 2) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS dependent_care_tax_credit_limit (
+  id SERIAL PRIMARY KEY,
+  num_dependents INT NOT NULL,
+  credit_limit INT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS earned_income_tax_credit (
@@ -40,7 +53,8 @@ CREATE TABLE IF NOT EXISTS education_tax_credit_aotc (
   max_credit_amount INT NOT NULL,
   full_credit_expenses_threshold INT NOT NULL,
   partial_credit_expenses_threshold INT NOT NULL,
-  partial_credit_expenses_rate DECIMAL(5,2) NOT NULL
+  partial_credit_expenses_rate DECIMAL(5,2) NOT NULL,
+  refund_limit INT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS education_tax_credit_llc (

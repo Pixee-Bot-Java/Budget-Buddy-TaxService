@@ -1,8 +1,28 @@
 BEGIN;
 -- marries filing jointly
-INSERT INTO child_tax_credit (per_qualifying_child, per_other_child, income_threshold, rate_factor) VALUES (2000, 500, 400000, 0.05);
+INSERT INTO child_tax_credit (per_qualifying_child, per_other_child, income_threshold, rate_factor, refund_limit) VALUES (2000, 500, 400000, 0.05, 1600);
 -- other filing statuses
-INSERT INTO child_tax_credit (per_qualifying_child, per_other_child, income_threshold, rate_factor) VALUES (2000, 500, 200000, 0.05);
+INSERT INTO child_tax_credit (per_qualifying_child, per_other_child, income_threshold, rate_factor, refund_limit) VALUES (2000, 500, 200000, 0.05, 1600);
+
+INSERT INTO dependent_care_tax_credit (income_range, rate) VALUES (15000, 0.35);
+INSERT INTO dependent_care_tax_credit (income_range, rate) VALUES (2000, 0.34);
+INSERT INTO dependent_care_tax_credit (income_range, rate) VALUES (2000, 0.33);
+INSERT INTO dependent_care_tax_credit (income_range, rate) VALUES (2000, 0.32);
+INSERT INTO dependent_care_tax_credit (income_range, rate) VALUES (2000, 0.31);
+INSERT INTO dependent_care_tax_credit (income_range, rate) VALUES (2000, 0.30);
+INSERT INTO dependent_care_tax_credit (income_range, rate) VALUES (2000, 0.29);
+INSERT INTO dependent_care_tax_credit (income_range, rate) VALUES (2000, 0.28);
+INSERT INTO dependent_care_tax_credit (income_range, rate) VALUES (2000, 0.27);
+INSERT INTO dependent_care_tax_credit (income_range, rate) VALUES (2000, 0.26);
+INSERT INTO dependent_care_tax_credit (income_range, rate) VALUES (2000, 0.25);
+INSERT INTO dependent_care_tax_credit (income_range, rate) VALUES (2000, 0.24);
+INSERT INTO dependent_care_tax_credit (income_range, rate) VALUES (2000, 0.23);
+INSERT INTO dependent_care_tax_credit (income_range, rate) VALUES (2000, 0.22);
+INSERT INTO dependent_care_tax_credit (income_range, rate) VALUES (2000, 0.21);
+INSERT INTO dependent_care_tax_credit (income_range, rate) VALUES (0, 0.20);
+
+INSERT INTO dependent_care_tax_credit_limit (num_dependents, credit_limit) VALUES (1, 3000);
+INSERT INTO dependent_care_tax_credit_limit (num_dependents, credit_limit) VALUES (2, 6000);
 
 -- married filing jointly
 INSERT INTO earned_income_tax_credit (agi_threshold_3children, 
@@ -34,8 +54,9 @@ INSERT INTO education_tax_credit_aotc (full_credit_income_threshold,
                                       max_credit_amount,
                                       full_credit_expenses_threshold,
                                       partial_credit_expenses_threshold,
-                                      partial_credit_expenses_rate)
-                                      VALUES (160000, 20000, 0.75, 2500, 2000, 2000, 0.40);
+                                      partial_credit_expenses_rate,
+                                      refund_limit)
+                                      VALUES (160000, 20000, 0.75, 2500, 2000, 2000, 0.40, 1000);
 -- other filing statuses
 INSERT INTO education_tax_credit_aotc (full_credit_income_threshold, 
                                       partial_credit_income_threshold,
@@ -43,8 +64,9 @@ INSERT INTO education_tax_credit_aotc (full_credit_income_threshold,
                                       max_credit_amount,
                                       full_credit_expenses_threshold,
                                       partial_credit_expenses_threshold,
-                                      partial_credit_expenses_rate)
-                                      VALUES (80000, 10000, 0.75, 2500, 2000, 2000, 0.40);
+                                      partial_credit_expenses_rate,
+                                      refund_limit)
+                                      VALUES (80000, 10000, 0.75, 2500, 2000, 2000, 0.40, 1000);
 
 -- married filing jointly
 INSERT INTO education_tax_credit_llc (full_credit_income_threshold, 

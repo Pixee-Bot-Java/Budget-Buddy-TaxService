@@ -1,4 +1,4 @@
-package com.skillstorm.taxservice.repositories;
+package com.skillstorm.taxservice.repositories.taxcredits;
 
 import com.skillstorm.taxservice.models.taxcredits.EarnedIncomeTaxCredit;
 
