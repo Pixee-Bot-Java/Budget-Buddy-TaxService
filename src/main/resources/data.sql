@@ -1,8 +1,8 @@
 BEGIN;
 -- marries filing jointly
-INSERT INTO child_tax_credit (per_qualifying_child, per_other_child, income_threshold, rate_factor, refund_limit) VALUES (2000, 500, 400000, 0.05, 1600);
+INSERT INTO child_tax_credit (per_qualifying_child, per_other_child, income_threshold, rate_factor, refundable, refund_limit) VALUES (2000, 500, 400000, 0.05, TRUE, 1600);
 -- other filing statuses
-INSERT INTO child_tax_credit (per_qualifying_child, per_other_child, income_threshold, rate_factor, refund_limit) VALUES (2000, 500, 200000, 0.05, 1600);
+INSERT INTO child_tax_credit (per_qualifying_child, per_other_child, income_threshold, rate_factor, refundable, refund_limit) VALUES (2000, 500, 200000, 0.05, TRUE, 1600);
 
 INSERT INTO dependent_care_tax_credit (income_range, rate) VALUES (15000, 0.35);
 INSERT INTO dependent_care_tax_credit (income_range, rate) VALUES (2000, 0.34);

@@ -17,7 +17,8 @@ CREATE TABLE IF NOT EXISTS child_tax_credit (
   per_other_child INT NOT NULL,
   income_threshold INT NOT NULL,
   rate_factor DECIMAL(5, 2) NOT NULL DEFAULT 0.05,
-  refund_limit
+  refundable BOOLEAN NOT NULL,
+  refund_limit INT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS dependent_care_tax_credit (

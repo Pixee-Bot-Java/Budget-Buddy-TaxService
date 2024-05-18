@@ -35,6 +35,9 @@ public class ChildTaxCredit {
   @Column(name = "rate_factor")
   private BigDecimal rateFactor;
 
+  @Column
+  private boolean refundable;
+
   @Column(name = "refund_limit")
   private int refundLimit;
   
