@@ -49,5 +49,9 @@ public class EducationTaxCreditLlc {
   @Column(name = "credit_rate")
   private BigDecimal creditRate;
 
+  // Indicates whether credit is refundable
+  @Column
+  private boolean refundable;
+
   
 }

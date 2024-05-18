@@ -19,7 +19,7 @@ public class TaxReturnCredit {
   @Column(name = "tax_return_id")
   private int taxReturnId;
 
-  @Column(name = "num_dependents")
+  @Column(name = "num_dependents_aotc")
   private int numDependentsAotc;
 
   @Column(name = "num_dependents_under_13")
@@ -27,6 +27,9 @@ public class TaxReturnCredit {
 
   @Column(name = "child_care_expenses")
   private BigDecimal childCareExpenses;
+
+  @Column(name = "education_expenses")
+  private BigDecimal educationExpenses;
 
   @Column(name = "ira_contributions")
   private BigDecimal ira_contributions;

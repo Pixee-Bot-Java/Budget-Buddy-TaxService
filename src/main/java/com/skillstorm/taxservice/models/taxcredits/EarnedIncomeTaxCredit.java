@@ -1,5 +1,7 @@
 package com.skillstorm.taxservice.models.taxcredits;
 
+import java.math.BigDecimal;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -49,5 +51,18 @@ public class EarnedIncomeTaxCredit {
 
   @Column(name = "investment_income_limit")
   private int investmentIncomeLimit;
+
+  
+  // Indicates whether credit is refundable
+  @Column
+  private boolean refundable;
+
+  // Limit of credit that can be applied as refund
+  @Column(name = "refund_limit")
+  private int refundLimit;
+
+  // Rate at which remaining credit is applied as refund
+  @Column(name = "refund_rate")
+  private BigDecimal refundRate;
   
 }

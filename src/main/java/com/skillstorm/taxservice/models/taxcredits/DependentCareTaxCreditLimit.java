@@ -26,4 +26,8 @@ public class DependentCareTaxCreditLimit {
 
   @Column(name = "credit_limit")
   private int creditLimit;
+
+  // Indicates whether credit is refundable
+  @Column
+  private boolean refundable;
 }

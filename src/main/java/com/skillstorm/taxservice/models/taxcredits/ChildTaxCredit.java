@@ -40,5 +40,8 @@ public class ChildTaxCredit {
 
   @Column(name = "refund_limit")
   private int refundLimit;
+
+  @Column(name = "refund_rate")
+  private BigDecimal refundRate;
   
 }

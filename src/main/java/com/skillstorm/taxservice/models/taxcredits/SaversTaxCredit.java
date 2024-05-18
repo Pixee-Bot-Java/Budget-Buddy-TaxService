@@ -52,5 +52,9 @@ public class SaversTaxCredit {
   // Max contribution amount that qualifies for credit and is considered in calculating credit amount
   @Column(name = "max_contribution_amount")
   private int maxContributionAmount;
+
+
+  @Column
+  private boolean refundable;
   
 }
