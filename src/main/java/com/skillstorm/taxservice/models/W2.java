@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 
 @Data
-@NoArgsConstructor
 @Entity
 @Table(name = "w2")
 public class W2 {
@@ -29,8 +28,15 @@ public class W2 {
 
     private BigDecimal wages;
 
+    private BigDecimal tips;
+
+    private int state;
+
     @Column(name = "federal_income_tax_withheld")
     private BigDecimal federalIncomeTaxWithheld;
+
+    @Column(name = "state_income_tax_withheld")
+    private BigDecimal stateIncomeTaxWithheld;
 
     @Column(name = "social_security_tax_withheld")
     private BigDecimal socialSecurityTaxWithheld;
@@ -40,4 +46,27 @@ public class W2 {
 
     @Column(name = "image_key")
     private String imageKey;
+
+    @Override
+    public String toString() {
+        return "W2{" +
+                "id=" + id +
+                ", taxReturn=" + taxReturn.getId() +
+                ", year=" + year +
+                ", userId=" + userId +
+                ", employer='" + employer + '\'' +
+                ", wages=" + wages +
+                ", tips=" + tips +
+                ", state=" + state +
+                ", federalIncomeTaxWithheld=" + federalIncomeTaxWithheld +
+                ", stateIncomeTaxWithheld=" + stateIncomeTaxWithheld +
+                ", socialSecurityTaxWithheld=" + socialSecurityTaxWithheld +
+                ", medicareTaxWithheld=" + medicareTaxWithheld +
+                ", imageKey='" + imageKey + '\'' +
+                '}';
+    }
+
+    public BigDecimal getTips() {
+        return tips;
+    }
 }

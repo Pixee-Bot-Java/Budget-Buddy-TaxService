@@ -14,12 +14,13 @@ import java.io.InputStream;
 public class S3Service {
 
     private final S3Client s3;
-    private final String imageBucket = "";
+    private final String imageBucket;
 
     @Autowired
-    public S3Service(S3Client s3 /*,@Value("${IMAGE_BUCKET}") String imageBucket*/) {
+    // If the IMAGE_BUCKET environment variable is not set, the default value is an empty string:
+    public S3Service(S3Client s3 ,@Value("${IMAGE_BUCKET:}") String imageBucket) {
         this.s3 = s3;
-        //this.imageBucket = imageBucket;
+        this.imageBucket = imageBucket;
     }
 
     // Upload file to S3 bucket:

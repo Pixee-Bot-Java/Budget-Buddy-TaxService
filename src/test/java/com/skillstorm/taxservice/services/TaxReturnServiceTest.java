@@ -1,5 +1,7 @@
 package com.skillstorm.taxservice.services;
 
+import com.skillstorm.taxservice.constants.FilingStatus;
+import com.skillstorm.taxservice.dtos.TaxReturnDto;
 import com.skillstorm.taxservice.exceptions.NotFoundException;
 import com.skillstorm.taxservice.models.TaxReturn;
 import com.skillstorm.taxservice.repositories.TaxReturnRepository;
@@ -9,10 +11,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.MessageSource;
+import org.springframework.core.env.Environment;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -24,21 +30,22 @@ class TaxReturnServiceTest {
 
     @InjectMocks private static TaxReturnService taxReturnService;
 
-    @Mock private TaxReturnRepository taxReturnRepository;
+    @Mock private static TaxReturnRepository taxReturnRepository;
+    @Spy private static Environment environment;
 
-    private static TaxReturn newTaxReturn;
+    private static TaxReturnDto newTaxReturn;
     private static TaxReturn returnedNewTaxReturn;
-    private static TaxReturn updatedTaxReturn;
+    private static TaxReturnDto updatedTaxReturn;
 
     @BeforeEach
     void setUp() {
-        taxReturnService = new TaxReturnService(taxReturnRepository);
+        taxReturnService = new TaxReturnService(taxReturnRepository, environment);
 
         setupTaxReturns();
     }
 
     private void setupTaxReturns() {
-        newTaxReturn = new TaxReturn();
+        newTaxReturn = new TaxReturnDto();
         newTaxReturn.setYear(2024);
         newTaxReturn.setUserId(1);
 
@@ -47,10 +54,11 @@ class TaxReturnServiceTest {
         returnedNewTaxReturn.setYear(2024);
         returnedNewTaxReturn.setUserId(1);
 
-        updatedTaxReturn = new TaxReturn();
+        updatedTaxReturn = new TaxReturnDto();
         updatedTaxReturn.setId(1);
         updatedTaxReturn.setYear(2024);
         updatedTaxReturn.setUserId(1);
+        updatedTaxReturn.setFilingStatus(FilingStatus.SINGLE);
         updatedTaxReturn.setFirstName("TestFirstName");
         updatedTaxReturn.setLastName("TestLastName");
         updatedTaxReturn.setAddress("TestAddress");
@@ -65,10 +73,10 @@ class TaxReturnServiceTest {
     void addTaxReturn() {
 
         // Define stubbing:
-        when(taxReturnRepository.saveAndFlush(newTaxReturn)).thenReturn(returnedNewTaxReturn);
+        when(taxReturnRepository.saveAndFlush(newTaxReturn.mapToEntity())).thenReturn(returnedNewTaxReturn);
 
         // Call the method to be tested:
-        TaxReturn result = taxReturnService.addTaxReturn(newTaxReturn);
+        TaxReturnDto result = taxReturnService.addTaxReturn(newTaxReturn);
 
         // Verify the result:
         assertEquals(1, result.getId(), "The TaxReturn ID should be 1.");
@@ -81,10 +89,10 @@ class TaxReturnServiceTest {
     void findByIdSuccess() {
 
         // Define stubbing:
-        when(taxReturnRepository.findById(1)).thenReturn(java.util.Optional.of(returnedNewTaxReturn));
+        when(taxReturnRepository.findById(1)).thenReturn(Optional.of(returnedNewTaxReturn));
 
         // Call the method to be tested:
-        TaxReturn result = taxReturnService.findById(1);
+        TaxReturnDto result = taxReturnService.findById(1);
 
         // Verify the result:
         assertEquals(1, result.getId(), "The TaxReturn ID should be 1.");
@@ -97,7 +105,7 @@ class TaxReturnServiceTest {
     void findByIdFailure() {
 
         // Define stubbing:
-        when(taxReturnRepository.findById(1)).thenReturn(java.util.Optional.empty());
+        when(taxReturnRepository.findById(1)).thenReturn(Optional.empty());
 
         // Verify the exception
         assertThrows(NotFoundException.class, () -> taxReturnService.findById(1), "NotFoundException should be thrown.");
@@ -111,7 +119,24 @@ class TaxReturnServiceTest {
         when(taxReturnRepository.findAllByUserId(1)).thenReturn(List.of(returnedNewTaxReturn));
 
         // Call the method to be tested:
-        List<TaxReturn> result = taxReturnService.findAllByUserId(1);
+        List<TaxReturnDto> result = taxReturnService.findAllByUserId(1);
+
+        // Verify the result:
+        assertEquals(1, result.size(), "The size of the list should be 1.");
+        assertEquals(1, result.get(0).getId(), "The TaxReturn ID should be 1.");
+        assertEquals(2024, result.get(0).getYear(), "The TaxReturn year should be 2024.");
+        assertEquals(1, result.get(0).getUserId(), "The TaxReturn user ID should be 1.");
+    }
+
+    // Find all TaxReturns by userId and year:
+    @Test
+    void findAllByUserIdAndYear() {
+
+        // Define stubbing:
+        when(taxReturnRepository.findAllByUserIdAndYear(1, 2024)).thenReturn(List.of(returnedNewTaxReturn));
+
+        // Call the method to be tested:
+        List<TaxReturnDto> result = taxReturnService.findAllByUserIdAndYear(1, 2024);
 
         // Verify the result:
         assertEquals(1, result.size(), "The size of the list should be 1.");
@@ -125,11 +150,11 @@ class TaxReturnServiceTest {
     void updateTaxReturn() {
 
         // Define stubbing:
-        when(taxReturnRepository.findById(1)).thenReturn(java.util.Optional.of(returnedNewTaxReturn));
-        when(taxReturnRepository.saveAndFlush(updatedTaxReturn)).thenReturn(updatedTaxReturn);
+        when(taxReturnRepository.findById(1)).thenReturn(Optional.of(returnedNewTaxReturn));
+        when(taxReturnRepository.saveAndFlush(updatedTaxReturn.mapToEntity())).thenReturn(updatedTaxReturn.mapToEntity());
 
         // Call the method to be tested:
-        TaxReturn result = taxReturnService.updateTaxReturn(1, updatedTaxReturn);
+        TaxReturnDto result = taxReturnService.updateTaxReturn(1, updatedTaxReturn);
 
         // Verify the result:
         assertEquals(1, result.getId(), "The TaxReturn ID should be 1.");
@@ -149,7 +174,7 @@ class TaxReturnServiceTest {
     void deleteTaxReturn() {
 
         // Define stubbing:
-        when(taxReturnRepository.findById(1)).thenReturn(java.util.Optional.of(updatedTaxReturn));
+        when(taxReturnRepository.findById(1)).thenReturn(Optional.of(updatedTaxReturn.mapToEntity()));
 
         //Define ArgumentCaptor:
         ArgumentCaptor<Integer> idCaptor = ArgumentCaptor.forClass(Integer.class);

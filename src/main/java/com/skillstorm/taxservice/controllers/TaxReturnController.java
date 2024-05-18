@@ -1,6 +1,6 @@
 package com.skillstorm.taxservice.controllers;
 
-import com.skillstorm.taxservice.models.TaxReturn;
+import com.skillstorm.taxservice.dtos.TaxReturnDto;
 import com.skillstorm.taxservice.services.TaxReturnService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +10,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/taxreturn")
+@RequestMapping("/taxreturns")
 public class TaxReturnController {
 
     private final TaxReturnService taxReturnService;
@@ -23,26 +23,29 @@ public class TaxReturnController {
     // Add new TaxReturn. All we really need is the year and userId. We will
     // get the rest of the information as they fill out the form:
     @PostMapping
-    public ResponseEntity<TaxReturn> addTaxReturn(TaxReturn newTaxReturn) {
-        TaxReturn createdTaxReturn = taxReturnService.addTaxReturn(newTaxReturn);
+    public ResponseEntity<TaxReturnDto> addTaxReturn(@RequestBody TaxReturnDto newTaxReturn) {
+        TaxReturnDto createdTaxReturn = taxReturnService.addTaxReturn(newTaxReturn);
         return ResponseEntity.created(URI.create("/" + createdTaxReturn.getId())).body(createdTaxReturn);
     }
 
     // Get TaxReturn by id:
     @GetMapping("/{id}")
-    public ResponseEntity<TaxReturn> findById(@PathVariable("id") int id) {
+    public ResponseEntity<TaxReturnDto> findById(@PathVariable("id") int id) {
         return ResponseEntity.ok(taxReturnService.findById(id));
     }
 
-    // Get all TaxReturns by userId:
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<TaxReturn>> findAllByUserId(@PathVariable("userId") int userId) {
-        return ResponseEntity.ok(taxReturnService.findAllByUserId(userId));
+    // Get all TaxReturns by userId (and optionally by year):
+    @GetMapping
+    public ResponseEntity<List<TaxReturnDto>> findAllByUserId(@RequestParam("userId") int userId, @RequestParam(value = "year", required = false) Integer year) {
+        if(year == null) {
+            return ResponseEntity.ok(taxReturnService.findAllByUserId(userId));
+        }
+        return ResponseEntity.ok(taxReturnService.findAllByUserIdAndYear(userId, year));
     }
 
     // Update TaxReturn:
     @PutMapping("/{id}")
-    public ResponseEntity<TaxReturn> updateTaxReturn(@PathVariable("id") int id, TaxReturn updatedTaxReturn) {
+    public ResponseEntity<TaxReturnDto> updateTaxReturn(@PathVariable("id") int id, @RequestBody TaxReturnDto updatedTaxReturn) {
         return ResponseEntity.ok(taxReturnService.updateTaxReturn(id, updatedTaxReturn));
     }
 
