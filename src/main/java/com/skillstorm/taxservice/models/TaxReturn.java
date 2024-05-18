@@ -9,7 +9,7 @@ import java.util.List;
 
 @Data
 @Entity
-@Table
+@Table(name = "tax_return")
 public class TaxReturn {
 
     @Id
@@ -17,6 +17,9 @@ public class TaxReturn {
     private int id;
 
     private int year;
+
+    @Column(name = "filing_status")
+    private int filingStatus;
 
     @Column(name = "user_id")
     private int userId;
@@ -48,5 +51,10 @@ public class TaxReturn {
 
     public TaxReturn() {
         w2s = List.of();
+    }
+
+    public TaxReturn(int id) {
+        this();
+        this.id = id;
     }
 }
