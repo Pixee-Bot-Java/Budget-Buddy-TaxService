@@ -53,7 +53,7 @@ public class SaversTaxCredit {
   @Column(name = "max_contribution_amount")
   private int maxContributionAmount;
 
-
+  // Indicates whether credit is refundable
   @Column
   private boolean refundable;
   
