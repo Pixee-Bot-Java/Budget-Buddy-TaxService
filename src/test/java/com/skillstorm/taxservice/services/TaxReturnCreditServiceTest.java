@@ -71,9 +71,7 @@ class TaxReturnCreditServiceTest {
 
     @Test
     void testUpdateTaxReturnCredit() {
-      TaxReturnCreditDto taxReturnCreditDto = createTaxReturnCreditDto();
-      TaxReturnCredit existingTaxReturnCredit = createTaxReturnCredit();
-      when(taxReturnCreditRepository.findByTaxReturnId(taxReturnCreditDto.getTaxReturnId())).thenReturn(Optional.of(existingTaxReturnCredit));
+      when(taxReturnCreditRepository.findByTaxReturnId(taxReturnCreditDto.getTaxReturnId())).thenReturn(Optional.of(taxReturnCredit));
       when(taxReturnCreditRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
       TaxReturnCreditDto result = taxReturnCreditService.updateTaxReturnCredit(taxReturnCreditDto);
