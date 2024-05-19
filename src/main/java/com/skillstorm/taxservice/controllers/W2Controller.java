@@ -26,19 +26,10 @@ public class W2Controller {
         this.w2Service = w2Service;
     }
 
-    // Add new W2:
+    // Add new W2s or update existing W2s. Can also be used to delete W2s by sending an empty list:
     @PostMapping
-    public ResponseEntity<W2Dto> addW2(@RequestBody W2Dto newW2) {
-        W2Dto createdW2 = w2Service.addW2(newW2);
-        return ResponseEntity.created(URI.create("/" + createdW2.getId())).body(createdW2);
-    }
-
-    // Add batch of W2s:
-    // We will likely use either this method or the one above, but not both:
-    @PostMapping("/batch")
-    public ResponseEntity<List<W2Dto>> addListW2s(@RequestBody List<W2Dto> newW2s) {
-        List<W2Dto> createdW2s = w2Service.addListW2s(newW2s);
-        return ResponseEntity.created(URI.create("/" + createdW2s.get(0).getId())).body(createdW2s);
+    public ResponseEntity<List<W2Dto>> addW2sByTaxReturnId(@RequestParam("taxReturnId") int taxReturnId, @RequestBody List<W2Dto> updatedW2s) {
+        return ResponseEntity.ok(w2Service.updateAllByTaxReturnId(taxReturnId, updatedW2s));
     }
 
     // Find W2 by ID:
@@ -63,18 +54,6 @@ public class W2Controller {
     @GetMapping()
     public ResponseEntity<List<W2Dto>> findAllW2sByTaxReturnId(@RequestParam("taxReturnId") int taxReturnId) {
         return ResponseEntity.ok(w2Service.findAllByTaxReturnId(taxReturnId));
-    }
-
-    // Update W2 by ID:
-    @PutMapping("/{id}")
-    public ResponseEntity<W2Dto> updateW2ById(@PathVariable("id") int id, @RequestBody W2Dto updatedW2) {
-        return ResponseEntity.ok(w2Service.updateById(id, updatedW2));
-    }
-
-    // Update all W2s Associated with a Tax Return:
-    @PutMapping("/taxreturn/{taxReturnId}")
-    public ResponseEntity<List<W2Dto>> updateAllW2sByTaxReturnId(@PathVariable("taxReturnId") int taxReturnId, @RequestBody List<W2Dto> updatedW2s) {
-        return ResponseEntity.ok(w2Service.updateAllByTaxReturnId(taxReturnId, updatedW2s));
     }
 
     // Delete W2 by ID:

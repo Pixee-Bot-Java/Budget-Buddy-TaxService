@@ -48,7 +48,7 @@ public class W2Service {
     // Find W2 by ID:
     public W2Dto findById(int id) {
         return new W2Dto(w2Repository.findById(id)
-                .orElseThrow(() -> new NotFoundException("w2.not.found")));
+                .orElseThrow(() -> new NotFoundException(environment.getProperty("w2.not.found") + " " + id)));
     }
 
     // Find all W2s by UserId:
