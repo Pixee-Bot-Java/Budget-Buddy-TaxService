@@ -19,7 +19,6 @@ public class W2Dto {
     private String employer;
     private State state;
     private BigDecimal wages;
-    private BigDecimal tips;
     private BigDecimal federalIncomeTaxWithheld;
     private BigDecimal stateIncomeTaxWithheld;
     private BigDecimal socialSecurityTaxWithheld;

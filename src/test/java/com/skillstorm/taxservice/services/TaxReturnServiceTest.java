@@ -31,6 +31,8 @@ class TaxReturnServiceTest {
     @InjectMocks private static TaxReturnService taxReturnService;
 
     @Mock private static TaxReturnRepository taxReturnRepository;
+    @Mock private static TaxReturnCreditService taxReturnCreditService;
+    @Mock private static TaxReturnDeductionService taxReturnDeductionService;
     @Spy private static Environment environment;
 
     private static TaxReturnDto newTaxReturn;
@@ -39,7 +41,7 @@ class TaxReturnServiceTest {
 
     @BeforeEach
     void setUp() {
-        taxReturnService = new TaxReturnService(taxReturnRepository, environment);
+        taxReturnService = new TaxReturnService(taxReturnRepository, taxReturnCreditService, taxReturnDeductionService, environment);
 
         setupTaxReturns();
     }

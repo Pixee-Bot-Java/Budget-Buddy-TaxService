@@ -28,8 +28,6 @@ public class W2 {
 
     private BigDecimal wages;
 
-    private BigDecimal tips;
-
     private int state;
 
     @Column(name = "federal_income_tax_withheld")

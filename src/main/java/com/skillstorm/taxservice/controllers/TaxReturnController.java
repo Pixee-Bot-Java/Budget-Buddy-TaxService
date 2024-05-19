@@ -1,5 +1,6 @@
 package com.skillstorm.taxservice.controllers;
 
+import com.skillstorm.taxservice.dtos.TaxReturnDeductionDto;
 import com.skillstorm.taxservice.dtos.TaxReturnDto;
 import com.skillstorm.taxservice.services.TaxReturnService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,5 +55,11 @@ public class TaxReturnController {
     public ResponseEntity<Void> deleteTaxReturn(@PathVariable("id") int id) {
         taxReturnService.deleteTaxReturn(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // Claim deductions:
+    @PostMapping("/{id}/deductions")
+    public ResponseEntity<List<TaxReturnDeductionDto>> claimDeductions(@PathVariable("id") int id, @RequestBody List<TaxReturnDeductionDto> deductions) {
+        return ResponseEntity.ok(taxReturnService.claimDeductions(id, deductions));
     }
 }
