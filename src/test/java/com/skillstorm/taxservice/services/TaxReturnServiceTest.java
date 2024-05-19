@@ -50,11 +50,25 @@ class TaxReturnServiceTest {
         newTaxReturn = new TaxReturnDto();
         newTaxReturn.setYear(2024);
         newTaxReturn.setUserId(1);
+        newTaxReturn.setTotalIncome(BigDecimal.ZERO.setScale(2));
+        newTaxReturn.setFedTaxWithheld(BigDecimal.ZERO.setScale(2));
+        newTaxReturn.setStateTaxWithheld(BigDecimal.ZERO.setScale(2));
+        newTaxReturn.setSocialSecurityTaxWithheld(BigDecimal.ZERO.setScale(2));
+        newTaxReturn.setMedicareTaxWithheld(BigDecimal.ZERO.setScale(2));
+        newTaxReturn.setTotalCredits(BigDecimal.ZERO.setScale(2));
+        newTaxReturn.setTotalDeductions(BigDecimal.ZERO.setScale(2));
 
         returnedNewTaxReturn = new TaxReturn();
         returnedNewTaxReturn.setId(1);
         returnedNewTaxReturn.setYear(2024);
         returnedNewTaxReturn.setUserId(1);
+        returnedNewTaxReturn.setTotalIncome(BigDecimal.ZERO.setScale(2));
+        returnedNewTaxReturn.setFedTaxWithheld(BigDecimal.ZERO.setScale(2));
+        returnedNewTaxReturn.setStateTaxWithheld(BigDecimal.ZERO.setScale(2));
+        returnedNewTaxReturn.setSocialSecurityTaxWithheld(BigDecimal.ZERO.setScale(2));
+        returnedNewTaxReturn.setMedicareTaxWithheld(BigDecimal.ZERO.setScale(2));
+        returnedNewTaxReturn.setTotalCredits(BigDecimal.ZERO.setScale(2));
+        returnedNewTaxReturn.setTotalDeductions(BigDecimal.ZERO.setScale(2));
 
         updatedTaxReturn = new TaxReturnDto();
         updatedTaxReturn.setId(1);
@@ -67,6 +81,13 @@ class TaxReturnServiceTest {
         updatedTaxReturn.setCity("TestCity");
         updatedTaxReturn.setState("TestState");
         updatedTaxReturn.setZip("TestZipCode");
+        updatedTaxReturn.setTotalIncome(BigDecimal.ZERO.setScale(2));
+        updatedTaxReturn.setFedTaxWithheld(BigDecimal.ZERO.setScale(2));
+        updatedTaxReturn.setStateTaxWithheld(BigDecimal.ZERO.setScale(2));
+        updatedTaxReturn.setSocialSecurityTaxWithheld(BigDecimal.ZERO.setScale(2));
+        updatedTaxReturn.setMedicareTaxWithheld(BigDecimal.ZERO.setScale(2));
+        updatedTaxReturn.setTotalCredits(BigDecimal.ZERO.setScale(2));
+        updatedTaxReturn.setTotalDeductions(BigDecimal.ZERO.setScale(2));
         updatedTaxReturn.setRefund(BigDecimal.ZERO.setScale(2));
     }
 
@@ -74,11 +95,15 @@ class TaxReturnServiceTest {
     @Test
     void addTaxReturn() {
 
+        TaxReturnDto request = new TaxReturnDto();
+        request.setYear(2024);
+        request.setUserId(1);
+
         // Define stubbing:
         when(taxReturnRepository.saveAndFlush(newTaxReturn.mapToEntity())).thenReturn(returnedNewTaxReturn);
 
         // Call the method to be tested:
-        TaxReturnDto result = taxReturnService.addTaxReturn(newTaxReturn);
+        TaxReturnDto result = taxReturnService.addTaxReturn(request);
 
         // Verify the result:
         assertEquals(1, result.getId(), "The TaxReturn ID should be 1.");
