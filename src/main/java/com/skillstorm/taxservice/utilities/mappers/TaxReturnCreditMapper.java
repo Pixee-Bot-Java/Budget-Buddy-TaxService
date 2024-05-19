@@ -1,6 +1,5 @@
 package com.skillstorm.taxservice.utilities.mappers;
 
-import org.springframework.boot.autoconfigure.amqp.RabbitConnectionDetails.Address;
 import org.springframework.stereotype.Component;
 
 import com.skillstorm.taxservice.dtos.TaxReturnCreditDto;
@@ -8,6 +7,8 @@ import com.skillstorm.taxservice.models.TaxReturnCredit;
 
 @Component
 public class TaxReturnCreditMapper {
+
+  private TaxReturnCreditMapper() { }
   
   public static TaxReturnCreditDto toDto(TaxReturnCredit taxReturnCredit) {
     TaxReturnCreditDto dto = new TaxReturnCreditDto();

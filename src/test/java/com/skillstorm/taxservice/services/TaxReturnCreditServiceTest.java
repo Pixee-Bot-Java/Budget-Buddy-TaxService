@@ -19,7 +19,7 @@ import com.skillstorm.taxservice.models.TaxReturnCredit;
 import com.skillstorm.taxservice.repositories.TaxReturnCreditRepository;
 import com.skillstorm.taxservice.repositories.TaxReturnRepository;
 
-public class TaxReturnCreditServiceTest {
+class TaxReturnCreditServiceTest {
 
     @Mock
     private TaxReturnCreditRepository taxReturnCreditRepository;
@@ -41,7 +41,7 @@ public class TaxReturnCreditServiceTest {
     }
 
     @Test
-    public void testFindById() {
+    void testFindById() {
         when(taxReturnCreditRepository.findById(1)).thenReturn(Optional.of(taxReturnCredit));
 
         TaxReturnCreditDto result = taxReturnCreditService.findById(1);
@@ -50,7 +50,7 @@ public class TaxReturnCreditServiceTest {
     }
 
     @Test
-    public void testFindByTaxReturnId() {
+    void testFindByTaxReturnId() {
         when(taxReturnCreditRepository.findByTaxReturnId(1)).thenReturn(Optional.of(taxReturnCredit));
 
         TaxReturnCreditDto result = taxReturnCreditService.findByTaxReturnId(1);
@@ -59,7 +59,7 @@ public class TaxReturnCreditServiceTest {
     }
 
     @Test
-    public void testCreateTaxReturnCredit() {
+    void testCreateTaxReturnCredit() {
       TaxReturn taxReturn = createTaxReturn();
       when(taxReturnRepository.findById(taxReturnCreditDto.getTaxReturnId())).thenReturn(Optional.of(taxReturn));
       when(taxReturnCreditRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
@@ -70,7 +70,7 @@ public class TaxReturnCreditServiceTest {
     }
 
     @Test
-    public void testUpdateTaxReturnCredit() {
+    void testUpdateTaxReturnCredit() {
       TaxReturnCreditDto taxReturnCreditDto = createTaxReturnCreditDto();
       TaxReturnCredit existingTaxReturnCredit = createTaxReturnCredit();
       when(taxReturnCreditRepository.findByTaxReturnId(taxReturnCreditDto.getTaxReturnId())).thenReturn(Optional.of(existingTaxReturnCredit));
@@ -82,7 +82,7 @@ public class TaxReturnCreditServiceTest {
     }
 
     @Test
-    public void testDeleteTaxReturnCredit() {
+    void testDeleteTaxReturnCredit() {
       when(taxReturnCreditRepository.findByTaxReturnId(taxReturnCreditDto.getTaxReturnId())).thenReturn(Optional.of(taxReturnCredit));
 
       taxReturnCreditService.deleteTaxReturnCredit(taxReturnCreditDto);

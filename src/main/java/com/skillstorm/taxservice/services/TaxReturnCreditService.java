@@ -1,5 +1,6 @@
 package com.skillstorm.taxservice.services;
 
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import com.skillstorm.taxservice.dtos.TaxReturnCreditDto;
@@ -15,11 +16,14 @@ public class TaxReturnCreditService {
   
   private final TaxReturnCreditRepository taxReturnCreditRepository;
   private final TaxReturnRepository taxReturnRepository;
+  private final Environment environment;
 
   public TaxReturnCreditService(TaxReturnCreditRepository taxReturnCreditRepository,
-                                TaxReturnRepository taxReturnRepository) {
+                                TaxReturnRepository taxReturnRepository,
+                                Environment environment) {
     this.taxReturnCreditRepository = taxReturnCreditRepository;
     this.taxReturnRepository = taxReturnRepository;
+    this.environment = environment;
   }
 
 
@@ -32,7 +36,7 @@ public class TaxReturnCreditService {
 
   public TaxReturnCreditDto findByTaxReturnId(int taxReturnId) {
     TaxReturnCredit existingTaxCreditReturn = taxReturnCreditRepository.findByTaxReturnId(taxReturnId)
-      .orElseThrow(() -> new NotFoundException("tax return credit not found for tax return id: " + taxReturnId));
+      .orElseThrow(() -> new NotFoundException(environment.getProperty("taxreturncredit.not.found") + taxReturnId));
 
     return TaxReturnCreditMapper.toDto(existingTaxCreditReturn);
   }
@@ -49,7 +53,7 @@ public class TaxReturnCreditService {
 
   public TaxReturnCreditDto updateTaxReturnCredit(TaxReturnCreditDto taxReturnCreditDto) {
     TaxReturnCredit existingTaxReturnCredit = taxReturnCreditRepository.findByTaxReturnId(taxReturnCreditDto.getTaxReturnId())
-      .orElseThrow(() -> new NotFoundException("tax return credit not found for tax return id: " + taxReturnCreditDto.getTaxReturnId()));
+      .orElseThrow(() -> new NotFoundException(environment.getProperty("taxreturncredit.not.found") + taxReturnCreditDto.getTaxReturnId()));
     existingTaxReturnCredit = TaxReturnCreditMapper.updateEntity(existingTaxReturnCredit, taxReturnCreditDto);
     existingTaxReturnCredit = taxReturnCreditRepository.save(existingTaxReturnCredit);
     return TaxReturnCreditMapper.toDto(existingTaxReturnCredit);
@@ -57,8 +61,7 @@ public class TaxReturnCreditService {
 
   public void deleteTaxReturnCredit(TaxReturnCreditDto taxReturnCreditDto) {
     TaxReturnCredit existingTaxReturnCredit = taxReturnCreditRepository.findByTaxReturnId(taxReturnCreditDto.getTaxReturnId())
-      .orElseThrow(() -> new NotFoundException("tax return credit not found for tax return id: " + taxReturnCreditDto.getTaxReturnId()));
+      .orElseThrow(() -> new NotFoundException(environment.getProperty("taxreturncredit.not.found") + taxReturnCreditDto.getTaxReturnId()));
     taxReturnCreditRepository.delete(existingTaxReturnCredit);
-    return;
   }
 }
