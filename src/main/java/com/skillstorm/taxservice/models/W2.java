@@ -54,7 +54,6 @@ public class W2 {
                 ", userId=" + userId +
                 ", employer='" + employer + '\'' +
                 ", wages=" + wages +
-                ", tips=" + tips +
                 ", state=" + state +
                 ", federalIncomeTaxWithheld=" + federalIncomeTaxWithheld +
                 ", stateIncomeTaxWithheld=" + stateIncomeTaxWithheld +
@@ -62,9 +61,5 @@ public class W2 {
                 ", medicareTaxWithheld=" + medicareTaxWithheld +
                 ", imageKey='" + imageKey + '\'' +
                 '}';
-    }
-
-    public BigDecimal getTips() {
-        return tips;
     }
 }

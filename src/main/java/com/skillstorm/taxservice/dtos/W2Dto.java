@@ -28,7 +28,6 @@ public class W2Dto {
     public W2Dto() {
         // Default value to avoid null pointers:
         this.state = State.ALABAMA;
-        this.tips = BigDecimal.ZERO.setScale(2);
     }
 
     @JsonCreator
@@ -48,7 +47,6 @@ public class W2Dto {
         this.employer = w2.getEmployer();
         this.state = State.fromValue(w2.getState());
         this.wages = w2.getWages();
-        this.tips = w2.getTips();
         this.federalIncomeTaxWithheld = w2.getFederalIncomeTaxWithheld();
         this.stateIncomeTaxWithheld = w2.getStateIncomeTaxWithheld();
         this.socialSecurityTaxWithheld = w2.getSocialSecurityTaxWithheld();
@@ -65,7 +63,6 @@ public class W2Dto {
         w2.setEmployer(employer);
         w2.setState(state.getValue());
         w2.setWages(wages);
-        w2.setTips(tips);
         w2.setFederalIncomeTaxWithheld(federalIncomeTaxWithheld);
         w2.setStateIncomeTaxWithheld(stateIncomeTaxWithheld);
         w2.setSocialSecurityTaxWithheld(socialSecurityTaxWithheld);
@@ -84,7 +81,6 @@ public class W2Dto {
                 ", employer='" + employer + '\'' +
                 ", state=" + state +
                 ", wages=" + wages +
-                ", tips=" + tips +
                 ", federalIncomeTaxWithheld=" + federalIncomeTaxWithheld +
                 ", stateIncomeTaxWithheld=" + stateIncomeTaxWithheld +
                 ", socialSecurityTaxWithheld=" + socialSecurityTaxWithheld +
