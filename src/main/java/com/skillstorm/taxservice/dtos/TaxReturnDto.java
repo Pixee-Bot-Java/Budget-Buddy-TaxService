@@ -25,13 +25,19 @@ public class TaxReturnDto {
     private String state;
     private String zip;
     private List<W2Dto> w2s;
+    private BigDecimal totalIncome;
+    private BigDecimal fedTaxWithheld;
+    private BigDecimal stateTaxWithheld;
+    private BigDecimal socialSecurityTaxWithheld;
+    private BigDecimal medicareTaxWithheld;
+    private BigDecimal totalDeductions;
+    private BigDecimal totalCredits;
     private BigDecimal refund;
 
     public TaxReturnDto() {
         // Default values to avoid null pointers:
         this.filingStatus = FilingStatus.SINGLE;
         w2s = List.of();
-        refund = BigDecimal.ZERO.setScale(2);
     }
 
     @JsonCreator
@@ -57,6 +63,13 @@ public class TaxReturnDto {
         this.state = taxReturn.getState();
         this.zip = taxReturn.getZip();
         this.w2s = taxReturn.getW2s().stream().map(W2Dto::new).toList();
+        this.totalIncome = taxReturn.getTotalIncome();
+        this.fedTaxWithheld = taxReturn.getFedTaxWithheld();
+        this.stateTaxWithheld = taxReturn.getStateTaxWithheld();
+        this.socialSecurityTaxWithheld = taxReturn.getSocialSecurityTaxWithheld();
+        this.medicareTaxWithheld = taxReturn.getMedicareTaxWithheld();
+        this.totalDeductions = taxReturn.getTotalDeductions();
+        this.totalCredits = taxReturn.getTotalCredits();
         this.refund = taxReturn.getRefund();
     }
 
@@ -75,7 +88,15 @@ public class TaxReturnDto {
         taxReturn.setState(state);
         taxReturn.setZip(zip);
         taxReturn.setW2s(w2s.stream().map(W2Dto::mapToEntity).toList());
+        taxReturn.setTotalIncome(totalIncome);
+        taxReturn.setFedTaxWithheld(fedTaxWithheld);
+        taxReturn.setStateTaxWithheld(stateTaxWithheld);
+        taxReturn.setSocialSecurityTaxWithheld(socialSecurityTaxWithheld);
+        taxReturn.setMedicareTaxWithheld(medicareTaxWithheld);
+        taxReturn.setTotalDeductions(totalDeductions);
+        taxReturn.setTotalCredits(totalCredits);
         taxReturn.setRefund(refund);
+
         return taxReturn;
     }
 }

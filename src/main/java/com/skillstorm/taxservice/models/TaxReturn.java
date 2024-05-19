@@ -47,6 +47,27 @@ public class TaxReturn {
     @OneToMany(mappedBy = "taxReturn", cascade = CascadeType.ALL)
     private List<W2> w2s;
 
+    @Column(name = "total_income")
+    private BigDecimal totalIncome;
+
+    @Column(name = "fed_tax_withheld")
+    private BigDecimal fedTaxWithheld;
+
+    @Column(name = "state_tax_withheld")
+    private BigDecimal stateTaxWithheld;
+
+    @Column(name = "social_security_tax_withheld")
+    private BigDecimal socialSecurityTaxWithheld;
+
+    @Column(name = "medicare_tax_withheld")
+    private BigDecimal medicareTaxWithheld;
+
+    @Column(name = "total_deductions")
+    private BigDecimal totalDeductions;
+
+    @Column(name = "total_credits")
+    private BigDecimal totalCredits;
+
     private BigDecimal refund;
 
     public TaxReturn() {
