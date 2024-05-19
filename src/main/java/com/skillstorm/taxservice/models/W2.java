@@ -28,8 +28,6 @@ public class W2 {
 
     private BigDecimal wages;
 
-    private BigDecimal tips;
-
     private int state;
 
     @Column(name = "federal_income_tax_withheld")
@@ -56,7 +54,6 @@ public class W2 {
                 ", userId=" + userId +
                 ", employer='" + employer + '\'' +
                 ", wages=" + wages +
-                ", tips=" + tips +
                 ", state=" + state +
                 ", federalIncomeTaxWithheld=" + federalIncomeTaxWithheld +
                 ", stateIncomeTaxWithheld=" + stateIncomeTaxWithheld +
@@ -64,9 +61,5 @@ public class W2 {
                 ", medicareTaxWithheld=" + medicareTaxWithheld +
                 ", imageKey='" + imageKey + '\'' +
                 '}';
-    }
-
-    public BigDecimal getTips() {
-        return tips;
     }
 }
