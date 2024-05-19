@@ -7,8 +7,6 @@ import com.skillstorm.taxservice.models.TaxReturnCredit;
 
 @Component
 public class TaxReturnCreditMapper {
-
-  public TaxReturnCreditMapper() { }
   
   public static TaxReturnCreditDto toDto(TaxReturnCredit taxReturnCredit) {
     TaxReturnCreditDto dto = new TaxReturnCreditDto();
