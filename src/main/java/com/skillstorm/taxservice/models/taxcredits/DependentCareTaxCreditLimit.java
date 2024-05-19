@@ -1,7 +1,5 @@
 package com.skillstorm.taxservice.models.taxcredits;
 
-import java.math.BigDecimal;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,32 +14,20 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "child_tax_credit")
-public class ChildTaxCredit {
+@Table(name = "dependent_care_tax_credit_limit")
+public class DependentCareTaxCreditLimit {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
 
-  @Column(name = "per_qualifying_child")
-  private int perQualifyingChild;
+  @Column(name = "num_dependents")
+  private int numDependents;
 
-  @Column(name = "per_other_child")
-  private int perOtherChild;
+  @Column(name = "credit_limit")
+  private int creditLimit;
 
-  @Column(name = "income_threshold")
-  private int incomeThreshold;
-
-  @Column(name = "rate_factor")
-  private BigDecimal rateFactor;
-
+  // Indicates whether credit is refundable
   @Column
   private boolean refundable;
-
-  @Column(name = "refund_limit")
-  private int refundLimit;
-
-  @Column(name = "refund_rate")
-  private BigDecimal refundRate;
-  
 }

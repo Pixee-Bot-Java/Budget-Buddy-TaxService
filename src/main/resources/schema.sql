@@ -3,6 +3,8 @@ DROP TABLE IF EXISTS standard_deduction CASCADE;
 DROP TABLE IF EXISTS capital_gains_tax;
 DROP TABLE IF EXISTS filing_status CASCADE;
 DROP TABLE IF EXISTS child_tax_credit CASCADE;
+DROP TABLE IF EXISTS dependent_care_tax_credit CASCADE;
+DROP TABLE IF EXISTS dependent_care_tax_credit_limit CASCADE;
 DROP TABLE IF EXISTS earned_income_tax_credit CASCADE;
 DROP TABLE IF EXISTS education_tax_credit_aotc CASCADE;
 DROP TABLE IF EXISTS education_tax_credit_llc CASCADE;
@@ -16,7 +18,23 @@ CREATE TABLE IF NOT EXISTS child_tax_credit (
   per_qualifying_child INT NOT NULL,
   per_other_child INT NOT NULL,
   income_threshold INT NOT NULL,
-  rate_factor DECIMAL(5, 2) DEFAULT 0.05
+  rate_factor DECIMAL(5, 2) NOT NULL DEFAULT 0.05,
+  refundable BOOLEAN NOT NULL,
+  refund_limit INT NOT NULL,
+  refund_rate DECIMAL(5, 2) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS dependent_care_tax_credit (
+  id SERIAL PRIMARY KEY,
+  income_range INT NOT NULL,
+  rate DECIMAL(5, 2) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS dependent_care_tax_credit_limit (
+  id SERIAL PRIMARY KEY,
+  num_dependents INT NOT NULL,
+  credit_limit INT NOT NULL,
+  refundable BOOLEAN NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS earned_income_tax_credit (
@@ -29,7 +47,10 @@ CREATE TABLE IF NOT EXISTS earned_income_tax_credit (
   amount_2children INT NOT NULL,
   amount_1children INT NOT NULL,
   amount_0children INT NOT NULL,
-  investment_income_limit INT NOT NULL
+  investment_income_limit INT NOT NULL,
+  refundable BOOLEAN NOT NULL,
+  refund_limit INT NOT NULL,
+  refund_rate DECIMAL(5, 2)
 );
 
 CREATE TABLE IF NOT EXISTS education_tax_credit_aotc (
@@ -40,7 +61,10 @@ CREATE TABLE IF NOT EXISTS education_tax_credit_aotc (
   max_credit_amount INT NOT NULL,
   full_credit_expenses_threshold INT NOT NULL,
   partial_credit_expenses_threshold INT NOT NULL,
-  partial_credit_expenses_rate DECIMAL(5,2) NOT NULL
+  partial_credit_expenses_rate DECIMAL(5,2) NOT NULL,
+  refundable BOOLEAN NOT NULL,
+  refund_limit INT NOT NULL,
+  refund_rate DECIMAL(5, 2)
 );
 
 CREATE TABLE IF NOT EXISTS education_tax_credit_llc (
@@ -50,7 +74,8 @@ CREATE TABLE IF NOT EXISTS education_tax_credit_llc (
   income_partial_credit_rate DECIMAL(5, 2) NOT NULL,
   max_credit_amount INT NOT NULL,
   expenses_threshold INT NOT NULL,
-  credit_rate DECIMAL(5, 2) NOT NULL
+  credit_rate DECIMAL(5, 2) NOT NULL,
+  refundable BOOLEAN NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS savers_tax_credit (
@@ -61,7 +86,8 @@ CREATE TABLE IF NOT EXISTS savers_tax_credit (
   first_contribution_rate DECIMAL(5, 2) NOT NULL,
   second_contribution_rate DECIMAL(5, 2) NOT NULL,
   third_contribution_rate DECIMAL(5, 2) NOT NULL,
-  max_contribution_amount INT NOT NULL
+  max_contribution_amount INT NOT NULL,
+  refundable BOOLEAN NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS filing_status (

@@ -52,4 +52,17 @@ public class EducationTaxCreditAotc {
   // Expenses are reduced to this rate before being applied as partial credit amount
   @Column(name = "partial_credit_expenses_rate")
   private BigDecimal expensesPartialCreditRate;
+  
+
+  // Indicates whether credit is refundable
+  @Column
+  private boolean refundable;
+
+  // Limit of credit that can be applied as refund
+  @Column(name = "refund_limit")
+  private int refundLimit;
+
+  // Rate at which remaining credit is applied as refund
+  @Column(name = "refund_rate")
+  private BigDecimal refundRate;
 }

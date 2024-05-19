@@ -16,32 +16,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "child_tax_credit")
-public class ChildTaxCredit {
-
+@Table(name = "dependent_care_tax_credit")
+public class DependentCareTaxCredit {
+  
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
 
-  @Column(name = "per_qualifying_child")
-  private int perQualifyingChild;
-
-  @Column(name = "per_other_child")
-  private int perOtherChild;
-
-  @Column(name = "income_threshold")
-  private int incomeThreshold;
-
-  @Column(name = "rate_factor")
-  private BigDecimal rateFactor;
+  @Column(name = "income_range")
+  private int incomeRange;
 
   @Column
-  private boolean refundable;
-
-  @Column(name = "refund_limit")
-  private int refundLimit;
-
-  @Column(name = "refund_rate")
-  private BigDecimal refundRate;
-  
+  private BigDecimal rate;
 }
+
