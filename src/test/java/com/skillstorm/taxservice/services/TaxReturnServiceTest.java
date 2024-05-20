@@ -56,6 +56,7 @@ class TaxReturnServiceTest {
         newTaxReturn.setMedicareTaxWithheld(BigDecimal.ZERO.setScale(2));
         newTaxReturn.setTotalCredits(BigDecimal.ZERO.setScale(2));
         newTaxReturn.setTotalDeductions(BigDecimal.ZERO.setScale(2));
+        newTaxReturn.setRefund(BigDecimal.ZERO.setScale(2));
 
         returnedNewTaxReturn = new TaxReturn();
         returnedNewTaxReturn.setId(1);
@@ -68,6 +69,7 @@ class TaxReturnServiceTest {
         returnedNewTaxReturn.setMedicareTaxWithheld(BigDecimal.ZERO.setScale(2));
         returnedNewTaxReturn.setTotalCredits(BigDecimal.ZERO.setScale(2));
         returnedNewTaxReturn.setTotalDeductions(BigDecimal.ZERO.setScale(2));
+        returnedNewTaxReturn.setRefund(BigDecimal.ZERO.setScale(2));
 
         updatedTaxReturn = new TaxReturnDto();
         updatedTaxReturn.setId(1);
