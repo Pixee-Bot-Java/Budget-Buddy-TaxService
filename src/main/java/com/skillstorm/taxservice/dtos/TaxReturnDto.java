@@ -10,6 +10,8 @@ import com.skillstorm.taxservice.utilities.mappers.TaxReturnCreditMapper;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Data
@@ -27,11 +29,14 @@ public class TaxReturnDto {
     private String city;
     private String state;
     private String zip;
+    private String dateOfBirth;
     private String ssn;
     private List<W2Dto> w2s;
     private OtherIncomeDto otherIncome;
     private TaxReturnCreditDto taxCredit;
     private BigDecimal totalIncome;
+    private BigDecimal adjustedGrossIncome;
+    private BigDecimal taxableIncome;
     private BigDecimal fedTaxWithheld;
     private BigDecimal stateTaxWithheld;
     private BigDecimal socialSecurityTaxWithheld;
@@ -68,11 +73,16 @@ public class TaxReturnDto {
         this.city = taxReturn.getCity();
         this.state = taxReturn.getState();
         this.zip = taxReturn.getZip();
+        if (taxReturn.getDateOfBirth() != null) {
+            this.dateOfBirth = taxReturn.getDateOfBirth().toString();
+        }
         this.ssn = taxReturn.getSsn();
         this.w2s = taxReturn.getW2s().stream().map(W2Dto::new).toList();
         this.otherIncome = OtherIncomeMapper.toDto(taxReturn.getOtherIncome());
         this.taxCredit = TaxReturnCreditMapper.toDto(taxReturn.getTaxCredit());
         this.totalIncome = taxReturn.getTotalIncome();
+        this.adjustedGrossIncome = taxReturn.getAdjustedGrossIncome();
+        this.taxableIncome = taxReturn.getTaxableIncome();
         this.fedTaxWithheld = taxReturn.getFedTaxWithheld();
         this.stateTaxWithheld = taxReturn.getStateTaxWithheld();
         this.socialSecurityTaxWithheld = taxReturn.getSocialSecurityTaxWithheld();
@@ -96,11 +106,16 @@ public class TaxReturnDto {
         taxReturn.setCity(city);
         taxReturn.setState(state);
         taxReturn.setZip(zip);
+        if (dateOfBirth != null) {
+            taxReturn.setDateOfBirth(LocalDate.parse(dateOfBirth));
+        }
         taxReturn.setSsn(ssn);
         taxReturn.setW2s(w2s.stream().map(W2Dto::mapToEntity).toList());
         taxReturn.setOtherIncome(OtherIncomeMapper.toEntity(otherIncome));
         taxReturn.setTaxCredit(TaxReturnCreditMapper.toEntity(taxCredit));
         taxReturn.setTotalIncome(totalIncome);
+        taxReturn.setAdjustedGrossIncome(adjustedGrossIncome);
+        taxReturn.setTaxableIncome(taxableIncome);
         taxReturn.setFedTaxWithheld(fedTaxWithheld);
         taxReturn.setStateTaxWithheld(stateTaxWithheld);
         taxReturn.setSocialSecurityTaxWithheld(socialSecurityTaxWithheld);
