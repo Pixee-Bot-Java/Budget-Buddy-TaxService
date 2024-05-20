@@ -1,8 +1,8 @@
-package com.skillstorm.taxdemo.controllers;
+package com.skillstorm.taxservice.controllers;
 
-import com.skillstorm.taxdemo.models.UserCreditData;
-import com.skillstorm.taxdemo.repositories.UserCreditDataRepository;
-import com.skillstorm.taxdemo.services.CreditScoreService;
+import com.skillstorm.taxservice.models.UserCreditData;
+import com.skillstorm.taxservice.repositories.UserCreditDataRepository;
+import com.skillstorm.taxservice.services.CreditScoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
