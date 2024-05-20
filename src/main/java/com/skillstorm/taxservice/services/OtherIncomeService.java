@@ -40,6 +40,8 @@ public class OtherIncomeService {
   }
 
   public OtherIncomeDto createOtherIncome(OtherIncomeDto otherIncomeDto) {
+    taxReturnRepository.findById(otherIncomeDto.getTaxReturnId())
+      .orElseThrow(() -> new IllegalArgumentException("No existing tax return with ID: " + otherIncomeDto.getTaxReturnId()));
     OtherIncome newOtherIncome = OtherIncomeMapper.toEntity(otherIncomeDto);
     newOtherIncome = otherIncomeRepository.save(newOtherIncome);
 
