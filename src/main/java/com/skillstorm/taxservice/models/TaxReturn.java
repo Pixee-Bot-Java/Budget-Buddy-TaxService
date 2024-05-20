@@ -2,7 +2,6 @@ package com.skillstorm.taxservice.models;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -43,6 +42,8 @@ public class TaxReturn {
     private String state;
 
     private String zip;
+
+    private String ssn;
 
     @OneToMany(mappedBy = "taxReturn", cascade = CascadeType.ALL)
     private List<W2> w2s;

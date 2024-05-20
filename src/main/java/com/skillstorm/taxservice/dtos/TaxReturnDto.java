@@ -27,6 +27,7 @@ public class TaxReturnDto {
     private String city;
     private String state;
     private String zip;
+    private String ssn;
     private List<W2Dto> w2s;
     private OtherIncomeDto otherIncome;
     private TaxReturnCreditDto taxCredit;
@@ -67,6 +68,7 @@ public class TaxReturnDto {
         this.city = taxReturn.getCity();
         this.state = taxReturn.getState();
         this.zip = taxReturn.getZip();
+        this.ssn = taxReturn.getSsn();
         this.w2s = taxReturn.getW2s().stream().map(W2Dto::new).toList();
         this.otherIncome = OtherIncomeMapper.toDto(taxReturn.getOtherIncome());
         this.taxCredit = TaxReturnCreditMapper.toDto(taxReturn.getTaxCredit());
@@ -94,6 +96,7 @@ public class TaxReturnDto {
         taxReturn.setCity(city);
         taxReturn.setState(state);
         taxReturn.setZip(zip);
+        taxReturn.setSsn(ssn);
         taxReturn.setW2s(w2s.stream().map(W2Dto::mapToEntity).toList());
         taxReturn.setOtherIncome(OtherIncomeMapper.toEntity(otherIncome));
         taxReturn.setTaxCredit(TaxReturnCreditMapper.toEntity(taxCredit));
