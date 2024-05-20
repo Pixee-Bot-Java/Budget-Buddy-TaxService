@@ -51,7 +51,7 @@ public class OtherIncomeService {
     return OtherIncomeMapper.toDto(newOtherIncome);
   }
 
-  public OtherIncomeDto updateTaxReturnCredit(OtherIncomeDto otherIncomeDto) {
+  public OtherIncomeDto updateOtherIncome(OtherIncomeDto otherIncomeDto) {
     OtherIncome existingOtherIncome = otherIncomeRepository.findByTaxReturnId(otherIncomeDto.getTaxReturnId())
       .orElseThrow(() -> new NotFoundException(env.getProperty("otherincome.not.found") + otherIncomeDto.getTaxReturnId()));
     existingOtherIncome = OtherIncomeMapper.updateEntity(existingOtherIncome, otherIncomeDto);
