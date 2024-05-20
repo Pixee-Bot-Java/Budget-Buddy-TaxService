@@ -24,6 +24,7 @@ public class TaxReturnDto {
     private String city;
     private String state;
     private String zip;
+    private String ssn;
     private List<W2Dto> w2s;
     private BigDecimal totalIncome;
     private BigDecimal fedTaxWithheld;
@@ -62,6 +63,7 @@ public class TaxReturnDto {
         this.city = taxReturn.getCity();
         this.state = taxReturn.getState();
         this.zip = taxReturn.getZip();
+        this.ssn = taxReturn.getSsn();
         this.w2s = taxReturn.getW2s().stream().map(W2Dto::new).toList();
         this.totalIncome = taxReturn.getTotalIncome();
         this.fedTaxWithheld = taxReturn.getFedTaxWithheld();
@@ -87,6 +89,7 @@ public class TaxReturnDto {
         taxReturn.setCity(city);
         taxReturn.setState(state);
         taxReturn.setZip(zip);
+        taxReturn.setSsn(ssn);
         taxReturn.setW2s(w2s.stream().map(W2Dto::mapToEntity).toList());
         taxReturn.setTotalIncome(totalIncome);
         taxReturn.setFedTaxWithheld(fedTaxWithheld);

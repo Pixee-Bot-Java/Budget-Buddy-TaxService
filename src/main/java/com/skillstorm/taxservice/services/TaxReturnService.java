@@ -91,6 +91,9 @@ public class TaxReturnService {
 
         // Calculate total credits and deductions for the TaxReturn:
         calculateCreditsAndDeductions(updatedTaxReturn);
+
+        // With all of our fields set, let's run the TaxCalculator. Placeholder for now:
+        updatedTaxReturn.setRefund(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP));
     }
 
     // Calculate the total credits and deductions for a TaxReturn:
@@ -102,7 +105,7 @@ public class TaxReturnService {
         updatedTaxReturn.setTotalDeductions(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP));
     }
 
-    // Calculate the total of taxes already withheld for a TaxReturn:
+    // Calculate the total of all taxes already withheld for a TaxReturn:
     private void calculateTaxesWithheld(TaxReturnDto updatedTaxReturn) {
         updatedTaxReturn.setFedTaxWithheld(getFederalTaxesWithheld(updatedTaxReturn));
         updatedTaxReturn.setStateTaxWithheld(getStateTaxesWithheld(updatedTaxReturn));
@@ -110,24 +113,28 @@ public class TaxReturnService {
         updatedTaxReturn.setMedicareTaxWithheld(getMedicareTaxesWithheld(updatedTaxReturn));
     }
 
+    // Calculate total medicare taxes already withheld for a TaxReturn:
     private BigDecimal getMedicareTaxesWithheld(TaxReturnDto updatedTaxReturn) {
         return updatedTaxReturn.getW2s().stream().map(W2Dto::getMedicareTaxWithheld)
                 .reduce(BigDecimal.ZERO, BigDecimal::add)
                 .setScale(2, RoundingMode.HALF_UP);
     }
 
+    // Calculate total social security taxes already withheld for a TaxReturn:
     private BigDecimal getSocialSecurityTaxesWithheld(TaxReturnDto updatedTaxReturn) {
         return updatedTaxReturn.getW2s().stream().map(W2Dto::getSocialSecurityTaxWithheld)
                 .reduce(BigDecimal.ZERO, BigDecimal::add)
                 .setScale(2, RoundingMode.HALF_UP);
     }
 
+    // Calculate total state income taxes already withheld for a TaxReturn:
     private BigDecimal getStateTaxesWithheld(TaxReturnDto updatedTaxReturn) {
         return updatedTaxReturn.getW2s().stream().map(W2Dto::getStateIncomeTaxWithheld)
                 .reduce(BigDecimal.ZERO, BigDecimal::add)
                 .setScale(2, RoundingMode.HALF_UP);
     }
 
+    // Calculate total federal income taxes already withheld for a TaxReturn:
     private BigDecimal getFederalTaxesWithheld(TaxReturnDto updatedTaxReturn) {
         return updatedTaxReturn.getW2s().stream().map(W2Dto::getFederalIncomeTaxWithheld)
                 .reduce(BigDecimal.ZERO, BigDecimal::add)
@@ -141,7 +148,8 @@ public class TaxReturnService {
                 .setScale(2, RoundingMode.HALF_UP);
     }
 
+    // Claim deductions for a TaxReturn or update its existing ones:
     public List<TaxReturnDeductionDto> claimDeductions(int id, List<TaxReturnDeductionDto> deductions) {
-        return null;
+        return taxReturnDeductionService.saveAndUpdateByTaxReturnId(id, deductions);
     }
 }

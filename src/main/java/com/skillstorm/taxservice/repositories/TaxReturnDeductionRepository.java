@@ -6,4 +6,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TaxReturnDeductionRepository extends JpaRepository<TaxReturnDeduction, Integer> {
+
+    // Delete all TaxReturns associated with a given tax return:
+    void deleteAllByTaxReturnId(int taxReturnId);
 }
