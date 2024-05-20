@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -43,6 +44,9 @@ public class TaxReturn {
 
     private String zip;
 
+    @Column(name = "date_of_birth")
+    private LocalDate dateOfBirth;
+
     private String ssn;
 
     @OneToMany(mappedBy = "taxReturn", cascade = CascadeType.ALL)
@@ -50,6 +54,12 @@ public class TaxReturn {
 
     @Column(name = "total_income")
     private BigDecimal totalIncome;
+
+    @Column(name = "adjusted_gross_income")
+    private BigDecimal adjustedGrossIncome;
+
+    @Column(name = "taxable_income")
+    private BigDecimal taxableIncome;
 
     @Column(name = "fed_tax_withheld")
     private BigDecimal fedTaxWithheld;
