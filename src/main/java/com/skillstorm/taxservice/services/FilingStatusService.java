@@ -16,7 +16,7 @@ public class FilingStatusService {
   private FilingStatusRepository filingStatusRepository;
 
   // Get filing status by the status string
-  public FilingStatus getByStatus(String status) {
+  public FilingStatus findByStatus(String status) {
     Optional<FilingStatus> filingStatus = filingStatusRepository.findByStatus(status);
 
     if (filingStatus.isPresent()) {
@@ -24,5 +24,10 @@ public class FilingStatusService {
     } else {
       throw new NotFoundException("Filing status: " + status + " not found");
     }
+  }
+
+  public FilingStatus findById(int id) {
+    return filingStatusRepository.findById(id)
+      .orElseThrow(() -> new NotFoundException("No filing status found with ID: " + id));
   }
 }

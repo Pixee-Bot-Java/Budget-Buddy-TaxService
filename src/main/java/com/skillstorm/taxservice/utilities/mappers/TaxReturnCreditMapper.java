@@ -9,26 +9,34 @@ import com.skillstorm.taxservice.models.TaxReturnCredit;
 public class TaxReturnCreditMapper {
   
   public static TaxReturnCreditDto toDto(TaxReturnCredit taxReturnCredit) {
-    TaxReturnCreditDto dto = new TaxReturnCreditDto();
-    dto.setTaxReturnId(taxReturnCredit.getTaxReturn().getId());
-    dto.setNumDependentsAotc(taxReturnCredit.getNumDependentsAotc());
-    dto.setNumChildren(taxReturnCredit.getNumChildren());
-    dto.setChildCareExpenses(taxReturnCredit.getChildCareExpenses());
-    dto.setEducationExpenses(taxReturnCredit.getEducationExpenses());
-    dto.setIraContributions(taxReturnCredit.getIraContributions());
-    dto.setClaimedAsDependent(taxReturnCredit.isClaimedAsDependent());
-    return dto;
+    if (taxReturnCredit != null) {
+      TaxReturnCreditDto dto = new TaxReturnCreditDto();
+      dto.setTaxReturnId(taxReturnCredit.getTaxReturn().getId());
+      dto.setNumDependentsAotc(taxReturnCredit.getNumDependentsAotc());
+      dto.setNumChildren(taxReturnCredit.getNumChildren());
+      dto.setChildCareExpenses(taxReturnCredit.getChildCareExpenses());
+      dto.setEducationExpenses(taxReturnCredit.getEducationExpenses());
+      dto.setIraContributions(taxReturnCredit.getIraContributions());
+      dto.setClaimedAsDependent(taxReturnCredit.isClaimedAsDependent());
+      return dto;
+    }
+
+    return null;
   }
 
   public static TaxReturnCredit toEntity(TaxReturnCreditDto dto) {
-    TaxReturnCredit entity = new TaxReturnCredit();
-    entity.setNumDependentsAotc(dto.getNumDependentsAotc());
-    entity.setNumChildren(dto.getNumChildren());
-    entity.setChildCareExpenses(dto.getChildCareExpenses());
-    entity.setEducationExpenses(dto.getEducationExpenses());
-    entity.setIraContributions(dto.getIraContributions());
-    entity.setClaimedAsDependent(dto.isClaimedAsDependent());
-    return entity;
+    if (dto != null) {
+      TaxReturnCredit entity = new TaxReturnCredit();
+      entity.setNumDependentsAotc(dto.getNumDependentsAotc());
+      entity.setNumChildren(dto.getNumChildren());
+      entity.setChildCareExpenses(dto.getChildCareExpenses());
+      entity.setEducationExpenses(dto.getEducationExpenses());
+      entity.setIraContributions(dto.getIraContributions());
+      entity.setClaimedAsDependent(dto.isClaimedAsDependent());
+      return entity;
+    }
+    
+    return null;
   }
 
   public static TaxReturnCredit updateEntity(TaxReturnCredit entity, TaxReturnCreditDto dto) {

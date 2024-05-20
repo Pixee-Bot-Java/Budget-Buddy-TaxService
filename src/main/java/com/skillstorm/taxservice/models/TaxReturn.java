@@ -48,6 +48,12 @@ public class TaxReturn {
     @OneToMany(mappedBy = "taxReturn", cascade = CascadeType.ALL)
     private List<W2> w2s;
 
+    @OneToOne(mappedBy = "taxReturn", cascade = CascadeType.ALL)
+    private OtherIncome otherIncome;
+
+    @OneToOne(mappedBy = "taxReturn", cascade = CascadeType.ALL)
+    private TaxReturnCredit taxCredit;
+
     @Column(name = "total_income")
     private BigDecimal totalIncome;
 
