@@ -50,6 +50,8 @@ class TaxReturnServiceTest {
         newTaxReturn.setYear(2024);
         newTaxReturn.setUserId(1);
         newTaxReturn.setTotalIncome(BigDecimal.ZERO.setScale(2));
+        newTaxReturn.setAdjustedGrossIncome(BigDecimal.ZERO.setScale(2));
+        newTaxReturn.setTaxableIncome(BigDecimal.ZERO.setScale(2));
         newTaxReturn.setFedTaxWithheld(BigDecimal.ZERO.setScale(2));
         newTaxReturn.setStateTaxWithheld(BigDecimal.ZERO.setScale(2));
         newTaxReturn.setSocialSecurityTaxWithheld(BigDecimal.ZERO.setScale(2));
@@ -63,6 +65,8 @@ class TaxReturnServiceTest {
         returnedNewTaxReturn.setYear(2024);
         returnedNewTaxReturn.setUserId(1);
         returnedNewTaxReturn.setTotalIncome(BigDecimal.ZERO.setScale(2));
+        returnedNewTaxReturn.setAdjustedGrossIncome(BigDecimal.ZERO.setScale(2));
+        returnedNewTaxReturn.setTaxableIncome(BigDecimal.ZERO.setScale(2));
         returnedNewTaxReturn.setFedTaxWithheld(BigDecimal.ZERO.setScale(2));
         returnedNewTaxReturn.setStateTaxWithheld(BigDecimal.ZERO.setScale(2));
         returnedNewTaxReturn.setSocialSecurityTaxWithheld(BigDecimal.ZERO.setScale(2));
@@ -83,6 +87,8 @@ class TaxReturnServiceTest {
         updatedTaxReturn.setState("TestState");
         updatedTaxReturn.setZip("TestZipCode");
         updatedTaxReturn.setTotalIncome(BigDecimal.ZERO.setScale(2));
+        updatedTaxReturn.setAdjustedGrossIncome(BigDecimal.ZERO.setScale(2));
+        updatedTaxReturn.setTaxableIncome(BigDecimal.ZERO.setScale(2));
         updatedTaxReturn.setFedTaxWithheld(BigDecimal.ZERO.setScale(2));
         updatedTaxReturn.setStateTaxWithheld(BigDecimal.ZERO.setScale(2));
         updatedTaxReturn.setSocialSecurityTaxWithheld(BigDecimal.ZERO.setScale(2));
