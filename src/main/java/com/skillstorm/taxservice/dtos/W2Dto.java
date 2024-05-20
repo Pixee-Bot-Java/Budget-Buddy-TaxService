@@ -20,9 +20,9 @@ public class W2Dto {
     private State state;
     private BigDecimal wages = BigDecimal.valueOf(0);
     private BigDecimal federalIncomeTaxWithheld = BigDecimal.valueOf(0);
-    private BigDecimal stateIncomeTaxWithheld = BigDecimal.valueOf(0);;
-    private BigDecimal socialSecurityTaxWithheld = BigDecimal.valueOf(0);;
-    private BigDecimal medicareTaxWithheld = BigDecimal.valueOf(0);;
+    private BigDecimal stateIncomeTaxWithheld = BigDecimal.valueOf(0);
+    private BigDecimal socialSecurityTaxWithheld = BigDecimal.valueOf(0);
+    private BigDecimal medicareTaxWithheld = BigDecimal.valueOf(0);
     private String imageKey;
 
     public W2Dto() {
