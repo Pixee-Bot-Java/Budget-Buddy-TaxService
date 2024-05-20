@@ -1,4 +1,4 @@
-package com.skillstorm.taxdemo.services; //refactor package
+package com.skillstorm.taxservice.services; //refactor package
 
 public class TaxCreditCalculator {
     
