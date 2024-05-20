@@ -17,7 +17,7 @@ public class OtherIncome {
   private int id;
 
   @OneToOne
-  @JoinColumn(name = "tax_return_id")
+  @JoinColumn(name = "tax_return_id", nullable = false)
   private TaxReturn taxReturn;
 
   @Column
