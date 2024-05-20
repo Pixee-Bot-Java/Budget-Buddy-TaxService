@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.skillstorm.taxservice.constants.FilingStatus;
 import com.skillstorm.taxservice.models.TaxReturn;
+import com.skillstorm.taxservice.utilities.mappers.OtherIncomeMapper;
+import com.skillstorm.taxservice.utilities.mappers.TaxReturnCreditMapper;
+
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -25,6 +28,8 @@ public class TaxReturnDto {
     private String state;
     private String zip;
     private List<W2Dto> w2s;
+    private OtherIncomeDto otherIncome;
+    private TaxReturnCreditDto taxCredit;
     private BigDecimal totalIncome;
     private BigDecimal fedTaxWithheld;
     private BigDecimal stateTaxWithheld;
@@ -63,6 +68,8 @@ public class TaxReturnDto {
         this.state = taxReturn.getState();
         this.zip = taxReturn.getZip();
         this.w2s = taxReturn.getW2s().stream().map(W2Dto::new).toList();
+        this.otherIncome = OtherIncomeMapper.toDto(taxReturn.getOtherIncome());
+        this.taxCredit = TaxReturnCreditMapper.toDto(taxReturn.getTaxCredit());
         this.totalIncome = taxReturn.getTotalIncome();
         this.fedTaxWithheld = taxReturn.getFedTaxWithheld();
         this.stateTaxWithheld = taxReturn.getStateTaxWithheld();
@@ -88,6 +95,8 @@ public class TaxReturnDto {
         taxReturn.setState(state);
         taxReturn.setZip(zip);
         taxReturn.setW2s(w2s.stream().map(W2Dto::mapToEntity).toList());
+        taxReturn.setOtherIncome(OtherIncomeMapper.toEntity(otherIncome));
+        taxReturn.setTaxCredit(TaxReturnCreditMapper.toEntity(taxCredit));
         taxReturn.setTotalIncome(totalIncome);
         taxReturn.setFedTaxWithheld(fedTaxWithheld);
         taxReturn.setStateTaxWithheld(stateTaxWithheld);

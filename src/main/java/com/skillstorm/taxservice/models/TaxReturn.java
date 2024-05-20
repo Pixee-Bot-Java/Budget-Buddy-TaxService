@@ -51,7 +51,7 @@ public class TaxReturn {
     private OtherIncome otherIncome;
 
     @OneToOne(mappedBy = "taxReturn", cascade = CascadeType.ALL)
-    private TaxReturnCredit taxReturnCredit;
+    private TaxReturnCredit taxCredit;
 
     @Column(name = "total_income")
     private BigDecimal totalIncome;

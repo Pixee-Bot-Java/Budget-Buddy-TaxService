@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import com.skillstorm.taxservice.dtos.OtherIncomeDto;
 import com.skillstorm.taxservice.exceptions.NotFoundException;
 import com.skillstorm.taxservice.models.OtherIncome;
-import com.skillstorm.taxservice.models.TaxReturn;
 import com.skillstorm.taxservice.repositories.OtherIncomeRepository;
 import com.skillstorm.taxservice.repositories.TaxReturnRepository;
 import com.skillstorm.taxservice.utilities.mappers.OtherIncomeMapper;
@@ -41,11 +40,7 @@ public class OtherIncomeService {
   }
 
   public OtherIncomeDto createOtherIncome(OtherIncomeDto otherIncomeDto) {
-    TaxReturn existingTaxReturn = taxReturnRepository.findById(otherIncomeDto.getTaxReturnId())
-      .orElseThrow(() -> new IllegalArgumentException("no tax return exists with id: " + otherIncomeDto.getTaxReturnId()));
-    
     OtherIncome newOtherIncome = OtherIncomeMapper.toEntity(otherIncomeDto);
-    newOtherIncome.setTaxReturn(existingTaxReturn);
     newOtherIncome = otherIncomeRepository.save(newOtherIncome);
 
     return OtherIncomeMapper.toDto(newOtherIncome);
