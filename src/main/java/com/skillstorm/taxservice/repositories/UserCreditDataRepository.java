@@ -1,6 +1,6 @@
-package com.skillstorm.taxdemo.repositories;
+package com.skillstorm.taxservice.repositories;
 
-import com.skillstorm.taxdemo.models.UserCreditData;
+import com.skillstorm.taxservice.models.UserCreditData;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
