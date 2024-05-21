@@ -179,4 +179,9 @@ public class TaxReturnService {
     public List<TaxReturnDeductionDto> claimDeductions(int id, List<TaxReturnDeductionDto> deductions) {
         return taxReturnDeductionService.saveAndUpdateByTaxReturnId(id, deductions);
     }
+
+    // Get the current tax refund for a TaxReturn:
+    public BigDecimal getRefund(int id) {
+        return findById(id).getRefund();
+    }
 }
