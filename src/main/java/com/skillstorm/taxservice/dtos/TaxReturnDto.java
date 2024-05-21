@@ -11,7 +11,6 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Data
@@ -43,7 +42,8 @@ public class TaxReturnDto {
     private BigDecimal medicareTaxWithheld;
     private BigDecimal totalDeductions;
     private BigDecimal totalCredits;
-    private BigDecimal refund;
+    private BigDecimal federalRefund;
+    private BigDecimal stateRefund;
 
     public TaxReturnDto() {
         // Default values to avoid null pointers:
@@ -89,7 +89,8 @@ public class TaxReturnDto {
         this.medicareTaxWithheld = taxReturn.getMedicareTaxWithheld();
         this.totalDeductions = taxReturn.getTotalDeductions();
         this.totalCredits = taxReturn.getTotalCredits();
-        this.refund = taxReturn.getRefund();
+        this.federalRefund = taxReturn.getFederalRefund();
+        this.stateRefund = taxReturn.getStateRefund();
     }
 
     public TaxReturn mapToEntity() {
@@ -122,7 +123,8 @@ public class TaxReturnDto {
         taxReturn.setMedicareTaxWithheld(medicareTaxWithheld);
         taxReturn.setTotalDeductions(totalDeductions);
         taxReturn.setTotalCredits(totalCredits);
-        taxReturn.setRefund(refund);
+        taxReturn.setFederalRefund(federalRefund);
+        taxReturn.setStateRefund(stateRefund);
 
         return taxReturn;
     }

@@ -36,9 +36,9 @@ public class TaxReturnController {
         return ResponseEntity.ok(taxReturnService.findById(id));
     }
 
-    // Get current tax refund:
+    // Get current federal tax refund:
     @GetMapping("/{id}/refund")
-    public ResponseEntity<BigDecimal> getRefund(@PathVariable("id") int id) {
+    public ResponseEntity<List<BigDecimal>> getRefund(@PathVariable("id") int id) {
         return ResponseEntity.ok(taxReturnService.getRefund(id));
     }
 
