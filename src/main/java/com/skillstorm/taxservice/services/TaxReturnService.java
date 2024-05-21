@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @PropertySource("classpath:SystemMessages.properties")
@@ -83,6 +84,18 @@ public class TaxReturnService {
     // Calculate the Tax Refund for a TaxReturn:
     private void calculateRefundAmount(TaxReturnDto updatedTaxReturn) {
 
+        // Set financial values for the TaxReturn:
+        setFinancialValues(updatedTaxReturn);
+
+        // With all of our fields set, let's run the TaxCalculator. Placeholder for now:
+        updatedTaxReturn.setFederalRefund(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP));
+
+        // Also calculate the state refund. Placeholder for now:
+        updatedTaxReturn.setStateRefund(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP));
+    }
+
+    // Populate the monetary values for a TaxReturn:
+    private void setFinancialValues(TaxReturnDto updatedTaxReturn) {
         // Calculate the total income for the TaxReturn:
         updatedTaxReturn.setTotalIncome(getTotalIncome(updatedTaxReturn));
 
@@ -92,8 +105,26 @@ public class TaxReturnService {
         // Calculate total credits and deductions for the TaxReturn:
         calculateCreditsAndDeductions(updatedTaxReturn);
 
-        // With all of our fields set, let's run the TaxCalculator. Placeholder for now:
-        updatedTaxReturn.setRefund(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP));
+        // Calculate the adjusted gross income for the TaxReturn:
+        calculateAgi(updatedTaxReturn);
+
+        // Calculate the taxable income for the TaxReturn:
+        calculateTaxableIncome(updatedTaxReturn);
+    }
+
+    // Calculate the taxable income for a TaxReturn:
+    private void calculateTaxableIncome(TaxReturnDto updatedTaxReturn) {
+        // Placeholder for now:
+        updatedTaxReturn.setTaxableIncome(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP));
+    }
+
+    // Calculate the adjusted gross income for a TaxReturn:
+    private void calculateAgi(TaxReturnDto updatedTaxReturn) {
+        // Placeholder for now:
+        updatedTaxReturn.setAdjustedGrossIncome(updatedTaxReturn
+                .getTotalIncome()
+                .subtract(updatedTaxReturn.getTotalDeductions())
+                .setScale(2, RoundingMode.HALF_UP));
     }
 
     // Calculate the total credits and deductions for a TaxReturn:
@@ -151,5 +182,12 @@ public class TaxReturnService {
     // Claim deductions for a TaxReturn or update its existing ones:
     public List<TaxReturnDeductionDto> claimDeductions(int id, List<TaxReturnDeductionDto> deductions) {
         return taxReturnDeductionService.saveAndUpdateByTaxReturnId(id, deductions);
+    }
+
+    // Get the current tax refund for a TaxReturn:
+    public Map<String, BigDecimal> getRefund(int id) {
+        TaxReturnDto taxReturnDto = findById(id);
+        return Map.of("federalRefund", taxReturnDto.getFederalRefund(),
+                "stateRefund", taxReturnDto.getStateRefund());
     }
 }

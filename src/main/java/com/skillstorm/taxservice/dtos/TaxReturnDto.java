@@ -10,6 +10,7 @@ import com.skillstorm.taxservice.utilities.mappers.TaxReturnCreditMapper;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -27,18 +28,22 @@ public class TaxReturnDto {
     private String city;
     private String state;
     private String zip;
+    private String dateOfBirth;
     private String ssn;
     private List<W2Dto> w2s;
     private OtherIncomeDto otherIncome;
     private TaxReturnCreditDto taxCredit;
     private BigDecimal totalIncome;
+    private BigDecimal adjustedGrossIncome;
+    private BigDecimal taxableIncome;
     private BigDecimal fedTaxWithheld;
     private BigDecimal stateTaxWithheld;
     private BigDecimal socialSecurityTaxWithheld;
     private BigDecimal medicareTaxWithheld;
     private BigDecimal totalDeductions;
     private BigDecimal totalCredits;
-    private BigDecimal refund;
+    private BigDecimal federalRefund;
+    private BigDecimal stateRefund;
 
     public TaxReturnDto() {
         // Default values to avoid null pointers:
@@ -68,18 +73,24 @@ public class TaxReturnDto {
         this.city = taxReturn.getCity();
         this.state = taxReturn.getState();
         this.zip = taxReturn.getZip();
+        if (taxReturn.getDateOfBirth() != null) {
+            this.dateOfBirth = taxReturn.getDateOfBirth().toString();
+        }
         this.ssn = taxReturn.getSsn();
         this.w2s = taxReturn.getW2s().stream().map(W2Dto::new).toList();
         this.otherIncome = OtherIncomeMapper.toDto(taxReturn.getOtherIncome());
         this.taxCredit = TaxReturnCreditMapper.toDto(taxReturn.getTaxCredit());
         this.totalIncome = taxReturn.getTotalIncome();
+        this.adjustedGrossIncome = taxReturn.getAdjustedGrossIncome();
+        this.taxableIncome = taxReturn.getTaxableIncome();
         this.fedTaxWithheld = taxReturn.getFedTaxWithheld();
         this.stateTaxWithheld = taxReturn.getStateTaxWithheld();
         this.socialSecurityTaxWithheld = taxReturn.getSocialSecurityTaxWithheld();
         this.medicareTaxWithheld = taxReturn.getMedicareTaxWithheld();
         this.totalDeductions = taxReturn.getTotalDeductions();
         this.totalCredits = taxReturn.getTotalCredits();
-        this.refund = taxReturn.getRefund();
+        this.federalRefund = taxReturn.getFederalRefund();
+        this.stateRefund = taxReturn.getStateRefund();
     }
 
     public TaxReturn mapToEntity() {
@@ -96,18 +107,24 @@ public class TaxReturnDto {
         taxReturn.setCity(city);
         taxReturn.setState(state);
         taxReturn.setZip(zip);
+        if (dateOfBirth != null) {
+            taxReturn.setDateOfBirth(LocalDate.parse(dateOfBirth));
+        }
         taxReturn.setSsn(ssn);
         taxReturn.setW2s(w2s.stream().map(W2Dto::mapToEntity).toList());
         taxReturn.setOtherIncome(OtherIncomeMapper.toEntity(otherIncome));
         taxReturn.setTaxCredit(TaxReturnCreditMapper.toEntity(taxCredit));
         taxReturn.setTotalIncome(totalIncome);
+        taxReturn.setAdjustedGrossIncome(adjustedGrossIncome);
+        taxReturn.setTaxableIncome(taxableIncome);
         taxReturn.setFedTaxWithheld(fedTaxWithheld);
         taxReturn.setStateTaxWithheld(stateTaxWithheld);
         taxReturn.setSocialSecurityTaxWithheld(socialSecurityTaxWithheld);
         taxReturn.setMedicareTaxWithheld(medicareTaxWithheld);
         taxReturn.setTotalDeductions(totalDeductions);
         taxReturn.setTotalCredits(totalCredits);
-        taxReturn.setRefund(refund);
+        taxReturn.setFederalRefund(federalRefund);
+        taxReturn.setStateRefund(stateRefund);
 
         return taxReturn;
     }
