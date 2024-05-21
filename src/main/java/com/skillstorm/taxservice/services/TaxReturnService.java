@@ -88,6 +88,9 @@ public class TaxReturnService {
 
         // With all of our fields set, let's run the TaxCalculator. Placeholder for now:
         updatedTaxReturn.setFederalRefund(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP));
+
+        // Also calculate the state refund. Placeholder for now:
+        updatedTaxReturn.setStateRefund(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP));
     }
 
     // Populate the monetary values for a TaxReturn:

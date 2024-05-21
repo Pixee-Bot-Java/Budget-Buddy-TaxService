@@ -58,7 +58,8 @@ class TaxReturnServiceTest {
         newTaxReturn.setMedicareTaxWithheld(BigDecimal.ZERO.setScale(2));
         newTaxReturn.setTotalCredits(BigDecimal.ZERO.setScale(2));
         newTaxReturn.setTotalDeductions(BigDecimal.ZERO.setScale(2));
-        newTaxReturn.setRefund(BigDecimal.ZERO.setScale(2));
+        newTaxReturn.setFederalRefund(BigDecimal.ZERO.setScale(2));
+        newTaxReturn.setStateRefund(BigDecimal.ZERO.setScale(2));
 
         returnedNewTaxReturn = new TaxReturn();
         returnedNewTaxReturn.setId(1);
@@ -73,7 +74,8 @@ class TaxReturnServiceTest {
         returnedNewTaxReturn.setMedicareTaxWithheld(BigDecimal.ZERO.setScale(2));
         returnedNewTaxReturn.setTotalCredits(BigDecimal.ZERO.setScale(2));
         returnedNewTaxReturn.setTotalDeductions(BigDecimal.ZERO.setScale(2));
-        returnedNewTaxReturn.setRefund(BigDecimal.ZERO.setScale(2));
+        returnedNewTaxReturn.setFederalRefund(BigDecimal.ZERO.setScale(2));
+        returnedNewTaxReturn.setStateRefund(BigDecimal.ZERO.setScale(2));
 
         updatedTaxReturn = new TaxReturnDto();
         updatedTaxReturn.setId(1);
@@ -95,7 +97,8 @@ class TaxReturnServiceTest {
         updatedTaxReturn.setMedicareTaxWithheld(BigDecimal.ZERO.setScale(2));
         updatedTaxReturn.setTotalCredits(BigDecimal.ZERO.setScale(2));
         updatedTaxReturn.setTotalDeductions(BigDecimal.ZERO.setScale(2));
-        updatedTaxReturn.setRefund(BigDecimal.ZERO.setScale(2));
+        updatedTaxReturn.setFederalRefund(BigDecimal.ZERO.setScale(2));
+        updatedTaxReturn.setStateRefund(BigDecimal.ZERO.setScale(2));
     }
 
     // Add new TaxReturn:
@@ -200,7 +203,7 @@ class TaxReturnServiceTest {
         assertEquals("TestCity", result.getCity(), "The TaxReturn city should be TestCity.");
         assertEquals("TestState", result.getState(), "The TaxReturn state should be TestState.");
         assertEquals("TestZipCode", result.getZip(), "The TaxReturn zip code should be TestZipCode.");
-        assertEquals(BigDecimal.ZERO.setScale(2), result.getRefund(), "The TaxReturn refund should be 0.00.");
+        assertEquals(BigDecimal.ZERO.setScale(2), result.getFederalRefund(), "The TaxReturn refund should be 0.00.");
     }
 
     // Delete TaxReturn:
