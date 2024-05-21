@@ -46,7 +46,7 @@ public class TaxCalculatorService {
       this.capitalGainsTaxService = capitalGainsTaxService;
     }
 
-    public TaxReturnDto calculateTotalIncome(TaxReturnDto taxReturn) {
+    public TaxReturnDto calculateTotalIncome(TaxReturnDto taxReturn) throws IllegalAccessException {
       List<W2Dto> w2s = taxReturn.getW2s();
       BigDecimal w2Income =  w2s.stream().map(W2Dto::getWages)
                               .reduce(BigDecimal.ZERO, BigDecimal::add)
@@ -64,13 +64,13 @@ public class TaxCalculatorService {
 
 
     // Placeholder for now
-    public TaxReturnDto calculateAgi(TaxReturnDto taxReturn) {
+    public TaxReturnDto calculateAgi(TaxReturnDto taxReturn) throws IllegalAccessException {
       return calculateTotalIncome(taxReturn);
     }
 
 
     // Placeholder for now
-    public TaxReturnDto calculateTaxableIncome(TaxReturnDto taxReturn) {
+    public TaxReturnDto calculateTaxableIncome(TaxReturnDto taxReturn) throws IllegalAccessException {
       return calculateTotalIncome(taxReturn);
     }
 
@@ -105,8 +105,8 @@ public class TaxCalculatorService {
 
           BigDecimal taxableAmountInBracket = remainingIncome.min(BigDecimal.valueOf(maxIncome - minIncome));
           BigDecimal taxInBracket = taxableAmountInBracket.multiply(taxRate);
-          totalTaxes.add(taxInBracket);
-          remainingIncome.subtract(taxableAmountInBracket);
+          totalTaxes = totalTaxes.add(taxInBracket);
+          remainingIncome = remainingIncome.subtract(taxableAmountInBracket);
       }
 
       // Set the federal tax amount in the TaxReturnDto
@@ -119,105 +119,69 @@ public class TaxCalculatorService {
 
     // Calculate total state tax liability
     public TaxReturnDto calculateStateTaxes(TaxReturnDto taxReturn) {
-
       // Get tax return's W2s
       List<W2Dto> w2s = taxReturn.getW2s();
-
-      // Initialize tax amount
+  
+      // Initialize tax amount and withheld amounts
       BigDecimal totalTaxAmount = BigDecimal.ZERO;
       BigDecimal totalFedTaxWithheld = BigDecimal.ZERO;
       BigDecimal totalStateTaxWithheld = BigDecimal.ZERO;
       BigDecimal totalSocialSecurityTaxWithheld = BigDecimal.ZERO;
       BigDecimal totalMedicareTaxWithheld = BigDecimal.ZERO;
-
-      // For each W2, calculate the state income tax liability
+  
+      // Calculate taxes for each W2
       for (W2Dto w2 : w2s) {
-
-        // Add tax withheld
-        totalFedTaxWithheld.add(w2.getFederalIncomeTaxWithheld());
-        totalStateTaxWithheld.add(w2.getStateIncomeTaxWithheld());
-        totalSocialSecurityTaxWithheld.add(w2.getSocialSecurityTaxWithheld());
-        totalMedicareTaxWithheld.add(w2.getMedicareTaxWithheld());
-
-        // Get state income tax brackets based on the W2's state
-        List<StateTax> taxBrackets = stateTaxService.getTaxBracketsByStateId(w2.getState().getValue());
-
-        // Get wages from W2
-        BigDecimal taxableWages = w2.getWages();
-
-        // Initialize remaining income
-        BigDecimal remainingIncome = taxableWages;
-
-        for (StateTax bracket : taxBrackets) {
-
-          // Get portion of income relevant to the current tax bracket
-          BigDecimal bracketIncome = remainingIncome.min(BigDecimal.valueOf(bracket.getIncomeRange()));
-
-          // If bracket is the last bracket (income range is 0), set bracketIncome to the remaining income
-          // If the income range is 0 because the state income tax is 0 for that state, still works
-          if (bracketIncome.doubleValue() == 0) {
-            bracketIncome = remainingIncome;
-          }
-
-          // Calculate the tax amount based on the bracket's rate
-          totalTaxAmount.add(bracketIncome.multiply(bracket.getRate()));
-
-          // Subtract the bracket amount to see if next bracket applies
-          remainingIncome.subtract(bracketIncome);
-
-          // If not, break here
-          if (remainingIncome.compareTo(BigDecimal.ZERO) <= 0) {
-            break;
-          }
-        }
+          totalFedTaxWithheld = totalFedTaxWithheld.add(w2.getFederalIncomeTaxWithheld());
+          totalStateTaxWithheld = totalStateTaxWithheld.add(w2.getStateIncomeTaxWithheld());
+          totalSocialSecurityTaxWithheld = totalSocialSecurityTaxWithheld.add(w2.getSocialSecurityTaxWithheld());
+          totalMedicareTaxWithheld = totalMedicareTaxWithheld.add(w2.getMedicareTaxWithheld());
+  
+          totalTaxAmount = totalTaxAmount.add(calculateTaxForIncome(w2.getWages(), w2.getState().getValue()));
       }
-
-      // For other income, calculate the state taxes based on user's primary residence
-      BigDecimal otherIncome = BigDecimal.ZERO;
+  
+      // Calculate taxes for other income
       if (taxReturn.getOtherIncome() != null) {
-        otherIncome.add(taxReturn.getOtherIncome().getOtherInvestmentIncome())
-          .add(taxReturn.getOtherIncome().getNetBusinessIncome())
-          .add(taxReturn.getOtherIncome().getAdditionalIncome())
-          .add(taxReturn.getOtherIncome().getShortTermCapitalGains());
-
-        List<StateTax> taxBracket = stateTaxService.getTaxBracketsByStateId(taxReturn.getState().getValue());
-
-        // Initialize remaining income
-        BigDecimal remainingIncome = otherIncome;
-
-        for (StateTax bracket : taxBracket) {
-
-          // Get portion of income relevant to the current tax bracket
-          BigDecimal bracketIncome = remainingIncome.min(BigDecimal.valueOf(bracket.getIncomeRange()));
-
-          // If bracket is the last bracket (income range is 0), set bracketIncome to the remaining income
-          // If the income range is 0 because the state income tax is 0 for that state, still works
-          if (bracketIncome.doubleValue() == 0) {
-            bracketIncome = remainingIncome;
-          }
-
-          // Calculate the tax amount based on the bracket's rate
-          totalTaxAmount.add(bracketIncome.multiply(bracket.getRate()));
-
-          // Subtract the bracket amount to see if next bracket applies
-          remainingIncome.subtract(bracketIncome);
-
-          // If not, break here
-          if (remainingIncome.compareTo(BigDecimal.ZERO) <= 0) {
-            break;
-          }
-        }
+          BigDecimal otherIncome = taxReturn.getOtherIncome().getOtherInvestmentIncome()
+              .add(taxReturn.getOtherIncome().getNetBusinessIncome())
+              .add(taxReturn.getOtherIncome().getAdditionalIncome())
+              .add(taxReturn.getOtherIncome().getShortTermCapitalGains());
+  
+          totalTaxAmount = totalTaxAmount.add(calculateTaxForIncome(otherIncome, taxReturn.getState().getValue()));
       }
-
-      // Set results in the relevant dto fields
+  
+      // Set results in the relevant DTO fields
       taxReturn.setStateRefund(taxReturn.getStateRefund().subtract(totalTaxAmount));
       taxReturn.setFedTaxWithheld(totalFedTaxWithheld);
       taxReturn.setStateTaxWithheld(totalStateTaxWithheld);
       taxReturn.setSocialSecurityTaxWithheld(totalSocialSecurityTaxWithheld);
       taxReturn.setMedicareTaxWithheld(totalMedicareTaxWithheld);
-
-      // return updated tax return
+  
+      // Return updated tax return
       return taxReturn;
+    }
+  
+    private BigDecimal calculateTaxForIncome(BigDecimal income, int stateId) {
+      BigDecimal totalTaxAmount = BigDecimal.ZERO;
+      List<StateTax> taxBrackets = stateTaxService.getTaxBracketsByStateId(stateId);
+  
+      BigDecimal remainingIncome = income;
+  
+      for (StateTax bracket : taxBrackets) {
+          BigDecimal bracketIncome = remainingIncome.min(BigDecimal.valueOf(bracket.getIncomeRange()));
+  
+          if (bracketIncome.compareTo(BigDecimal.ZERO) == 0) {
+              bracketIncome = remainingIncome;
+          }
+  
+          totalTaxAmount = totalTaxAmount.add(bracketIncome.multiply(bracket.getRate()));
+          remainingIncome = remainingIncome.subtract(bracketIncome);
+  
+          if (remainingIncome.compareTo(BigDecimal.ZERO) <= 0) {
+              break;
+          }
+      }
+  
+      return totalTaxAmount;
     }
 
 
@@ -267,10 +231,10 @@ public class TaxCalculatorService {
         double taxableAmount = Math.min(bracketRange, remainingCapGains.doubleValue());
 
         // Calculate the tax amount
-        longTermCapitalGainsTaxAmount.add(BigDecimal.valueOf(taxableAmount).multiply(bracket.getRate()));
+        longTermCapitalGainsTaxAmount = longTermCapitalGainsTaxAmount.add(BigDecimal.valueOf(taxableAmount).multiply(bracket.getRate()));
 
         // Subtract taxable amount to see if next bracket should apply
-        remainingCapGains.subtract(BigDecimal.valueOf(taxableAmount));
+        remainingCapGains = remainingCapGains.subtract(BigDecimal.valueOf(taxableAmount));
 
         // If there are no more gains to tax, break here
         if (remainingCapGains.doubleValue() <= 0) break;
@@ -341,12 +305,12 @@ public class TaxCalculatorService {
       BigDecimal taxRefund = taxReturn.getFederalRefund();
 
       if (taxRefund.compareTo(creditAfterPhaseout) >= 0) {
-        taxRefund.add(creditAfterPhaseout);
+        taxRefund = taxRefund.add(creditAfterPhaseout);
       } else {
         BigDecimal creditLimit = BigDecimal.valueOf(childTaxCredit.getRefundLimit());
         BigDecimal difference = BigDecimal.valueOf(childTaxCredit.getPerQualifyingChild()).subtract(creditLimit);
-        creditAfterPhaseout.subtract(difference.multiply(BigDecimal.valueOf(numDependents)));
-        taxRefund.add(creditAfterPhaseout);
+        creditAfterPhaseout = creditAfterPhaseout.subtract(difference.multiply(BigDecimal.valueOf(numDependents)));
+        taxRefund = taxRefund.add(creditAfterPhaseout);
       }
 
       taxReturn.setFederalRefund(taxRefund);
@@ -417,7 +381,7 @@ public class TaxCalculatorService {
 
       // Determine the rate at which credit is reduced by based on user's agi
       if (agi.compareTo(BigDecimal.valueOf(educationTaxCreditAotc.getFullCreditIncomeThreshold())) > 0) {
-        agi.subtract(BigDecimal.valueOf(educationTaxCreditAotc.getFullCreditIncomeThreshold()));
+        agi = agi.subtract(BigDecimal.valueOf(educationTaxCreditAotc.getFullCreditIncomeThreshold()));
         if (agi.compareTo(BigDecimal.valueOf(educationTaxCreditAotc.getPartialCreditIncomeThreshold())) > 0) {
           return taxReturn;
         } else {
@@ -485,7 +449,7 @@ public class TaxCalculatorService {
 
       // Determine the rate at which credit is reduced by based on user's agi
       if (agi.compareTo(BigDecimal.valueOf(educationTaxCreditLlc.getFullCreditIncomeThreshold())) > 0) {
-        agi.subtract(BigDecimal.valueOf(educationTaxCreditLlc.getFullCreditIncomeThreshold()));
+        agi = agi.subtract(BigDecimal.valueOf(educationTaxCreditLlc.getFullCreditIncomeThreshold()));
         if (agi.compareTo(BigDecimal.valueOf(educationTaxCreditLlc.getPartialCreditIncomeThreshold())) > 0) {
           return taxReturn;
         } else {

@@ -66,7 +66,7 @@ public class OtherIncomeService {
     otherIncomeRepository.delete(existingOtherIncome);
   }
 
-  public BigDecimal sumOtherIncome(OtherIncomeDto otherIncomeDto) {
+  public BigDecimal sumOtherIncome(OtherIncomeDto otherIncomeDto) throws IllegalAccessException {
     BigDecimal sum = BigDecimal.ZERO;
         
     // Get all declared fields of the class
@@ -76,14 +76,10 @@ public class OtherIncomeService {
         // Check if the field is of type BigDecimal
         if (field.getType().equals(BigDecimal.class)) {
             field.setAccessible(true); // Make private fields accessible
-            try {
-              // Sum valid values
-              BigDecimal value = (BigDecimal) field.get(otherIncomeDto);
-              if (value != null) {
-                  sum = sum.add(value);
-              }
-            } catch (IllegalAccessException e) {
-              e.printStackTrace();
+            // Sum valid values
+            BigDecimal value = (BigDecimal) field.get(otherIncomeDto);
+            if (value != null) {
+                sum = sum.add(value);
             }
         }
     }
