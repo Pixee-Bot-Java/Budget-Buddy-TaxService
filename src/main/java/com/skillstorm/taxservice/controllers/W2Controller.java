@@ -3,6 +3,7 @@ package com.skillstorm.taxservice.controllers;
 import com.skillstorm.taxservice.dtos.W2Dto;
 import com.skillstorm.taxservice.exceptions.UndeterminedContentException;
 import com.skillstorm.taxservice.services.W2Service;
+import jakarta.validation.Valid;
 import lombok.SneakyThrows;
 import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,7 @@ public class W2Controller {
 
     // Add new W2s or update existing W2s. Can also be used to delete W2s by sending an empty list:
     @PostMapping
-    public ResponseEntity<List<W2Dto>> addW2sByTaxReturnId(@RequestParam("taxReturnId") int taxReturnId, @RequestBody List<W2Dto> updatedW2s) {
+    public ResponseEntity<List<W2Dto>> addW2sByTaxReturnId(@RequestParam("taxReturnId") int taxReturnId,@Valid @RequestBody List<W2Dto> updatedW2s) {
         return ResponseEntity.ok(w2Service.updateAllByTaxReturnId(taxReturnId, updatedW2s));
     }
 

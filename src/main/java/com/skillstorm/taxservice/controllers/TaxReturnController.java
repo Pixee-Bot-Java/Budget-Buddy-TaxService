@@ -1,5 +1,6 @@
 package com.skillstorm.taxservice.controllers;
 
+import com.skillstorm.taxservice.dtos.RefundDto;
 import com.skillstorm.taxservice.dtos.TaxReturnDeductionDto;
 import com.skillstorm.taxservice.dtos.TaxReturnDto;
 import com.skillstorm.taxservice.services.TaxReturnService;
@@ -39,7 +40,7 @@ public class TaxReturnController {
 
     // Get current federal tax refund:
     @GetMapping("/{id}/refund")
-    public ResponseEntity<Map<String, BigDecimal>> getRefund(@PathVariable("id") int id) {
+    public ResponseEntity<RefundDto> getRefund(@PathVariable("id") int id) {
         return ResponseEntity.ok(taxReturnService.getRefund(id));
     }
 
