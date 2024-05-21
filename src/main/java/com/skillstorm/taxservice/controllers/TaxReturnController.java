@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.util.List;
 
@@ -33,6 +34,12 @@ public class TaxReturnController {
     @GetMapping("/{id}")
     public ResponseEntity<TaxReturnDto> findById(@PathVariable("id") int id) {
         return ResponseEntity.ok(taxReturnService.findById(id));
+    }
+
+    // Get current tax refund:
+    @GetMapping("/{id}/refund")
+    public ResponseEntity<BigDecimal> getRefund(@PathVariable("id") int id) {
+        return ResponseEntity.ok(taxReturnService.getRefund(id));
     }
 
     // Get all TaxReturns by userId (and optionally by year):
