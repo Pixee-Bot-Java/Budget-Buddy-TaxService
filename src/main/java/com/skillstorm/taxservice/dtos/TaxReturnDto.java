@@ -3,6 +3,7 @@ package com.skillstorm.taxservice.dtos;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.skillstorm.taxservice.constants.FilingStatus;
+import com.skillstorm.taxservice.constants.State;
 import com.skillstorm.taxservice.models.TaxReturn;
 import com.skillstorm.taxservice.utilities.mappers.OtherIncomeMapper;
 import com.skillstorm.taxservice.utilities.mappers.TaxReturnCreditMapper;
@@ -26,7 +27,7 @@ public class TaxReturnDto {
     private String phoneNumber;
     private String address;
     private String city;
-    private String state;
+    private State state;
     private String zip;
     private String dateOfBirth;
     private String ssn;
@@ -48,6 +49,7 @@ public class TaxReturnDto {
     public TaxReturnDto() {
         // Default values to avoid null pointers:
         this.filingStatus = FilingStatus.SINGLE;
+        this.state = State.AL;
         w2s = List.of();
     }
 

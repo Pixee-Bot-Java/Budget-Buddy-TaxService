@@ -34,7 +34,7 @@ public class StateTaxService {
   }
 
   // Get state income tax brackets by state id (1-50, alphabetical order)
-  public List<StateTax> getTaxBrackersByStateId(int stateId) {
+  public List<StateTax> getTaxBracketsByStateId(int stateId) {
     List<StateTax> taxBrackets = stateTaxRepository.findByStateId(stateId);
     if (taxBrackets.isEmpty()) {
       throw new NotFoundException("State tax info not found for state ID: " + stateId);

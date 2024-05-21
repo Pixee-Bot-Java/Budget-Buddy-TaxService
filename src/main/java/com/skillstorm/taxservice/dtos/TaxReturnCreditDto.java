@@ -10,10 +10,13 @@ import lombok.NoArgsConstructor;
 public class TaxReturnCreditDto {
 
   private int taxReturnId;
+  private int numDependents = 0;
   private int numDependentsAotc = 0;
   private int numChildren = 0;
   private BigDecimal childCareExpenses = BigDecimal.valueOf(0);
   private BigDecimal educationExpenses = BigDecimal.valueOf(0);
+  private BigDecimal llcEducationExpenses = BigDecimal.valueOf(0);
   private BigDecimal iraContributions = BigDecimal.valueOf(0);
   private boolean claimedAsDependent = false;
+  private boolean claimLlcCredit = false;
 }
