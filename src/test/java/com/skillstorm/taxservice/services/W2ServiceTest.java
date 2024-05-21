@@ -58,7 +58,7 @@ class W2ServiceTest {
         newW2.setYear(2024);
         newW2.setUserId(1);
         newW2.setEmployer("Test Employer");
-        newW2.setState(State.ALABAMA);
+        newW2.setState(State.AL);
         newW2.setWages(BigDecimal.valueOf(1000.00));
         newW2.setFederalIncomeTaxWithheld(BigDecimal.valueOf(300.00));
         newW2.setStateIncomeTaxWithheld(BigDecimal.ZERO);
