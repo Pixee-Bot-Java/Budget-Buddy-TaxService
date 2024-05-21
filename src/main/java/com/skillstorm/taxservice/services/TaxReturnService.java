@@ -1,5 +1,6 @@
 package com.skillstorm.taxservice.services;
 
+import com.skillstorm.taxservice.dtos.RefundDto;
 import com.skillstorm.taxservice.dtos.TaxReturnDeductionDto;
 import com.skillstorm.taxservice.dtos.TaxReturnDto;
 import com.skillstorm.taxservice.dtos.W2Dto;
@@ -185,9 +186,8 @@ public class TaxReturnService {
     }
 
     // Get the current tax refund for a TaxReturn:
-    public Map<String, BigDecimal> getRefund(int id) {
+    public RefundDto getRefund(int id) {
         TaxReturnDto taxReturnDto = findById(id);
-        return Map.of("federalRefund", taxReturnDto.getFederalRefund(),
-                "stateRefund", taxReturnDto.getStateRefund());
+        return new RefundDto(taxReturnDto.getFederalRefund(), taxReturnDto.getStateRefund());
     }
 }

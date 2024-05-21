@@ -5,45 +5,25 @@ import lombok.Getter;
 @Getter
 public enum State {
 
-    ALABAMA(1, "AL"), ALASKA(2, "AK"), ARIZONA(3, "AZ"), ARKANSAS(4, "AR"), CALIFORNIA(5, "CA"),
-    COLORADO(6, "CO"), CONNECTICUT(7, "CT"), DELAWARE(8, "DE"), FLORIDA(9, "FL"), GEORGIA(10, "GA"),
-    HAWAII(11, "HI"), IDAHO(12, "ID"), ILLINOIS(13, "IL"), INDIANA(14, "IN"), IOWA(15, "IA"),
-    KANSAS(16, "KS"), KENTUCKY(17, "KY"), LOUISIANA(18, "LA"), MAINE(19, "ME"), MARYLAND(20, "MD"),
-    MASSACHUSETTS(21, "MA"), MICHIGAN(22, "MI"), MINNESOTA(23, "MN"), MISSISSIPPI(24, "MS"),
-    MISSOURI(25, "MO"), MONTANA(26, "MT"), NEBRASKA(27, "NE"), NEVADA(28, "NV"), NEW_HAMPSHIRE(29, "NH"),
-    NEW_JERSEY(30, "NJ"), NEW_MEXICO(31, "NM"), NEW_YORK(32, "NY"), NORTH_CAROLINA(33, "NC"),
-    NORTH_DAKOTA(34, "ND"), OHIO(35, "OH"), OKLAHOMA(36, "OK"), OREGON(37, "OR"), PENNSYLVANIA(38, "PA"),
-    RHODE_ISLAND(39, "RI"), SOUTH_CAROLINA(40, "SC"), SOUTH_DAKOTA(41, "SD"), TENNESSEE(42, "TN"),
-    TEXAS(43, "TX"), UTAH(44, "UT"), VERMONT(45, "VT"), VIRGINIA(46, "VA"), WASHINGTON(47, "WA"),
-    WEST_VIRGINIA(48, "WV"), WISCONSIN(49, "WI"), WYOMING(50, "WY");
+    AL(1), AK(2), AZ(3), AR(4), CA(5), CO(6), CT(7), DE(8), FL(9), GA(10), HI(11), ID(12), IL(13), IN(14), IA(15),
+    KS(16), KY(17), LA(18), ME(19), MD(20), MA(21), MI(22), MN(23), MS(24), MO(25), MT(26), NE(27), NV(28), NH(29),
+    NJ(30), NM(31), NY(32), NC(33), ND(34), OH(35), OK(36), OR(37), PA(38), RI(39), SC(40), SD(41), TN(42), TX(43),
+    UT(44), VT(45), VA(46), WA(47), WV(48), WI(49), WY(50);
 
-    // Convert String to State. Used to translate JSON from request to Java object:
-    public static State fromCode(String stateCode) {
-        for (State state : State.values()) {
-            if (state.getCode().equalsIgnoreCase(stateCode)) {
+
+    // Convert int to State. Used to translate integer from database to Java object:
+    public static State fromValue(int value) {
+        for(State state : State.values()) {
+            if(state.getValue() == value) {
                 return state;
             }
         }
         return null;
     }
 
-
-    // Convert int to State. Used to translate integer from database to Java object:
-    public static State fromValue(int stateValue) {
-        for (State state : State.values()) {
-            if (state.getValue() == stateValue) {
-                return state;
-            }
-        }
-        return null; // Return null if no matching state is found
-    }
-
-
     private final int value;
-    private final String code;
 
-    State(int value, String code) {
+    State(int value) {
         this.value = value;
-        this.code = code;
     }
 }

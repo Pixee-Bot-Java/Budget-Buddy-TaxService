@@ -1,10 +1,10 @@
 package com.skillstorm.taxservice.dtos;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.skillstorm.taxservice.constants.State;
 import com.skillstorm.taxservice.models.TaxReturn;
 import com.skillstorm.taxservice.models.W2;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -13,29 +13,44 @@ import java.math.BigDecimal;
 public class W2Dto {
 
     private int id;
+
+    @Min(value = 1, message = "taxreturn.id.min")
     private int taxReturnId;
+
+    @Min(value = 2015, message = "w2.year.min")
     private int year;
+
+    @Min(value = 1, message = "w2.userId.min")
     private int userId;
+
     private String employer;
+
     private State state;
-    private BigDecimal wages = BigDecimal.valueOf(0);
-    private BigDecimal federalIncomeTaxWithheld = BigDecimal.valueOf(0);
-    private BigDecimal stateIncomeTaxWithheld = BigDecimal.valueOf(0);
-    private BigDecimal socialSecurityTaxWithheld = BigDecimal.valueOf(0);
-    private BigDecimal medicareTaxWithheld = BigDecimal.valueOf(0);
+
+    @Min(value = 0, message = "w2.wages.min")
+    private BigDecimal wages;
+
+    @Min(value = 0, message = "w2.federalIncomeTaxWithheld.min")
+    private BigDecimal federalIncomeTaxWithheld;
+
+    @Min(value = 0, message = "w2.stateIncomeTaxWithheld.min")
+    private BigDecimal stateIncomeTaxWithheld;
+
+    @Min(value = 0, message = "w2.socialSecurityTaxWithheld.min")
+    private BigDecimal socialSecurityTaxWithheld;
+
+    @Min(value = 0, message = "w2.medicareTaxWithheld.min")
+    private BigDecimal medicareTaxWithheld;
+
     private String imageKey;
 
     public W2Dto() {
-        // Default value to avoid null pointers:
-        this.state = State.ALABAMA;
-    }
-
-    @JsonCreator
-    public W2Dto(@JsonProperty("state") String state) {
-        this();
-        if(state != null) {
-            this.state = State.fromCode(state.trim().toUpperCase());
-        }
+        // Default values to avoid null pointers in tax return calculations:
+        this.wages = BigDecimal.ZERO.setScale(2);
+        this.federalIncomeTaxWithheld = BigDecimal.ZERO.setScale(2);
+        this.stateIncomeTaxWithheld = BigDecimal.ZERO.setScale(2);
+        this.socialSecurityTaxWithheld = BigDecimal.ZERO.setScale(2);
+        this.medicareTaxWithheld = BigDecimal.ZERO.setScale(2);
     }
 
     public W2Dto(W2 w2) {
@@ -61,7 +76,9 @@ public class W2Dto {
         w2.setYear(year);
         w2.setUserId(userId);
         w2.setEmployer(employer);
-        w2.setState(state.getValue());
+        if(state != null) {
+            w2.setState(state.getValue());
+        }
         w2.setWages(wages);
         w2.setFederalIncomeTaxWithheld(federalIncomeTaxWithheld);
         w2.setStateIncomeTaxWithheld(stateIncomeTaxWithheld);
