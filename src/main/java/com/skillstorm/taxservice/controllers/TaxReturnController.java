@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/taxreturns")
@@ -38,7 +39,7 @@ public class TaxReturnController {
 
     // Get current federal tax refund:
     @GetMapping("/{id}/refund")
-    public ResponseEntity<List<BigDecimal>> getRefund(@PathVariable("id") int id) {
+    public ResponseEntity<Map<String, BigDecimal>> getRefund(@PathVariable("id") int id) {
         return ResponseEntity.ok(taxReturnService.getRefund(id));
     }
 
