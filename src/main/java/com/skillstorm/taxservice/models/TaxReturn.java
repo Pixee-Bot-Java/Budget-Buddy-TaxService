@@ -85,7 +85,11 @@ public class TaxReturn {
     @Column(name = "total_credits")
     private BigDecimal totalCredits;
 
-    private BigDecimal refund;
+    @Column(name = "federal_refund")
+    private BigDecimal federalRefund;
+
+    @Column(name = "state_refund")
+    private BigDecimal stateRefund;
 
     public TaxReturn() {
         w2s = List.of();

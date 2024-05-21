@@ -87,7 +87,7 @@ public class TaxReturnService {
         setFinancialValues(updatedTaxReturn);
 
         // With all of our fields set, let's run the TaxCalculator. Placeholder for now:
-        updatedTaxReturn.setRefund(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP));
+        updatedTaxReturn.setFederalRefund(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP));
     }
 
     // Populate the monetary values for a TaxReturn:
@@ -181,7 +181,8 @@ public class TaxReturnService {
     }
 
     // Get the current tax refund for a TaxReturn:
-    public BigDecimal getRefund(int id) {
-        return findById(id).getRefund();
+    public List<BigDecimal> getRefund(int id) {
+        TaxReturnDto taxReturnDto = findById(id);
+        return List.of(taxReturnDto.getFederalRefund(), taxReturnDto.getStateRefund());
     }
 }
