@@ -1,11 +1,8 @@
 package com.skillstorm.taxservice.constants;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import lombok.Getter;
 
 @Getter
-//@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum State {
 
     AL(1), AK(2), AZ(3), AR(4), CA(5), CO(6), CT(7), DE(8), FL(9), GA(10), HI(11), ID(12), IL(13), IN(14), IA(15),
