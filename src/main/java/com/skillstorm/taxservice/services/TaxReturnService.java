@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @PropertySource("classpath:SystemMessages.properties")
@@ -184,8 +185,9 @@ public class TaxReturnService {
     }
 
     // Get the current tax refund for a TaxReturn:
-    public List<BigDecimal> getRefund(int id) {
+    public Map<String, BigDecimal> getRefund(int id) {
         TaxReturnDto taxReturnDto = findById(id);
-        return List.of(taxReturnDto.getFederalRefund(), taxReturnDto.getStateRefund());
+        return Map.of("federalRefund", taxReturnDto.getFederalRefund(),
+                "stateRefund", taxReturnDto.getStateRefund());
     }
 }
