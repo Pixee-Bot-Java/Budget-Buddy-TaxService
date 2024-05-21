@@ -46,7 +46,7 @@ public class TaxCalculatorController {
         return marriedFilerTaxBracketRepository.findAll();
     }
 
-    @PostMapping("/calculate/single")
+    /* @PostMapping("/calculate/single")
     public double calculateSingleFilerTax(@RequestParam int taxableIncome, @RequestParam int creditsApplied) {
         return taxCalculatorService.calculateSingleFilerTax(taxableIncome, creditsApplied);
     }
@@ -54,6 +54,6 @@ public class TaxCalculatorController {
     @PostMapping("/calculate/married")
     public double calculateMarriedFilerTax(@RequestParam int taxableIncome) {
         return taxCalculatorService.calculateMarriedFilerTax(taxableIncome);
-    }
+    } */
 }
 

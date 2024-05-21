@@ -23,6 +23,10 @@ public class TaxReturnCredit {
   @JoinColumn(name = "tax_return_id", nullable = false, unique = true)
   private TaxReturn taxReturn;
 
+  // Number of user's dependents that qualify for child tax credit
+  @Column(name = "num_dependents")
+  private int numDependents;
+
   // Number of user's qualifying dependents who qualify for aotc credit 
   @Column(name = "num_dependents_aotc")
   private int numDependentsAotc;
@@ -35,9 +39,13 @@ public class TaxReturnCredit {
   @Column(name = "child_care_expenses")
   private BigDecimal childCareExpenses;
 
-  // Amount paid in educational expenses
+  // Amount paid in educational expenses regarding aotc (college) credit
   @Column(name = "education_expenses")
   private BigDecimal educationExpenses;
+
+  // Amount paid in education expenses regarding llc education credit
+  @Column(name = "llc_education_expenses")
+  private BigDecimal llcEducationExpenses;
 
   // Amount contributed to IRA accounts
   @Column(name = "ira_contributions")
@@ -46,5 +54,9 @@ public class TaxReturnCredit {
   // Whether the user can be claimed as a dependent on another's tax return
   @Column(name = "claimed_as_dependent")
   private boolean claimedAsDependent;
+
+  // Whether the user or one of their dependents can claim LLC education credit if they don't qualify for aotc
+  @Column(name = "llc_credit")
+  private boolean claimLlcCredit;
 
 }

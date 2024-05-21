@@ -15,4 +15,6 @@ public interface StateTaxRepository extends JpaRepository<StateTax, Integer> {
 
     @Query("SELECT st FROM StateTax st JOIN st.state s WHERE s.stateCode = :stateCode")
     List<StateTax> findByStateCode(@Param("stateCode") String stateCode);
+
+    List<StateTax> findByStateId(int id);
 }

@@ -43,4 +43,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleUndeterminedContentException(UndeterminedContentException e) {
         return ResponseEntity.badRequest().body(e.getMessage());
     }
+
+    // Handle IllegalAccessError from trying to sum other income fields
+    @ExceptionHandler(IllegalAccessException.class)
+    public ResponseEntity<String> handleIllegalAccessError(IllegalAccessException e) {
+      return ResponseEntity.badRequest().body(e.getMessage());
+  }
 }

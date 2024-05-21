@@ -3,6 +3,8 @@ package com.skillstorm.taxservice.models;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import com.skillstorm.taxservice.constants.State;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -39,8 +41,8 @@ public class TaxReturn {
 
     private String city;
 
-    // May change to enum:
-    private String state;
+    @Enumerated(EnumType.ORDINAL)
+    private State state;
 
     private String zip;
 

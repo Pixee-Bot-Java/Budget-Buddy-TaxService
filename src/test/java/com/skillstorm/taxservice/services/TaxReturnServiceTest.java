@@ -1,6 +1,7 @@
 package com.skillstorm.taxservice.services;
 
 import com.skillstorm.taxservice.constants.FilingStatus;
+import com.skillstorm.taxservice.constants.State;
 import com.skillstorm.taxservice.dtos.TaxReturnDto;
 import com.skillstorm.taxservice.exceptions.NotFoundException;
 import com.skillstorm.taxservice.models.TaxReturn;
@@ -86,7 +87,7 @@ class TaxReturnServiceTest {
         updatedTaxReturn.setLastName("TestLastName");
         updatedTaxReturn.setAddress("TestAddress");
         updatedTaxReturn.setCity("TestCity");
-        updatedTaxReturn.setState("TestState");
+        updatedTaxReturn.setState(State.AL);
         updatedTaxReturn.setZip("TestZipCode");
         updatedTaxReturn.setTotalIncome(BigDecimal.ZERO.setScale(2));
         updatedTaxReturn.setAdjustedGrossIncome(BigDecimal.ZERO.setScale(2));
@@ -201,7 +202,7 @@ class TaxReturnServiceTest {
         assertEquals("TestLastName", result.getLastName(), "The TaxReturn last name should be TestLastName.");
         assertEquals("TestAddress", result.getAddress(), "The TaxReturn address should be TestAddress.");
         assertEquals("TestCity", result.getCity(), "The TaxReturn city should be TestCity.");
-        assertEquals("TestState", result.getState(), "The TaxReturn state should be TestState.");
+        assertEquals(State.AL, result.getState(), "The TaxReturn state should be Alabama.");
         assertEquals("TestZipCode", result.getZip(), "The TaxReturn zip code should be TestZipCode.");
         assertEquals(BigDecimal.ZERO.setScale(2), result.getFederalRefund(), "The TaxReturn refund should be 0.00.");
     }
