@@ -1,5 +1,8 @@
 package com.skillstorm.taxservice.services;
 
+import java.lang.reflect.Field;
+import java.math.BigDecimal;
+
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
@@ -61,5 +64,30 @@ public class OtherIncomeService {
     OtherIncome existingOtherIncome = otherIncomeRepository.findByTaxReturnId(otherIncomeDto.getTaxReturnId())
       .orElseThrow(() -> new NotFoundException(env.getProperty("otherincome.not.found") + otherIncomeDto.getTaxReturnId()));
     otherIncomeRepository.delete(existingOtherIncome);
+  }
+
+  public BigDecimal sumOtherIncome(OtherIncomeDto otherIncomeDto) {
+    BigDecimal sum = BigDecimal.ZERO;
+        
+    // Get all declared fields of the class
+    Field[] fields = otherIncomeDto.getClass().getDeclaredFields();
+    
+    for (Field field : fields) {
+        // Check if the field is of type BigDecimal
+        if (field.getType().equals(BigDecimal.class)) {
+            field.setAccessible(true); // Make private fields accessible
+            try {
+              // Sum valid values
+              BigDecimal value = (BigDecimal) field.get(otherIncomeDto);
+              if (value != null) {
+                  sum = sum.add(value);
+              }
+            } catch (IllegalAccessException e) {
+              e.printStackTrace();
+            }
+        }
+    }
+    
+    return sum;
   }
 }
