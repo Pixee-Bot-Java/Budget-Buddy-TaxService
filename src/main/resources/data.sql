@@ -565,3 +565,10 @@ INSERT INTO state_tax (state_id, rate, income_range) VALUES (49, 0.0765, 0);
 -- Wyoming
 INSERT INTO state_tax (state_id, rate, income_range) VALUES (50, 0.00, 0);
 COMMIT;
+
+BEGIN;
+INSERT INTO deduction (name) VALUES ('Health Savings Account');
+INSERT INTO deduction (name) VALUES ('IRA Contributions');
+INSERT INTO deduction (name) VALUES ('Student Loan Interest');
+INSERT INTO deduction (name) VALUES ('Educator Expenses');
+COMMIT;

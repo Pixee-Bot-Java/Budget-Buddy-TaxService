@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -189,5 +190,11 @@ public class TaxReturnService {
     public RefundDto getRefund(int id) {
         TaxReturnDto taxReturnDto = findById(id);
         return new RefundDto(taxReturnDto.getFederalRefund(), taxReturnDto.getStateRefund());
+    }
+
+    // Clean up all entities associated with a User when they delete their account:
+    @Transactional
+    public void deleteAllByUserId(int userId) {
+        taxReturnRepository.deleteAllByUserId(userId);
     }
 }

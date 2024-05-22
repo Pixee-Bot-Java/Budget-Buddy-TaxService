@@ -42,12 +42,11 @@ class DeductionsServiceTest {
         returnedDeduction = new Deduction();
         returnedDeduction.setId(1);
         returnedDeduction.setName("Test Deduction");
-        returnedDeduction.setAgiLimit(BigDecimal.valueOf(0.25));
 
         deductionList = List.of(
-                new Deduction(1, "Test Deduction 1", BigDecimal.valueOf(0.25)),
-                new Deduction(2, "Test Deduction 2", BigDecimal.valueOf(0.50)),
-                new Deduction(3, "Test Deduction 3", BigDecimal.valueOf(0.75))
+                new Deduction(1, "Test Deduction 1"),
+                new Deduction(2, "Test Deduction 2"),
+                new Deduction(3, "Test Deduction 3")
         );
     }
 
@@ -64,7 +63,6 @@ class DeductionsServiceTest {
         // Verify:
         assertEquals(1, result.getId(), "Deduction ID should be: 1");
         assertEquals("Test Deduction", result.getName(), "Deduction name should be: Test Deduction");
-        assertEquals(BigDecimal.valueOf(0.25), result.getAgiLimit(), "Adjusted Gross Income Limit should be: 0.25");
     }
 
     // Test find Deduction by ID Failure:

@@ -29,12 +29,15 @@ spring:
     username: ${DATABASE_USER:postgres}
     password: ${DATABASE_PASS:postgres}
 
+    # Run scripts at start-up: always or never
+    initialization-mode: always
+
   # Configure the way JPA interacts with the database:
   jpa:
     show-sql: true
     hibernate:
       # To have JPA create a new database upon start up, set to create. If you
-      # want the database to persist between sessions, set to none:
+      # want the database to persist between sessions, set to update or none:
       ddl-auto: update
     properties:
       hibernate:

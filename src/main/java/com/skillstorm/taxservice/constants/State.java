@@ -2,8 +2,10 @@ package com.skillstorm.taxservice.constants;
 
 import lombok.Getter;
 
+import java.io.Serializable;
+
 @Getter
-public enum State {
+public enum State implements Serializable {
 
     AL(1), AK(2), AZ(3), AR(4), CA(5), CO(6), CT(7), DE(8), FL(9), GA(10), HI(11), ID(12), IL(13), IN(14), IA(15),
     KS(16), KY(17), LA(18), ME(19), MD(20), MA(21), MI(22), MN(23), MS(24), MO(25), MT(26), NE(27), NV(28), NH(29),
