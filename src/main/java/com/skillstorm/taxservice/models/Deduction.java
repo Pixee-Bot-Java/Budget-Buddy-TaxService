@@ -6,8 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "deduction")
 public class Deduction {
@@ -17,4 +17,9 @@ public class Deduction {
     private int id;
 
     private String name;
+
+    public Deduction(int id) {
+        super();
+        this.id = id;
+    }
 }
