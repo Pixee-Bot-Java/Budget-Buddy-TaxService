@@ -54,6 +54,9 @@ public class TaxReturn {
     @OneToMany(mappedBy = "taxReturn", cascade = CascadeType.ALL)
     private List<W2> w2s;
 
+    @OneToMany(mappedBy = "taxReturn", cascade = CascadeType.ALL)
+    private List<TaxReturnDeduction> taxReturnDeductions;
+
     @OneToOne(mappedBy = "taxReturn", cascade = CascadeType.ALL)
     private OtherIncome otherIncome;
 
