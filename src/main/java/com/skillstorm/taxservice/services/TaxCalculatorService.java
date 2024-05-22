@@ -313,6 +313,8 @@ public class TaxCalculatorService {
         taxRefund = taxRefund.add(creditAfterPhaseout);
       }
 
+      // Add credits to total credits, and set tax refund back into dto
+      taxReturn.setTotalCredits(taxReturn.getTotalCredits().add(creditAfterPhaseout));
       taxReturn.setFederalRefund(taxRefund);
       
       return taxReturn;
@@ -360,7 +362,8 @@ public class TaxCalculatorService {
       // if agi is greater than agi threshold: not eligible, return
       if (agi.compareTo(BigDecimal.valueOf(agiThreshold)) > 0) return taxReturn;
 
-      // If tax credit is applicable, add credit to federal refund
+      // If tax credit is applicable, add credit to federal refund and to total credits
+      taxReturn.setTotalCredits(taxReturn.getTotalCredits().add(BigDecimal.valueOf(creditAmount)));
       taxReturn.setFederalRefund(taxReturn.getFederalRefund().add(BigDecimal.valueOf(creditAmount)));
 
       return taxReturn;
@@ -422,7 +425,8 @@ public class TaxCalculatorService {
       // Calculate total credit amount based on income and its associated partial credit rate
       creditAmount = creditAmount.multiply(rate);
 
-      // Add total credit amount to tax return
+      // Add total credit amount to federal refund and total credits
+      taxReturn.setTotalCredits(taxReturn.getTotalCredits().add(creditAmount));
       taxReturn.setFederalRefund(taxReturn.getFederalRefund().add(creditAmount));
 
       return taxReturn;
@@ -469,8 +473,15 @@ public class TaxCalculatorService {
       // Calculate the final credit amount based on the limiting rate of agi
       creditAmount = creditAmount.multiply(rate);
 
-      // Add total credit amount to tax return
-      taxReturn.setFederalRefund(taxReturn.getFederalRefund().add(creditAmount).min(BigDecimal.ZERO));
+      // Calculate the amount needed to bring federalRefund to zero
+      BigDecimal neededToZero = taxReturn.getFederalRefund().negate();
+
+      // Determine the actual amount of credit added
+      BigDecimal actualAddedCredit = creditAmount.min(neededToZero.max(BigDecimal.ZERO));
+
+      // Add total credit amount to federal refund and total credits
+      taxReturn.setTotalCredits(taxReturn.getTotalCredits().add(actualAddedCredit));
+      taxReturn.setFederalRefund(taxReturn.getFederalRefund().add(actualAddedCredit));
 
       return taxReturn;
     }
@@ -521,8 +532,15 @@ public class TaxCalculatorService {
       // Calculate credit amount based on rate
       BigDecimal creditAmount = iraContributions.multiply(rate);
 
-      // Add total credit amount to tax return
-      taxReturn.setFederalRefund(taxReturn.getFederalRefund().add(creditAmount).min(BigDecimal.ZERO));
+      // Calculate the amount needed to bring federalRefund to zero
+      BigDecimal neededToZero = taxReturn.getFederalRefund().negate();
+
+      // Determine the actual amount of credit added
+      BigDecimal actualAddedCredit = creditAmount.min(neededToZero.max(BigDecimal.ZERO));
+
+      // Add total credit amount to federal refund and total credits
+      taxReturn.setTotalCredits(taxReturn.getTotalCredits().add(actualAddedCredit));
+      taxReturn.setFederalRefund(taxReturn.getFederalRefund().add(actualAddedCredit));
 
       return taxReturn;
     }
@@ -566,12 +584,15 @@ public class TaxCalculatorService {
       // Restrict creditAmount based on credit limit
       creditAmount = creditAmount.max(BigDecimal.valueOf(creditLimit.getCreditLimit()));
 
-      // Non-refundable credit, so add credit with a max liability of 0
-      BigDecimal taxRefund = taxReturn.getFederalRefund();
-      taxRefund = taxRefund.add(creditAmount).min(BigDecimal.ZERO);
+      // Calculate the amount needed to bring federalRefund to zero
+      BigDecimal neededToZero = taxReturn.getFederalRefund().negate();
 
-      // Set refund back into tax return
-      taxReturn.setFederalRefund(taxRefund);
+      // Determine the actual amount of credit added
+      BigDecimal actualAddedCredit = creditAmount.min(neededToZero.max(BigDecimal.ZERO));
+
+      // Add credits to federal refund and total credits
+      taxReturn.setTotalCredits(taxReturn.getTotalCredits().add(actualAddedCredit));
+      taxReturn.setFederalRefund(taxReturn.getFederalRefund().add(actualAddedCredit));
 
       return taxReturn;
     }
