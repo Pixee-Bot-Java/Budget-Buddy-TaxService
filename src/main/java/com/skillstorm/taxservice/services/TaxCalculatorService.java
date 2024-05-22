@@ -2,6 +2,7 @@ package com.skillstorm.taxservice.services;
 
 import org.springframework.stereotype.Service;
 
+import com.skillstorm.taxservice.constants.State;
 import com.skillstorm.taxservice.dtos.OtherIncomeDto;
 import com.skillstorm.taxservice.dtos.TaxReturnCreditDto;
 import com.skillstorm.taxservice.dtos.TaxReturnDto;
@@ -21,6 +22,8 @@ import com.skillstorm.taxservice.models.taxcredits.SaversTaxCredit;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class TaxCalculatorService {
@@ -44,6 +47,32 @@ public class TaxCalculatorService {
       this.taxBracketService = taxBracketService;
       this.stateTaxService = stateTaxService;
       this.capitalGainsTaxService = capitalGainsTaxService;
+    }
+
+    public TaxReturnDto calculateAll(TaxReturnDto taxReturn) throws IllegalAccessException {
+
+      // First, perform any income related calculations; calculating total income, agi, and taxable income
+      calculateTotalIncome(taxReturn);
+      calculateAgi(taxReturn);
+      calculateTaxableIncome(taxReturn);
+
+      // Second, calculate tax liabilities
+      calculateFederalTaxes(taxReturn);
+      calculateStateTaxes(taxReturn);
+      calculateCapitalGainsTax(taxReturn);
+
+      // Third, calculate applicable credits applied to federal tax liability
+      calculateNonRefundableTaxCredits(taxReturn);
+      calculateRefundableTaxCredits(taxReturn);
+
+      // Finally, scale the relevant BigDecimals to be presentable
+      taxReturn.setTotalIncome(taxReturn.getTotalIncome().setScale(2, RoundingMode.HALF_UP));
+      taxReturn.setAdjustedGrossIncome(taxReturn.getAdjustedGrossIncome().setScale(2, RoundingMode.HALF_UP));
+      taxReturn.setTaxableIncome(taxReturn.getTaxableIncome().setScale(2, RoundingMode.HALF_UP));
+      taxReturn.setTotalCredits(taxReturn.getTotalCredits().setScale(2, RoundingMode.HALF_UP));
+      taxReturn.setFederalRefund(taxReturn.getFederalRefund().setScale(2, RoundingMode.HALF_UP));
+
+      return taxReturn;
     }
 
     public TaxReturnDto calculateTotalIncome(TaxReturnDto taxReturn) throws IllegalAccessException {
@@ -110,7 +139,8 @@ public class TaxCalculatorService {
       }
 
       // Set the federal tax amount in the TaxReturnDto
-      taxReturn.setFederalRefund(taxReturn.getFederalRefund().subtract(totalTaxes));
+      taxReturn.setFederalRefund(taxReturn.getFederalRefund()
+                                          .subtract(totalTaxes));
 
       // Return the total federal tax liability
       return taxReturn;
@@ -121,44 +151,92 @@ public class TaxCalculatorService {
     public TaxReturnDto calculateStateTaxes(TaxReturnDto taxReturn) {
       // Get tax return's W2s
       List<W2Dto> w2s = taxReturn.getW2s();
-  
-      // Initialize tax amount and withheld amounts
+
+      // Determine the tax return's state
+      State taxReturnState = taxReturn.getState();
+
+      // Group W2s by state
+      Map<State, List<W2Dto>> w2sByState = w2s.stream()
+        .collect(Collectors.groupingBy(W2Dto::getState));
+
+      // Initialize tax amounts and withheld amounts
       BigDecimal totalTaxAmount = BigDecimal.ZERO;
-      BigDecimal totalFedTaxWithheld = BigDecimal.ZERO;
       BigDecimal totalStateTaxWithheld = BigDecimal.ZERO;
+      BigDecimal totalFedTaxWithheld = BigDecimal.ZERO;
       BigDecimal totalSocialSecurityTaxWithheld = BigDecimal.ZERO;
       BigDecimal totalMedicareTaxWithheld = BigDecimal.ZERO;
-  
-      // Calculate taxes for each W2
-      for (W2Dto w2 : w2s) {
-          totalFedTaxWithheld = totalFedTaxWithheld.add(w2.getFederalIncomeTaxWithheld());
-          totalStateTaxWithheld = totalStateTaxWithheld.add(w2.getStateIncomeTaxWithheld());
-          totalSocialSecurityTaxWithheld = totalSocialSecurityTaxWithheld.add(w2.getSocialSecurityTaxWithheld());
-          totalMedicareTaxWithheld = totalMedicareTaxWithheld.add(w2.getMedicareTaxWithheld());
-  
-          totalTaxAmount = totalTaxAmount.add(calculateTaxForIncome(w2.getWages(), w2.getState().getValue()));
+
+      // Calculate taxes for each group of W2s by state
+      for (Map.Entry<State, List<W2Dto>> entry : w2sByState.entrySet()) {
+        State state = entry.getKey();
+        List<W2Dto> w2sForState = entry.getValue();
+
+        // Calculate total wages for the state
+        BigDecimal totalWagesForState = w2sForState.stream()
+                                                  .map(W2Dto::getWages)
+                                                  .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        // Check if the state matches the tax return's state
+        if (state.equals(taxReturnState)) {
+
+          // Include OtherIncome values in the total state wages
+          if (taxReturn.getOtherIncome() != null) {
+              totalWagesForState = totalWagesForState.add(taxReturn.getOtherIncome().getOtherInvestmentIncome()
+                                                      .add(taxReturn.getOtherIncome().getNetBusinessIncome())
+                                                      .add(taxReturn.getOtherIncome().getAdditionalIncome())
+                                                      .add(taxReturn.getOtherIncome().getShortTermCapitalGains()));
+          }
+        }
+
+        // Calculate state tax for the total wages of the state
+        BigDecimal stateTaxForState = calculateTaxForIncome(totalWagesForState, state.getValue());
+
+        // Update total state tax amount
+        totalTaxAmount = totalTaxAmount.add(stateTaxForState);
+
+        // Calculate total state tax withheld for the state
+        BigDecimal totalStateTaxWithheldForState = w2sForState.stream()
+                                                              .map(W2Dto::getStateIncomeTaxWithheld)
+                                                              .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        // Update total state tax withheld
+        totalStateTaxWithheld = totalStateTaxWithheld.add(totalStateTaxWithheldForState);
       }
   
-      // Calculate taxes for other income
-      if (taxReturn.getOtherIncome() != null) {
-          BigDecimal otherIncome = taxReturn.getOtherIncome().getOtherInvestmentIncome()
-              .add(taxReturn.getOtherIncome().getNetBusinessIncome())
-              .add(taxReturn.getOtherIncome().getAdditionalIncome())
-              .add(taxReturn.getOtherIncome().getShortTermCapitalGains());
+      // Iterate over W2s to calculate total amounts
+      for (W2Dto w2 : w2s) {
+        totalFedTaxWithheld = totalFedTaxWithheld.add(w2.getFederalIncomeTaxWithheld());
+        totalSocialSecurityTaxWithheld = totalSocialSecurityTaxWithheld.add(w2.getSocialSecurityTaxWithheld());
+        totalMedicareTaxWithheld = totalMedicareTaxWithheld.add(w2.getMedicareTaxWithheld());
+      }
   
-          totalTaxAmount = totalTaxAmount.add(calculateTaxForIncome(otherIncome, taxReturn.getState().getValue()));
+      // If the tax return's state does not match any of the W2s' states,
+      // calculate taxes on OtherIncome for the tax return's state separately
+      if (!w2sByState.containsKey(taxReturnState) && taxReturn.getOtherIncome() != null) {
+        BigDecimal otherIncomeTaxForState = calculateTaxForIncome(
+                taxReturn.getOtherIncome().getOtherInvestmentIncome()
+                  .add(taxReturn.getOtherIncome().getNetBusinessIncome())
+                  .add(taxReturn.getOtherIncome().getShortTermCapitalGains())
+                  .add(taxReturn.getOtherIncome().getAdditionalIncome()),
+                taxReturnState.getValue()
+        );
+        // Add OtherIncome taxes to the total state tax amount
+        totalTaxAmount = totalTaxAmount.add(otherIncomeTaxForState);
       }
   
       // Set results in the relevant DTO fields
-      taxReturn.setStateRefund(taxReturn.getStateRefund().subtract(totalTaxAmount));
-      taxReturn.setFedTaxWithheld(totalFedTaxWithheld);
-      taxReturn.setStateTaxWithheld(totalStateTaxWithheld);
-      taxReturn.setSocialSecurityTaxWithheld(totalSocialSecurityTaxWithheld);
-      taxReturn.setMedicareTaxWithheld(totalMedicareTaxWithheld);
+      taxReturn.setStateRefund(taxReturn.getStateRefund()
+                                        .subtract(totalTaxAmount)
+                                        .setScale(2, RoundingMode.HALF_UP));
+      taxReturn.setFedTaxWithheld(totalFedTaxWithheld.setScale(2, RoundingMode.HALF_UP));
+      taxReturn.setStateTaxWithheld(totalStateTaxWithheld.setScale(2, RoundingMode.HALF_UP));
+      taxReturn.setSocialSecurityTaxWithheld(totalSocialSecurityTaxWithheld.setScale(2, RoundingMode.HALF_UP));
+      taxReturn.setMedicareTaxWithheld(totalMedicareTaxWithheld.setScale(2, RoundingMode.HALF_UP));
   
       // Return updated tax return
       return taxReturn;
     }
+
   
     private BigDecimal calculateTaxForIncome(BigDecimal income, int stateId) {
       BigDecimal totalTaxAmount = BigDecimal.ZERO;
@@ -199,7 +277,7 @@ public class TaxCalculatorService {
       BigDecimal longTermCapitalGains = taxReturn.getOtherIncome().getLongTermCapitalGains();
 
       // Initialize tax amounts
-      BigDecimal longTermCapitalGainsTaxAmount = BigDecimal.valueOf(0);
+      BigDecimal longTermCapitalGainsTaxAmount = BigDecimal.ZERO;
 
       // Get long term capital gains federal tax rates based on user's filing status
       List<CapitalGainsTax> longTermCapitalGainsTaxBrackets = capitalGainsTaxService.findByFilingStatusID(taxReturn.getFilingStatus().getValue());
@@ -213,13 +291,13 @@ public class TaxCalculatorService {
 
         // If at the last bracket (income range is 0) tax remaining gains at that rate
         if (bracket.getIncomeRange() == 0) {
-          longTermCapitalGainsTaxAmount = longTermCapitalGains.add(remainingCapGains.multiply(bracket.getRate()));
+          longTermCapitalGainsTaxAmount = longTermCapitalGainsTaxAmount.add(remainingCapGains.multiply(bracket.getRate()));
           break;
         }
 
         // Start at tax bracket that ordinary income falls into
-        if (ordinaryIncome.compareTo(BigDecimal.valueOf((double)bracket.getIncomeRange())) >= 0) {
-          ordinaryIncome = BigDecimal.valueOf(Math.max(0, ordinaryIncome.doubleValue() - bracket.getIncomeRange()));
+        if (ordinaryIncome.compareTo(BigDecimal.valueOf(bracket.getIncomeRange())) >= 0) {
+          ordinaryIncome = ordinaryIncome.subtract(BigDecimal.valueOf(bracket.getIncomeRange()).max(BigDecimal.ZERO));
           continue;
         }
 
@@ -241,7 +319,8 @@ public class TaxCalculatorService {
       }
 
       // Add tax amount to federal refund of tax return
-      taxReturn.setFederalRefund(taxReturn.getFederalRefund().subtract(longTermCapitalGainsTaxAmount));
+      taxReturn.setFederalRefund(taxReturn.getFederalRefund()
+                                          .subtract(longTermCapitalGainsTaxAmount));
 
       return taxReturn;
     }
@@ -304,7 +383,7 @@ public class TaxCalculatorService {
       // Get current federal tax liability
       BigDecimal taxRefund = taxReturn.getFederalRefund();
 
-      if (taxRefund.compareTo(creditAfterPhaseout) >= 0) {
+      if (taxRefund.compareTo(BigDecimal.ZERO) <= 0) {
         taxRefund = taxRefund.add(creditAfterPhaseout);
       } else {
         BigDecimal creditLimit = BigDecimal.valueOf(childTaxCredit.getRefundLimit());
@@ -313,12 +392,14 @@ public class TaxCalculatorService {
         taxRefund = taxRefund.add(creditAfterPhaseout);
       }
 
+      // Add credits to total credits, and set tax refund back into dto
+      taxReturn.setTotalCredits(taxReturn.getTotalCredits().add(creditAfterPhaseout));
       taxReturn.setFederalRefund(taxRefund);
       
       return taxReturn;
     }
 
-
+    // refundable
     public TaxReturnDto calculateEarnedIncomeTaxCredit(TaxReturnDto taxReturn) {
 
       TaxReturnCreditDto taxReturnCredit = taxReturn.getTaxCredit();
@@ -360,7 +441,8 @@ public class TaxCalculatorService {
       // if agi is greater than agi threshold: not eligible, return
       if (agi.compareTo(BigDecimal.valueOf(agiThreshold)) > 0) return taxReturn;
 
-      // If tax credit is applicable, add credit to federal refund
+      // If tax credit is applicable, add credit to federal refund and to total credits
+      taxReturn.setTotalCredits(taxReturn.getTotalCredits().add(BigDecimal.valueOf(creditAmount)));
       taxReturn.setFederalRefund(taxReturn.getFederalRefund().add(BigDecimal.valueOf(creditAmount)));
 
       return taxReturn;
@@ -422,7 +504,8 @@ public class TaxCalculatorService {
       // Calculate total credit amount based on income and its associated partial credit rate
       creditAmount = creditAmount.multiply(rate);
 
-      // Add total credit amount to tax return
+      // Add total credit amount to federal refund and total credits
+      taxReturn.setTotalCredits(taxReturn.getTotalCredits().add(creditAmount));
       taxReturn.setFederalRefund(taxReturn.getFederalRefund().add(creditAmount));
 
       return taxReturn;
@@ -469,8 +552,15 @@ public class TaxCalculatorService {
       // Calculate the final credit amount based on the limiting rate of agi
       creditAmount = creditAmount.multiply(rate);
 
-      // Add total credit amount to tax return
-      taxReturn.setFederalRefund(taxReturn.getFederalRefund().add(creditAmount).min(BigDecimal.ZERO));
+      // Calculate the amount needed to bring federalRefund to zero
+      BigDecimal neededToZero = taxReturn.getFederalRefund().negate();
+
+      // Determine the actual amount of credit added
+      BigDecimal actualAddedCredit = creditAmount.min(neededToZero.max(BigDecimal.ZERO));
+
+      // Add total credit amount to federal refund and total credits
+      taxReturn.setTotalCredits(taxReturn.getTotalCredits().add(actualAddedCredit));
+      taxReturn.setFederalRefund(taxReturn.getFederalRefund().add(actualAddedCredit));
 
       return taxReturn;
     }
@@ -505,7 +595,7 @@ public class TaxCalculatorService {
           if (remainingAgi.compareTo(agiThirdThreshold) > 0) {
             return taxReturn;
           } else {
-            rate = saversTaxCredit.getThirdontributionRate();
+            rate = saversTaxCredit.getThirdContributionRate();
           }
         } else {
           rate = saversTaxCredit.getSecondContributionRate();
@@ -521,8 +611,15 @@ public class TaxCalculatorService {
       // Calculate credit amount based on rate
       BigDecimal creditAmount = iraContributions.multiply(rate);
 
-      // Add total credit amount to tax return
-      taxReturn.setFederalRefund(taxReturn.getFederalRefund().add(creditAmount).min(BigDecimal.ZERO));
+      // Calculate the amount needed to bring federalRefund to zero
+      BigDecimal neededToZero = taxReturn.getFederalRefund().negate();
+
+      // Determine the actual amount of credit added
+      BigDecimal actualAddedCredit = creditAmount.min(neededToZero.max(BigDecimal.ZERO));
+
+      // Add total credit amount to federal refund and total credits
+      taxReturn.setTotalCredits(taxReturn.getTotalCredits().add(actualAddedCredit));
+      taxReturn.setFederalRefund(taxReturn.getFederalRefund().add(actualAddedCredit));
 
       return taxReturn;
     }
@@ -564,14 +661,17 @@ public class TaxCalculatorService {
       BigDecimal creditAmount = childCareExpenses.multiply(rate);
 
       // Restrict creditAmount based on credit limit
-      creditAmount = creditAmount.max(BigDecimal.valueOf(creditLimit.getCreditLimit()));
+      creditAmount = creditAmount.min(BigDecimal.valueOf(creditLimit.getCreditLimit()));
 
-      // Non-refundable credit, so add credit with a max liability of 0
-      BigDecimal taxRefund = taxReturn.getFederalRefund();
-      taxRefund = taxRefund.add(creditAmount).min(BigDecimal.ZERO);
+      // Calculate the amount needed to bring federalRefund to zero
+      BigDecimal neededToZero = taxReturn.getFederalRefund().negate();
 
-      // Set refund back into tax return
-      taxReturn.setFederalRefund(taxRefund);
+      // Determine the actual amount of credit added
+      BigDecimal actualAddedCredit = creditAmount.min(neededToZero.max(BigDecimal.ZERO));
+
+      // Add credits to federal refund and total credits
+      taxReturn.setTotalCredits(taxReturn.getTotalCredits().add(actualAddedCredit));
+      taxReturn.setFederalRefund(taxReturn.getFederalRefund().add(actualAddedCredit));
 
       return taxReturn;
     }

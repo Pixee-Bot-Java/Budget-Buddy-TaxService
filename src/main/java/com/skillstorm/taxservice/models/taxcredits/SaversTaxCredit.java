@@ -46,7 +46,7 @@ public class SaversTaxCredit {
 
   // Rate at which contribution is applied as credit given agi within third threshold
   @Column(name = "third_contribution_rate")
-  private BigDecimal thirdontributionRate;
+  private BigDecimal thirdContributionRate;
 
 
   // Max contribution amount that qualifies for credit and is considered in calculating credit amount

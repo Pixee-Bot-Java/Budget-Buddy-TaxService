@@ -100,14 +100,12 @@ class TaxReturnCreditServiceTest {
     private TaxReturn createTaxReturn() {
       TaxReturn taxReturn = new TaxReturn();
       taxReturn.setId(1);
-      // Set other fields as needed
       return taxReturn;
     }
 
     private TaxReturnCreditDto createTaxReturnCreditDto() {
       TaxReturnCreditDto taxReturnCreditDto = new TaxReturnCreditDto();
       taxReturnCreditDto.setTaxReturnId(1);
-      // Set other fields as needed
       return taxReturnCreditDto;
     }
 }

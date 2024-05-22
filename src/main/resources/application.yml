@@ -30,9 +30,6 @@ spring:
     password: ${DATABASE_PASS:postgres}
 
     # Run scripts at start-up: always or never
-    initialization-mode: always
-
-  # Configure the way JPA interacts with the database:
   jpa:
     show-sql: true
     hibernate:
@@ -48,6 +45,12 @@ spring:
   output:
     ansi:
       enabled: always
+      
+  sql:
+    init:
+      mode: always
+      
+      # Configure the way JPA interacts with the database:
 logging:
   level:
     com:
