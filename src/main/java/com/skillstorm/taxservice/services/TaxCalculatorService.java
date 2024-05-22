@@ -46,6 +46,25 @@ public class TaxCalculatorService {
       this.capitalGainsTaxService = capitalGainsTaxService;
     }
 
+    public TaxReturnDto calculateAll(TaxReturnDto taxReturn) throws IllegalAccessException {
+
+      // First, perform any income related calculations; calculating total income, agi, and taxable income
+      calculateTotalIncome(taxReturn);
+      calculateAgi(taxReturn);
+      calculateTaxableIncome(taxReturn);
+
+      // Second, calculate tax liabilities
+      calculateFederalTaxes(taxReturn);
+      calculateStateTaxes(taxReturn);
+      calculateCapitalGainsTax(taxReturn);
+
+      // Finally, calculate applicable credits applied to federal tax liability
+      calculateNonRefundableTaxCredits(taxReturn);
+      calculateRefundableTaxCredits(taxReturn);
+
+      return taxReturn;
+    }
+
     public TaxReturnDto calculateTotalIncome(TaxReturnDto taxReturn) throws IllegalAccessException {
       List<W2Dto> w2s = taxReturn.getW2s();
       BigDecimal w2Income =  w2s.stream().map(W2Dto::getWages)
@@ -320,7 +339,7 @@ public class TaxCalculatorService {
       return taxReturn;
     }
 
-
+    // refundable
     public TaxReturnDto calculateEarnedIncomeTaxCredit(TaxReturnDto taxReturn) {
 
       TaxReturnCreditDto taxReturnCredit = taxReturn.getTaxCredit();
