@@ -12,5 +12,9 @@ public interface TaxReturnRepository extends JpaRepository<TaxReturn, Integer> {
     // Find all TaxReturns by userId:
     List<TaxReturn> findAllByUserId(int userId);
 
+    // Find all TaxReturns by UserId for a given year. Should only return one:
     List<TaxReturn> findAllByUserIdAndYear(int userId, int year);
+
+
+    void deleteAllByUserId(int userId);
 }
