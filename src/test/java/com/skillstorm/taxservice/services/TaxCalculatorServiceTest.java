@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,6 +22,7 @@ import com.skillstorm.taxservice.constants.State;
 import com.skillstorm.taxservice.dtos.OtherIncomeDto;
 import com.skillstorm.taxservice.dtos.TaxReturnDto;
 import com.skillstorm.taxservice.dtos.W2Dto;
+import com.skillstorm.taxservice.models.CapitalGainsTax;
 import com.skillstorm.taxservice.models.StateTax;
 import com.skillstorm.taxservice.models.TaxBracket;
 
@@ -31,6 +33,9 @@ public class TaxCalculatorServiceTest {
 
   @Mock
   private StateTaxService stateTaxService;
+
+  @Mock
+  private CapitalGainsTaxService capitalGainsTaxService;
 
   @Mock
   private TaxBracketService taxBracketService;
@@ -184,6 +189,39 @@ public class TaxCalculatorServiceTest {
         assertEquals(new BigDecimal("725.00").setScale(2, RoundingMode.HALF_UP), result.getMedicareTaxWithheld());
 
         verify(stateTaxService, times(1)).getTaxBracketsByStateId(1);
+    }
+
+    @Test
+    void testCalculateCapitalGainsTax() {
+      // Setup
+      taxReturn.setTaxableIncome(BigDecimal.valueOf(50000));
+      taxReturn.setFederalRefund(BigDecimal.valueOf(2000));
+
+      OtherIncomeDto otherIncome = new OtherIncomeDto();
+      otherIncome.setLongTermCapitalGains(BigDecimal.valueOf(10000));
+
+      taxReturn.setOtherIncome(otherIncome);
+      taxReturn.setFilingStatus(FilingStatus.SINGLE);
+
+      // Mock capital gains tax brackets
+      List<CapitalGainsTax> capitalGainsTaxBrackets = new ArrayList<>();
+
+      // Mock capital gains tax brackets for married filing status
+      capitalGainsTaxBrackets.add(new CapitalGainsTax(1, new com.skillstorm.taxservice.models.FilingStatus(), BigDecimal.valueOf(0.1), 40000)); // Sample bracket 1
+      capitalGainsTaxBrackets.add(new CapitalGainsTax(2, new com.skillstorm.taxservice.models.FilingStatus(), BigDecimal.valueOf(0.15), 0)); // Sample last bracket
+
+      when(capitalGainsTaxService.findByFilingStatusID(taxReturn.getFilingStatus().getValue()))
+              .thenReturn(capitalGainsTaxBrackets);
+      
+      // Calculate expected federal refund after capital gains tax
+      BigDecimal expectedFederalRefund = taxReturn.getFederalRefund().subtract(BigDecimal.valueOf(1500)).setScale(2); // Sample expected federal refund after capital gains tax
+
+      // Call the method
+      TaxReturnDto result = taxCalculatorService.calculateCapitalGainsTax(taxReturn);
+
+      
+      // Assert the result
+      assertEquals(expectedFederalRefund, result.getFederalRefund());
     }
   
 }

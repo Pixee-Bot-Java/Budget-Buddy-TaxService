@@ -277,7 +277,7 @@ public class TaxCalculatorService {
       BigDecimal longTermCapitalGains = taxReturn.getOtherIncome().getLongTermCapitalGains();
 
       // Initialize tax amounts
-      BigDecimal longTermCapitalGainsTaxAmount = BigDecimal.valueOf(0);
+      BigDecimal longTermCapitalGainsTaxAmount = BigDecimal.ZERO;
 
       // Get long term capital gains federal tax rates based on user's filing status
       List<CapitalGainsTax> longTermCapitalGainsTaxBrackets = capitalGainsTaxService.findByFilingStatusID(taxReturn.getFilingStatus().getValue());
@@ -291,13 +291,13 @@ public class TaxCalculatorService {
 
         // If at the last bracket (income range is 0) tax remaining gains at that rate
         if (bracket.getIncomeRange() == 0) {
-          longTermCapitalGainsTaxAmount = longTermCapitalGains.add(remainingCapGains.multiply(bracket.getRate()));
+          longTermCapitalGainsTaxAmount = longTermCapitalGainsTaxAmount.add(remainingCapGains.multiply(bracket.getRate()));
           break;
         }
 
         // Start at tax bracket that ordinary income falls into
-        if (ordinaryIncome.compareTo(BigDecimal.valueOf((double)bracket.getIncomeRange())) >= 0) {
-          ordinaryIncome = BigDecimal.valueOf(Math.max(0, ordinaryIncome.doubleValue() - bracket.getIncomeRange()));
+        if (ordinaryIncome.compareTo(BigDecimal.valueOf(bracket.getIncomeRange())) >= 0) {
+          ordinaryIncome = ordinaryIncome.subtract(BigDecimal.valueOf(bracket.getIncomeRange()).max(BigDecimal.ZERO));
           continue;
         }
 
