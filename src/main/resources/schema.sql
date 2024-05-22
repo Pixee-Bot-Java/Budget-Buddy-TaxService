@@ -11,6 +11,7 @@ DROP TABLE IF EXISTS education_tax_credit_llc CASCADE;
 DROP TABLE IF EXISTS savers_tax_credit CASCADE;
 DROP TABLE IF EXISTS state_tax CASCADE;
 DROP TABLE IF EXISTS states CASCADE;
+DROP TABLE IF EXISTS deduction CASCADE;
 
 
 CREATE TABLE IF NOT EXISTS child_tax_credit (
@@ -141,4 +142,9 @@ CREATE TABLE IF NOT EXISTS state_tax (
   income_range INT NOT NULL,
   rate DECIMAL(6, 5) NOT NULL,
   FOREIGN KEY (state_id) REFERENCES states(id)
+);
+
+CREATE TABLE IF NOT EXISTS deduction (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(50)
 );

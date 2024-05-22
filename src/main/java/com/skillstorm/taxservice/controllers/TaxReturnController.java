@@ -8,10 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.net.URI;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/taxreturns")
@@ -66,9 +64,17 @@ public class TaxReturnController {
         return ResponseEntity.noContent().build();
     }
 
+    // Delete absolutely everything associated with a UserId in the event they delete their account:
+    @DeleteMapping("/deleteAll/{userId}")
+    public ResponseEntity<Void> deleteAllByUserId(@PathVariable("userId") int userId) {
+        taxReturnService.deleteAllByUserId(userId);
+        return ResponseEntity.noContent().build();
+    }
+
     // Claim deductions:
     @PostMapping("/{id}/deductions")
-    public ResponseEntity<List<TaxReturnDeductionDto>> claimDeductions(@PathVariable("id") int id, @RequestBody List<TaxReturnDeductionDto> deductions) {
-        return ResponseEntity.ok(taxReturnService.claimDeductions(id, deductions));
+    public ResponseEntity<TaxReturnDeductionDto> claimDeduction(@PathVariable("id") int id, @RequestBody TaxReturnDeductionDto deduction) {
+        System.out.println("TaxReturnController.claimDeductions called with args: " + id + ", " + deduction.toString());
+        return ResponseEntity.ok(taxReturnService.claimDeduction(id, deduction));
     }
 }

@@ -5,16 +5,17 @@ import com.skillstorm.taxservice.dtos.TaxReturnDeductionDto;
 import com.skillstorm.taxservice.dtos.TaxReturnDto;
 import com.skillstorm.taxservice.dtos.W2Dto;
 import com.skillstorm.taxservice.exceptions.NotFoundException;
+import com.skillstorm.taxservice.repositories.TaxReturnDeductionRepository;
 import com.skillstorm.taxservice.repositories.TaxReturnRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @PropertySource("classpath:SystemMessages.properties")
@@ -22,15 +23,15 @@ public class TaxReturnService {
 
     private final TaxReturnRepository taxReturnRepository;
     private final TaxReturnCreditService taxReturnCreditService;
-    private final TaxReturnDeductionService taxReturnDeductionService;
+    private final TaxReturnDeductionRepository taxReturnDeductionRepository;
     private final Environment environment;
 
     @Autowired
     public TaxReturnService(TaxReturnRepository taxReturnRepository, TaxReturnCreditService taxReturnCreditService,
-                            TaxReturnDeductionService taxReturnDeductionService, Environment environment) {
+                            TaxReturnDeductionRepository taxReturnDeductionRepository, Environment environment) {
         this.taxReturnRepository = taxReturnRepository;
         this.taxReturnCreditService = taxReturnCreditService;
-        this.taxReturnDeductionService = taxReturnDeductionService;
+        this.taxReturnDeductionRepository = taxReturnDeductionRepository;
         this.environment = environment;
     }
 
@@ -181,13 +182,22 @@ public class TaxReturnService {
     }
 
     // Claim deductions for a TaxReturn or update its existing ones:
-    public List<TaxReturnDeductionDto> claimDeductions(int id, List<TaxReturnDeductionDto> deductions) {
-        return taxReturnDeductionService.saveAndUpdateByTaxReturnId(id, deductions);
+    public TaxReturnDeductionDto claimDeduction(int id, TaxReturnDeductionDto deduction) {
+        System.out.println("TaxReturnService calls claimDeduction() with args:" + id + ", " + deduction.toString());
+        deduction.setTaxReturn(1);
+        return new TaxReturnDeductionDto(taxReturnDeductionRepository.saveAndFlush(deduction.mapToEntity()));
+
     }
 
     // Get the current tax refund for a TaxReturn:
     public RefundDto getRefund(int id) {
         TaxReturnDto taxReturnDto = findById(id);
         return new RefundDto(taxReturnDto.getFederalRefund(), taxReturnDto.getStateRefund());
+    }
+
+    // Clean up all entities associated with a User when they delete their account:
+    @Transactional
+    public void deleteAllByUserId(int userId) {
+        taxReturnRepository.deleteAllByUserId(userId);
     }
 }
