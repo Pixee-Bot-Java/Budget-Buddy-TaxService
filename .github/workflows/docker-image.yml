@@ -2,8 +2,9 @@ name: Maven Build and Dockerize
 
 on:
   push:
-    branches:
-      - main  # Adjust branch name if needed
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
   build-and-dockerize:
