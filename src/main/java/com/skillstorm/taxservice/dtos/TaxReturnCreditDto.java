@@ -13,10 +13,10 @@ public class TaxReturnCreditDto {
   private int numDependents = 0;
   private int numDependentsAotc = 0;
   private int numChildren = 0;
-  private BigDecimal childCareExpenses = BigDecimal.valueOf(0);
-  private BigDecimal educationExpenses = BigDecimal.valueOf(0);
-  private BigDecimal llcEducationExpenses = BigDecimal.valueOf(0);
-  private BigDecimal iraContributions = BigDecimal.valueOf(0);
+  private BigDecimal childCareExpenses = BigDecimal.ZERO;
+  private BigDecimal educationExpenses = BigDecimal.ZERO;
+  private BigDecimal llcEducationExpenses = BigDecimal.ZERO;
+  private BigDecimal iraContributions = BigDecimal.ZERO;
   private boolean claimedAsDependent = false;
   private boolean claimLlcCredit = false;
 }

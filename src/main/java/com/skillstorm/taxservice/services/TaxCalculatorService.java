@@ -303,7 +303,7 @@ public class TaxCalculatorService {
 
         // Any leftover ordinary income is subtracted from the income range
         double bracketRange = (double) bracket.getIncomeRange() - ordinaryIncome.doubleValue();
-        ordinaryIncome = BigDecimal.valueOf(0);
+        ordinaryIncome = BigDecimal.ZERO;
 
         // Calculate the taxable amount of the gains
         double taxableAmount = Math.min(bracketRange, remainingCapGains.doubleValue());
@@ -475,7 +475,7 @@ public class TaxCalculatorService {
       if (filingStatus.getStatus().equals("Married filing separately")) return taxReturn;
 
       // Initialize credit amount
-      BigDecimal creditAmount = BigDecimal.valueOf(0);
+      BigDecimal creditAmount = BigDecimal.ZERO;
 
       // Get relevant variables
       int numDependents = taxReturnCredit.getNumDependentsAotc();
