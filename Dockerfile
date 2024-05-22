@@ -5,8 +5,8 @@ RUN apk update && \
 
 WORKDIR /app
 
-COPY target/TaxService-0.0.1-SNAPSHOT.jar /app/TaxService.jar
+COPY target/tax-service-0.0.1-SNAPSHOT.jar /app/tax-service.jar
 
 EXPOSE 8080
 
-CMD ["java", "-jar", "TaxService.jar"]
+CMD ["java", "-jar", "tax-service.jar"]
