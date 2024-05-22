@@ -12,8 +12,11 @@ import com.skillstorm.taxservice.repositories.FilingStatusRepository;
 @Service
 public class FilingStatusService {
   
-  @Autowired
   private FilingStatusRepository filingStatusRepository;
+
+  public FilingStatusService(FilingStatusRepository filingStatusRepository) {
+    this.filingStatusRepository = filingStatusRepository;
+  }
 
   // Get filing status by the status string
   public FilingStatus findByStatus(String status) {
