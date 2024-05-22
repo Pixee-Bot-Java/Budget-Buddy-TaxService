@@ -51,16 +51,16 @@ public class TaxReturn {
 
     private String ssn;
 
-    @OneToMany(mappedBy = "taxReturn", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "taxReturn", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<W2> w2s;
 
-    @OneToMany(mappedBy = "taxReturn", cascade = CascadeType.ALL)
-    private List<TaxReturnDeduction> taxReturnDeductions;
+    @OneToMany(mappedBy = "taxReturn", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TaxReturnDeduction> deductions;
 
-    @OneToOne(mappedBy = "taxReturn", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "taxReturn", cascade = CascadeType.ALL, orphanRemoval = true)
     private OtherIncome otherIncome;
 
-    @OneToOne(mappedBy = "taxReturn", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "taxReturn", cascade = CascadeType.ALL, orphanRemoval = true)
     private TaxReturnCredit taxCredit;
 
     @Column(name = "total_income")
@@ -84,9 +84,6 @@ public class TaxReturn {
     @Column(name = "medicare_tax_withheld")
     private BigDecimal medicareTaxWithheld;
 
-    @Column(name = "total_deductions")
-    private BigDecimal totalDeductions;
-
     @Column(name = "total_credits")
     private BigDecimal totalCredits;
 
@@ -98,6 +95,7 @@ public class TaxReturn {
 
     public TaxReturn() {
         w2s = List.of();
+        deductions = List.of();
     }
 
     public TaxReturn(int id) {

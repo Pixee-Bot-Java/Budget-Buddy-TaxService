@@ -1,5 +1,6 @@
 package com.skillstorm.taxservice.dtos;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.skillstorm.taxservice.constants.State;
 import com.skillstorm.taxservice.models.TaxReturn;
 import com.skillstorm.taxservice.models.W2;
@@ -68,6 +69,7 @@ public class W2Dto {
         this.imageKey = w2.getImageKey();
     }
 
+    @JsonIgnore
     public W2 mapToEntity() {
         W2 w2 = new W2();
         w2.setId(id);

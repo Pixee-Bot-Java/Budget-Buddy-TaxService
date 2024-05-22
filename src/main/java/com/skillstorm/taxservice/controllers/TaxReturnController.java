@@ -64,17 +64,42 @@ public class TaxReturnController {
         return ResponseEntity.noContent().build();
     }
 
-    // Delete absolutely everything associated with a UserId in the event they delete their account:
-    @DeleteMapping("/deleteAll/{userId}")
-    public ResponseEntity<Void> deleteAllByUserId(@PathVariable("userId") int userId) {
-        taxReturnService.deleteAllByUserId(userId);
-        return ResponseEntity.noContent().build();
-    }
-
     // Claim deductions:
     @PostMapping("/{id}/deductions")
     public ResponseEntity<TaxReturnDeductionDto> claimDeduction(@PathVariable("id") int id, @RequestBody TaxReturnDeductionDto deduction) {
         System.out.println("TaxReturnController.claimDeductions called with args: " + id + ", " + deduction.toString());
         return ResponseEntity.ok(taxReturnService.claimDeduction(id, deduction));
+    }
+
+    // View a TaxReturnDeduction by ID:
+    @GetMapping("taxreturn/deductions/{taxReturnDeductionId}")
+    public ResponseEntity<TaxReturnDeductionDto> getTaxReturnDeductionById(@PathVariable("taxReturnDeductionId") int taxReturnDeductionId) {
+        return ResponseEntity.ok(taxReturnService.getTaxReturnDeductionById(taxReturnDeductionId));
+    }
+
+    // Get all deductions for a TaxReturn:
+    @GetMapping("/{id}/deductions")
+    public ResponseEntity<List<TaxReturnDeductionDto>> getDeductions(@PathVariable("id") int id) {
+        return ResponseEntity.ok(taxReturnService.getDeductions(id));
+    }
+
+    // Update a TaxReturnDeduction:
+    @PutMapping("taxreturn/deductions/{taxReturnDeductionId}")
+    public ResponseEntity<TaxReturnDeductionDto> updateTaxReturnDeduction(@PathVariable("taxReturnDeductionId") int taxReturnDeductionId, @RequestBody TaxReturnDeductionDto updatedDeduction) {
+        return ResponseEntity.ok(taxReturnService.updateTaxReturnDeduction(taxReturnDeductionId, updatedDeduction));
+    }
+
+    // Delete a TaxReturnDeduction:
+    @DeleteMapping("taxreturn/deductions/{taxReturnDeductionId}")
+    public ResponseEntity<Void> deleteTaxReturnDeduction(@PathVariable("taxReturnDeductionId") int taxReturnDeductionId) {
+        taxReturnService.deleteTaxReturnDeduction(taxReturnDeductionId);
+        return ResponseEntity.noContent().build();
+    }
+
+    // Delete absolutely everything associated with a UserId in the event they delete their account:
+    @DeleteMapping("/deleteAll/{userId}")
+    public ResponseEntity<Void> deleteAllByUserId(@PathVariable("userId") int userId) {
+        taxReturnService.deleteAllByUserId(userId);
+        return ResponseEntity.noContent().build();
     }
 }

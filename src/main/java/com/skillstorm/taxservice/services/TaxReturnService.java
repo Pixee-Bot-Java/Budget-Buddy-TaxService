@@ -125,7 +125,8 @@ public class TaxReturnService {
         // Placeholder for now:
         updatedTaxReturn.setAdjustedGrossIncome(updatedTaxReturn
                 .getTotalIncome()
-                .subtract(updatedTaxReturn.getTotalDeductions())
+                .subtract(updatedTaxReturn.getDeductions().stream().map(TaxReturnDeductionDto::getNetDeduction)
+                        .reduce(BigDecimal.ZERO, BigDecimal::add))
                 .setScale(2, RoundingMode.HALF_UP));
     }
 
@@ -135,7 +136,7 @@ public class TaxReturnService {
         updatedTaxReturn.setTotalCredits(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP));
 
         // Will need to sum up all of the TaxReturnDeductions associated with the TaxReturn. Placeholder for now:
-        updatedTaxReturn.setTotalDeductions(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP));
+        //updatedTaxReturn.setTotalDeductions(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP));
     }
 
     // Calculate the total of all taxes already withheld for a TaxReturn:
@@ -181,7 +182,8 @@ public class TaxReturnService {
                 .setScale(2, RoundingMode.HALF_UP);
     }
 
-    // Claim deductions for a TaxReturn or update its existing ones:
+    // Claim a deductions for a TaxReturn:
+    // TODO: Implement check to ensure unique taxreturnId and deductionId combination
     public TaxReturnDeductionDto claimDeduction(int id, TaxReturnDeductionDto deduction) {
         System.out.println("TaxReturnService calls claimDeduction() with args:" + id + ", " + deduction.toString());
         deduction.setTaxReturn(1);
@@ -193,6 +195,38 @@ public class TaxReturnService {
     public RefundDto getRefund(int id) {
         TaxReturnDto taxReturnDto = findById(id);
         return new RefundDto(taxReturnDto.getFederalRefund(), taxReturnDto.getStateRefund());
+    }
+
+    // Get a TaxReturnDeduction by ID:
+    public TaxReturnDeductionDto getTaxReturnDeductionById(int taxReturnDeductionId) {
+        return new TaxReturnDeductionDto(taxReturnDeductionRepository.findById(taxReturnDeductionId)
+                .orElseThrow(() -> new NotFoundException(environment.getProperty("taxreturn.deduction.not.found") + " " + taxReturnDeductionId)));
+    }
+
+    // Get all deductions for a TaxReturn:
+    public List<TaxReturnDeductionDto> getDeductions(int taxReturnId) {
+        return taxReturnDeductionRepository.findAllByTaxReturnId(taxReturnId)
+                .stream().map(TaxReturnDeductionDto::new).toList();
+    }
+
+    // Update a TaxReturnDeduction:
+    // TODO: Implement check to ensure unique taxreturnId and deductionId combination
+    public TaxReturnDeductionDto updateTaxReturnDeduction(int taxReturnDeductionId, TaxReturnDeductionDto updatedDeduction) {
+        // Verify that the TaxReturnDeduction exists:
+        getTaxReturnDeductionById(taxReturnDeductionId);
+
+        // Set the ID of the updated TaxReturnDeduction in case it was not set in the request body:
+        updatedDeduction.setId(taxReturnDeductionId);
+
+        // Save the updated TaxReturnDeduction to the database:
+        return new TaxReturnDeductionDto(taxReturnDeductionRepository.saveAndFlush(updatedDeduction.mapToEntity()));
+    }
+
+    // Delete a TaxReturnDeduction:
+    public void deleteTaxReturnDeduction(int taxReturnDeductionId) {
+        // Verify that the TaxReturnDeduction exists:
+        getTaxReturnDeductionById(taxReturnDeductionId);
+        taxReturnDeductionRepository.deleteById(taxReturnDeductionId);
     }
 
     // Clean up all entities associated with a User when they delete their account:
