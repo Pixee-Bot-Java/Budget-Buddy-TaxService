@@ -1,6 +1,5 @@
 package com.skillstorm.taxservice.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.skillstorm.taxservice.exceptions.NotFoundException;
@@ -10,8 +9,11 @@ import com.skillstorm.taxservice.repositories.StandardDeductionRepository;
 @Service
 public class StandardDeductionService {
   
-  @Autowired
-  private StandardDeductionRepository standardDeductionRepository;
+  private final StandardDeductionRepository standardDeductionRepository;
+
+  public StandardDeductionService(StandardDeductionRepository standardDeductionRepository) {
+    this.standardDeductionRepository = standardDeductionRepository;
+  }
 
   // Get the standardized deduction amount by Filing Status id
   public StandardDeduction getByFilingStatusId(int filingStatusId) {

@@ -26,7 +26,7 @@ public class W2 {
 
     private String employer;
 
-    private BigDecimal wages = BigDecimal.valueOf(0);
+    private BigDecimal wages = BigDecimal.ZERO;
 
     private int state;
 
