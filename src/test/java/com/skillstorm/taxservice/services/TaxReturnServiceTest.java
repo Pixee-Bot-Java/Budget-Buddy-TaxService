@@ -5,6 +5,7 @@ import com.skillstorm.taxservice.constants.State;
 import com.skillstorm.taxservice.dtos.TaxReturnDto;
 import com.skillstorm.taxservice.exceptions.NotFoundException;
 import com.skillstorm.taxservice.models.TaxReturn;
+import com.skillstorm.taxservice.repositories.TaxReturnDeductionRepository;
 import com.skillstorm.taxservice.repositories.TaxReturnRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,7 +33,7 @@ class TaxReturnServiceTest {
 
     @Mock private static TaxReturnRepository taxReturnRepository;
     @Mock private static TaxReturnCreditService taxReturnCreditService;
-    @Mock private static TaxReturnDeductionService taxReturnDeductionService;
+    @Mock private static TaxReturnDeductionRepository taxReturnDeductionRepository;
     @Spy private static Environment environment;
 
     private static TaxReturnDto newTaxReturn;
@@ -41,7 +42,7 @@ class TaxReturnServiceTest {
 
     @BeforeEach
     void setUp() {
-        taxReturnService = new TaxReturnService(taxReturnRepository, taxReturnCreditService, taxReturnDeductionService, environment);
+        taxReturnService = new TaxReturnService(taxReturnRepository, taxReturnCreditService, taxReturnDeductionRepository, environment);
 
         setupTaxReturns();
     }
