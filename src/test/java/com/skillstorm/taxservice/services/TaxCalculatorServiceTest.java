@@ -1,6 +1,7 @@
 package com.skillstorm.taxservice.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -20,11 +21,13 @@ import org.mockito.MockitoAnnotations;
 import com.skillstorm.taxservice.constants.FilingStatus;
 import com.skillstorm.taxservice.constants.State;
 import com.skillstorm.taxservice.dtos.OtherIncomeDto;
+import com.skillstorm.taxservice.dtos.TaxReturnCreditDto;
 import com.skillstorm.taxservice.dtos.TaxReturnDto;
 import com.skillstorm.taxservice.dtos.W2Dto;
 import com.skillstorm.taxservice.models.CapitalGainsTax;
 import com.skillstorm.taxservice.models.StateTax;
 import com.skillstorm.taxservice.models.TaxBracket;
+import com.skillstorm.taxservice.models.taxcredits.ChildTaxCredit;
 
 public class TaxCalculatorServiceTest {
 
@@ -36,6 +39,12 @@ public class TaxCalculatorServiceTest {
 
   @Mock
   private CapitalGainsTaxService capitalGainsTaxService;
+
+  @Mock
+  private FilingStatusService filingStatusService;
+
+  @Mock
+  private com.skillstorm.taxservice.models.FilingStatus filingStatusModel;
 
   @Mock
   private TaxBracketService taxBracketService;
@@ -87,11 +96,9 @@ public class TaxCalculatorServiceTest {
     BigDecimal taxableIncome = new BigDecimal("50000.00");
     BigDecimal federalRefund = new BigDecimal("1000.00");
 
-    FilingStatus filingStatus = FilingStatus.SINGLE;
-
     taxReturn.setTaxableIncome(taxableIncome);
     taxReturn.setFederalRefund(federalRefund);
-    taxReturn.setFilingStatus(filingStatus);
+    taxReturn.setFilingStatus(com.skillstorm.taxservice.constants.FilingStatus.SINGLE);
 
     TaxBracket bracket1 = new TaxBracket();
     bracket1.setMinIncome(0);
@@ -224,4 +231,53 @@ public class TaxCalculatorServiceTest {
       assertEquals(expectedFederalRefund, result.getFederalRefund());
     }
   
+    @Test
+    void testCalculateChildTaxCredits() {
+
+      // Set up test data
+      taxReturn.setAdjustedGrossIncome(BigDecimal.valueOf(90000));
+      taxReturn.setFederalRefund(BigDecimal.valueOf(2000));
+      taxReturn.setTotalCredits(BigDecimal.ZERO);
+
+      TaxReturnCreditDto taxReturnCredit = new TaxReturnCreditDto();
+      taxReturnCredit.setNumDependents(2);
+      taxReturn.setTaxCredit(taxReturnCredit);
+
+      FilingStatus filingStatusEnum = FilingStatus.SINGLE;
+      taxReturn.setFilingStatus(filingStatusEnum);
+
+      com.skillstorm.taxservice.models.FilingStatus filingStatus = 
+        mock(com.skillstorm.taxservice.models.FilingStatus.class);
+
+      ChildTaxCredit childTaxCredit = new ChildTaxCredit();
+      childTaxCredit.setPerQualifyingChild(2000);
+      childTaxCredit.setIncomeThreshold(75000);
+      childTaxCredit.setRefundLimit(1400);
+
+      // Mocking FilingStatusService to return our sample filing status and child tax credit
+      when(filingStatusService.findById(filingStatusEnum.getValue())).thenReturn(filingStatus);
+      when(filingStatus.getChildTaxCredit()).thenReturn(childTaxCredit);
+
+      // Call the method to test
+      TaxReturnDto result = taxCalculatorService.calculateChildTaxCredits(taxReturn);
+
+      // Calculate expected values
+      BigDecimal potentialCreditAmount = BigDecimal.valueOf(2 * 2000);
+      BigDecimal incomeThreshold = BigDecimal.valueOf(75000);
+      BigDecimal agiExcess = BigDecimal.valueOf(90000).subtract(incomeThreshold).max(BigDecimal.ZERO);
+      BigDecimal quotient = agiExcess.divide(new BigDecimal("1000"), RoundingMode.HALF_UP);
+      BigDecimal phaseoutAmount = quotient.multiply(new BigDecimal("50"));
+      BigDecimal creditAfterPhaseout = potentialCreditAmount.subtract(phaseoutAmount);
+
+      BigDecimal creditLimit = BigDecimal.valueOf(childTaxCredit.getRefundLimit());
+      BigDecimal difference = BigDecimal.valueOf(childTaxCredit.getPerQualifyingChild()).subtract(creditLimit);
+      creditAfterPhaseout = creditAfterPhaseout.subtract(difference.multiply(BigDecimal.valueOf(2)));
+
+      BigDecimal expectedFederalRefund = BigDecimal.valueOf(2000).add(creditAfterPhaseout);
+      BigDecimal expectedTotalCredits = creditAfterPhaseout;
+
+      // Assert the result
+      assertEquals(expectedFederalRefund.setScale(2, RoundingMode.HALF_UP), result.getFederalRefund().setScale(2, RoundingMode.HALF_UP));
+      assertEquals(expectedTotalCredits.setScale(2, RoundingMode.HALF_UP), result.getTotalCredits().setScale(2, RoundingMode.HALF_UP));
+    }
 }

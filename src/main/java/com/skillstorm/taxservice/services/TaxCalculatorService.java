@@ -383,7 +383,7 @@ public class TaxCalculatorService {
       // Get current federal tax liability
       BigDecimal taxRefund = taxReturn.getFederalRefund();
 
-      if (taxRefund.compareTo(creditAfterPhaseout) >= 0) {
+      if (taxRefund.compareTo(BigDecimal.ZERO) <= 0) {
         taxRefund = taxRefund.add(creditAfterPhaseout);
       } else {
         BigDecimal creditLimit = BigDecimal.valueOf(childTaxCredit.getRefundLimit());
