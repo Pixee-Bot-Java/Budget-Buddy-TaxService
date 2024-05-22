@@ -1,5 +1,6 @@
 package com.skillstorm.taxservice.dtos;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.skillstorm.taxservice.models.Deduction;
 import com.skillstorm.taxservice.models.TaxReturn;
 import com.skillstorm.taxservice.models.TaxReturnDeduction;
@@ -31,6 +32,7 @@ public class TaxReturnDeductionDto {
         this.netDeduction = taxReturnDeduction.getNetDeduction();
     }
 
+    @JsonIgnore
     public TaxReturnDeduction mapToEntity() {
         TaxReturnDeduction taxReturnDeduction = new TaxReturnDeduction();
         taxReturnDeduction.setId(this.id);

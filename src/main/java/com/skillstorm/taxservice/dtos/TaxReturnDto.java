@@ -32,6 +32,7 @@ public class TaxReturnDto {
     private String dateOfBirth;
     private String ssn;
     private List<W2Dto> w2s;
+    private List<TaxReturnDeductionDto> deductions;
     private OtherIncomeDto otherIncome;
     private TaxReturnCreditDto taxCredit;
     private BigDecimal totalIncome;
@@ -41,7 +42,6 @@ public class TaxReturnDto {
     private BigDecimal stateTaxWithheld;
     private BigDecimal socialSecurityTaxWithheld;
     private BigDecimal medicareTaxWithheld;
-    private BigDecimal totalDeductions;
     private BigDecimal totalCredits;
     private BigDecimal federalRefund;
     private BigDecimal stateRefund;
@@ -51,6 +51,7 @@ public class TaxReturnDto {
         this.filingStatus = FilingStatus.SINGLE;
         this.state = State.AL;
         w2s = List.of();
+        deductions = List.of();
     }
 
     @JsonCreator
@@ -80,6 +81,7 @@ public class TaxReturnDto {
         }
         this.ssn = taxReturn.getSsn();
         this.w2s = taxReturn.getW2s().stream().map(W2Dto::new).toList();
+        this.deductions = taxReturn.getDeductions().stream().map(TaxReturnDeductionDto::new).toList();
         this.otherIncome = OtherIncomeMapper.toDto(taxReturn.getOtherIncome());
         this.taxCredit = TaxReturnCreditMapper.toDto(taxReturn.getTaxCredit());
         this.totalIncome = taxReturn.getTotalIncome();
@@ -89,7 +91,6 @@ public class TaxReturnDto {
         this.stateTaxWithheld = taxReturn.getStateTaxWithheld();
         this.socialSecurityTaxWithheld = taxReturn.getSocialSecurityTaxWithheld();
         this.medicareTaxWithheld = taxReturn.getMedicareTaxWithheld();
-        this.totalDeductions = taxReturn.getTotalDeductions();
         this.totalCredits = taxReturn.getTotalCredits();
         this.federalRefund = taxReturn.getFederalRefund();
         this.stateRefund = taxReturn.getStateRefund();
@@ -114,6 +115,7 @@ public class TaxReturnDto {
         }
         taxReturn.setSsn(ssn);
         taxReturn.setW2s(w2s.stream().map(W2Dto::mapToEntity).toList());
+        taxReturn.setDeductions(deductions.stream().map(TaxReturnDeductionDto::mapToEntity).toList());
         taxReturn.setOtherIncome(OtherIncomeMapper.toEntity(otherIncome));
         taxReturn.setTaxCredit(TaxReturnCreditMapper.toEntity(taxCredit));
         taxReturn.setTotalIncome(totalIncome);
@@ -123,7 +125,6 @@ public class TaxReturnDto {
         taxReturn.setStateTaxWithheld(stateTaxWithheld);
         taxReturn.setSocialSecurityTaxWithheld(socialSecurityTaxWithheld);
         taxReturn.setMedicareTaxWithheld(medicareTaxWithheld);
-        taxReturn.setTotalDeductions(totalDeductions);
         taxReturn.setTotalCredits(totalCredits);
         taxReturn.setFederalRefund(federalRefund);
         taxReturn.setStateRefund(stateRefund);

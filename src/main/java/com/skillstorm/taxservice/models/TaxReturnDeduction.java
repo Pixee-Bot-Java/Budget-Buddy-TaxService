@@ -17,11 +17,11 @@ public class TaxReturnDeduction {
     private int id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "taxreturn_id", referencedColumnName = "id")
+    @JoinColumn(name = "taxreturn_id")
     private TaxReturn taxReturn;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "deduction_id", referencedColumnName = "id")
+    @JoinColumn(name = "deduction_id")
     private Deduction deduction;
 
     @Column(name = "amount_spent")
