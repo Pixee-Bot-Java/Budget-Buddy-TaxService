@@ -59,7 +59,6 @@ class TaxReturnServiceTest {
         newTaxReturn.setSocialSecurityTaxWithheld(BigDecimal.ZERO.setScale(2));
         newTaxReturn.setMedicareTaxWithheld(BigDecimal.ZERO.setScale(2));
         newTaxReturn.setTotalCredits(BigDecimal.ZERO.setScale(2));
-        newTaxReturn.setTotalDeductions(BigDecimal.ZERO.setScale(2));
         newTaxReturn.setFederalRefund(BigDecimal.ZERO.setScale(2));
         newTaxReturn.setStateRefund(BigDecimal.ZERO.setScale(2));
 
@@ -75,7 +74,6 @@ class TaxReturnServiceTest {
         returnedNewTaxReturn.setSocialSecurityTaxWithheld(BigDecimal.ZERO.setScale(2));
         returnedNewTaxReturn.setMedicareTaxWithheld(BigDecimal.ZERO.setScale(2));
         returnedNewTaxReturn.setTotalCredits(BigDecimal.ZERO.setScale(2));
-        returnedNewTaxReturn.setTotalDeductions(BigDecimal.ZERO.setScale(2));
         returnedNewTaxReturn.setFederalRefund(BigDecimal.ZERO.setScale(2));
         returnedNewTaxReturn.setStateRefund(BigDecimal.ZERO.setScale(2));
 
@@ -98,7 +96,6 @@ class TaxReturnServiceTest {
         updatedTaxReturn.setSocialSecurityTaxWithheld(BigDecimal.ZERO.setScale(2));
         updatedTaxReturn.setMedicareTaxWithheld(BigDecimal.ZERO.setScale(2));
         updatedTaxReturn.setTotalCredits(BigDecimal.ZERO.setScale(2));
-        updatedTaxReturn.setTotalDeductions(BigDecimal.ZERO.setScale(2));
         updatedTaxReturn.setFederalRefund(BigDecimal.ZERO.setScale(2));
         updatedTaxReturn.setStateRefund(BigDecimal.ZERO.setScale(2));
     }
