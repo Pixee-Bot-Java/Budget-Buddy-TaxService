@@ -28,6 +28,12 @@ import com.skillstorm.taxservice.models.CapitalGainsTax;
 import com.skillstorm.taxservice.models.StateTax;
 import com.skillstorm.taxservice.models.TaxBracket;
 import com.skillstorm.taxservice.models.taxcredits.ChildTaxCredit;
+import com.skillstorm.taxservice.models.taxcredits.DependentCareTaxCredit;
+import com.skillstorm.taxservice.models.taxcredits.DependentCareTaxCreditLimit;
+import com.skillstorm.taxservice.models.taxcredits.EarnedIncomeTaxCredit;
+import com.skillstorm.taxservice.models.taxcredits.EducationTaxCreditAotc;
+import com.skillstorm.taxservice.models.taxcredits.EducationTaxCreditLlc;
+import com.skillstorm.taxservice.models.taxcredits.SaversTaxCredit;
 
 public class TaxCalculatorServiceTest {
 
@@ -48,6 +54,9 @@ public class TaxCalculatorServiceTest {
 
   @Mock
   private TaxBracketService taxBracketService;
+
+  @Mock
+  private TaxCreditService taxCreditService;
 
   @InjectMocks
   private TaxCalculatorService taxCalculatorService;
@@ -198,86 +207,428 @@ public class TaxCalculatorServiceTest {
         verify(stateTaxService, times(1)).getTaxBracketsByStateId(1);
     }
 
-    @Test
-    void testCalculateCapitalGainsTax() {
-      // Setup
-      taxReturn.setTaxableIncome(BigDecimal.valueOf(50000));
-      taxReturn.setFederalRefund(BigDecimal.valueOf(2000));
+  @Test
+  void testCalculateCapitalGainsTax() {
+    // Setup
+    taxReturn.setTaxableIncome(BigDecimal.valueOf(50000));
+    taxReturn.setFederalRefund(BigDecimal.valueOf(2000));
 
-      OtherIncomeDto otherIncome = new OtherIncomeDto();
-      otherIncome.setLongTermCapitalGains(BigDecimal.valueOf(10000));
+    OtherIncomeDto otherIncome = new OtherIncomeDto();
+    otherIncome.setLongTermCapitalGains(BigDecimal.valueOf(10000));
 
-      taxReturn.setOtherIncome(otherIncome);
-      taxReturn.setFilingStatus(FilingStatus.SINGLE);
+    taxReturn.setOtherIncome(otherIncome);
+    taxReturn.setFilingStatus(FilingStatus.SINGLE);
 
-      // Mock capital gains tax brackets
-      List<CapitalGainsTax> capitalGainsTaxBrackets = new ArrayList<>();
+    // Mock capital gains tax brackets
+    List<CapitalGainsTax> capitalGainsTaxBrackets = new ArrayList<>();
 
-      // Mock capital gains tax brackets for married filing status
-      capitalGainsTaxBrackets.add(new CapitalGainsTax(1, new com.skillstorm.taxservice.models.FilingStatus(), BigDecimal.valueOf(0.1), 40000)); // Sample bracket 1
-      capitalGainsTaxBrackets.add(new CapitalGainsTax(2, new com.skillstorm.taxservice.models.FilingStatus(), BigDecimal.valueOf(0.15), 0)); // Sample last bracket
+    // Mock capital gains tax brackets for married filing status
+    capitalGainsTaxBrackets.add(new CapitalGainsTax(1, new com.skillstorm.taxservice.models.FilingStatus(), BigDecimal.valueOf(0.1), 40000)); // Sample bracket 1
+    capitalGainsTaxBrackets.add(new CapitalGainsTax(2, new com.skillstorm.taxservice.models.FilingStatus(), BigDecimal.valueOf(0.15), 0)); // Sample last bracket
 
-      when(capitalGainsTaxService.findByFilingStatusID(taxReturn.getFilingStatus().getValue()))
-              .thenReturn(capitalGainsTaxBrackets);
-      
-      // Calculate expected federal refund after capital gains tax
-      BigDecimal expectedFederalRefund = taxReturn.getFederalRefund().subtract(BigDecimal.valueOf(1500)).setScale(2); // Sample expected federal refund after capital gains tax
+    when(capitalGainsTaxService.findByFilingStatusID(taxReturn.getFilingStatus().getValue()))
+            .thenReturn(capitalGainsTaxBrackets);
+    
+    // Calculate expected federal refund after capital gains tax
+    BigDecimal expectedFederalRefund = taxReturn.getFederalRefund().subtract(BigDecimal.valueOf(1500)).setScale(2); // Sample expected federal refund after capital gains tax
 
-      // Call the method
-      TaxReturnDto result = taxCalculatorService.calculateCapitalGainsTax(taxReturn);
+    // Call the method
+    TaxReturnDto result = taxCalculatorService.calculateCapitalGainsTax(taxReturn);
 
-      
-      // Assert the result
-      assertEquals(expectedFederalRefund, result.getFederalRefund());
-    }
+    
+    // Assert the result
+    assertEquals(expectedFederalRefund, result.getFederalRefund());
+  }
   
-    @Test
-    void testCalculateChildTaxCredits() {
+  @Test
+  void testCalculateChildTaxCredits() {
 
-      // Set up test data
-      taxReturn.setAdjustedGrossIncome(BigDecimal.valueOf(90000));
-      taxReturn.setFederalRefund(BigDecimal.valueOf(2000));
-      taxReturn.setTotalCredits(BigDecimal.ZERO);
+    // Set up test data
+    taxReturn.setAdjustedGrossIncome(BigDecimal.valueOf(90000));
+    taxReturn.setFederalRefund(BigDecimal.valueOf(2000));
+    taxReturn.setTotalCredits(BigDecimal.ZERO);
 
-      TaxReturnCreditDto taxReturnCredit = new TaxReturnCreditDto();
-      taxReturnCredit.setNumDependents(2);
-      taxReturn.setTaxCredit(taxReturnCredit);
+    TaxReturnCreditDto taxReturnCredit = new TaxReturnCreditDto();
+    taxReturnCredit.setNumDependents(2);
+    taxReturn.setTaxCredit(taxReturnCredit);
 
-      FilingStatus filingStatusEnum = FilingStatus.SINGLE;
-      taxReturn.setFilingStatus(filingStatusEnum);
+    FilingStatus filingStatusEnum = FilingStatus.SINGLE;
+    taxReturn.setFilingStatus(filingStatusEnum);
 
-      com.skillstorm.taxservice.models.FilingStatus filingStatus = 
-        mock(com.skillstorm.taxservice.models.FilingStatus.class);
+    com.skillstorm.taxservice.models.FilingStatus filingStatus = 
+      mock(com.skillstorm.taxservice.models.FilingStatus.class);
 
-      ChildTaxCredit childTaxCredit = new ChildTaxCredit();
-      childTaxCredit.setPerQualifyingChild(2000);
-      childTaxCredit.setIncomeThreshold(75000);
-      childTaxCredit.setRefundLimit(1400);
+    ChildTaxCredit childTaxCredit = new ChildTaxCredit();
+    childTaxCredit.setPerQualifyingChild(2000);
+    childTaxCredit.setIncomeThreshold(75000);
+    childTaxCredit.setRefundLimit(1400);
 
-      // Mocking FilingStatusService to return our sample filing status and child tax credit
-      when(filingStatusService.findById(filingStatusEnum.getValue())).thenReturn(filingStatus);
-      when(filingStatus.getChildTaxCredit()).thenReturn(childTaxCredit);
+    // Mocking FilingStatusService to return our sample filing status and child tax credit
+    when(filingStatusService.findById(filingStatusEnum.getValue())).thenReturn(filingStatus);
+    when(filingStatus.getChildTaxCredit()).thenReturn(childTaxCredit);
 
-      // Call the method to test
-      TaxReturnDto result = taxCalculatorService.calculateChildTaxCredits(taxReturn);
+    // Call the method to test
+    TaxReturnDto result = taxCalculatorService.calculateChildTaxCredits(taxReturn);
 
-      // Calculate expected values
-      BigDecimal potentialCreditAmount = BigDecimal.valueOf(2 * 2000);
-      BigDecimal incomeThreshold = BigDecimal.valueOf(75000);
-      BigDecimal agiExcess = BigDecimal.valueOf(90000).subtract(incomeThreshold).max(BigDecimal.ZERO);
-      BigDecimal quotient = agiExcess.divide(new BigDecimal("1000"), RoundingMode.HALF_UP);
-      BigDecimal phaseoutAmount = quotient.multiply(new BigDecimal("50"));
-      BigDecimal creditAfterPhaseout = potentialCreditAmount.subtract(phaseoutAmount);
+    // Calculate expected values
+    BigDecimal potentialCreditAmount = BigDecimal.valueOf(2 * 2000);
+    BigDecimal incomeThreshold = BigDecimal.valueOf(75000);
+    BigDecimal agiExcess = BigDecimal.valueOf(90000).subtract(incomeThreshold).max(BigDecimal.ZERO);
+    BigDecimal quotient = agiExcess.divide(new BigDecimal("1000"), RoundingMode.HALF_UP);
+    BigDecimal phaseoutAmount = quotient.multiply(new BigDecimal("50"));
+    BigDecimal creditAfterPhaseout = potentialCreditAmount.subtract(phaseoutAmount);
 
-      BigDecimal creditLimit = BigDecimal.valueOf(childTaxCredit.getRefundLimit());
-      BigDecimal difference = BigDecimal.valueOf(childTaxCredit.getPerQualifyingChild()).subtract(creditLimit);
-      creditAfterPhaseout = creditAfterPhaseout.subtract(difference.multiply(BigDecimal.valueOf(2)));
+    BigDecimal creditLimit = BigDecimal.valueOf(childTaxCredit.getRefundLimit());
+    BigDecimal difference = BigDecimal.valueOf(childTaxCredit.getPerQualifyingChild()).subtract(creditLimit);
+    creditAfterPhaseout = creditAfterPhaseout.subtract(difference.multiply(BigDecimal.valueOf(2)));
 
-      BigDecimal expectedFederalRefund = BigDecimal.valueOf(2000).add(creditAfterPhaseout);
-      BigDecimal expectedTotalCredits = creditAfterPhaseout;
+    BigDecimal expectedFederalRefund = BigDecimal.valueOf(2000).add(creditAfterPhaseout);
+    BigDecimal expectedTotalCredits = creditAfterPhaseout;
 
-      // Assert the result
-      assertEquals(expectedFederalRefund.setScale(2, RoundingMode.HALF_UP), result.getFederalRefund().setScale(2, RoundingMode.HALF_UP));
-      assertEquals(expectedTotalCredits.setScale(2, RoundingMode.HALF_UP), result.getTotalCredits().setScale(2, RoundingMode.HALF_UP));
-    }
+    // Assert the result
+    assertEquals(expectedFederalRefund.setScale(2, RoundingMode.HALF_UP), result.getFederalRefund().setScale(2, RoundingMode.HALF_UP));
+    assertEquals(expectedTotalCredits.setScale(2, RoundingMode.HALF_UP), result.getTotalCredits().setScale(2, RoundingMode.HALF_UP));
+  }
+
+  @Test
+  void calculateEarnedIncomeTaxCredit_Test() {
+    // Set up test data
+    taxReturn.setAdjustedGrossIncome(BigDecimal.valueOf(40000));
+    taxReturn.setFederalRefund(BigDecimal.valueOf(1000));
+    taxReturn.setTotalCredits(BigDecimal.ZERO);
+
+    TaxReturnCreditDto taxReturnCredit = new TaxReturnCreditDto();
+    taxReturnCredit.setNumDependents(1);
+    taxReturn.setTaxCredit(taxReturnCredit);
+
+    OtherIncomeDto otherIncome = new OtherIncomeDto();
+    otherIncome.setOtherInvestmentIncome(BigDecimal.valueOf(1000));
+    taxReturn.setOtherIncome(otherIncome);
+
+    FilingStatus filingStatusEnum = FilingStatus.SINGLE;
+    taxReturn.setFilingStatus(filingStatusEnum);
+
+    // Mocking FilingStatus and EarnedIncomeTaxCredit
+    com.skillstorm.taxservice.models.FilingStatus filingStatus = mock(com.skillstorm.taxservice.models.FilingStatus.class);
+    EarnedIncomeTaxCredit earnedIncomeTaxCredit = new EarnedIncomeTaxCredit();
+    earnedIncomeTaxCredit.setInvestmentIncomeLimit(3500);
+    earnedIncomeTaxCredit.setAgiThreshold0Children(15000);
+    earnedIncomeTaxCredit.setAgiThreshold1Children(40000);
+    earnedIncomeTaxCredit.setAgiThreshold2Children(45000);
+    earnedIncomeTaxCredit.setAgiThreshold3Children(50000);
+    earnedIncomeTaxCredit.setAmount0Children(500);
+    earnedIncomeTaxCredit.setAmount1Children(3000);
+    earnedIncomeTaxCredit.setAmount2Children(3500);
+    earnedIncomeTaxCredit.setAmount3Children(4000);
+
+    // Mocking FilingStatusService to return our sample filing status and earned income tax credit
+    when(filingStatusService.findById(filingStatusEnum.getValue())).thenReturn(filingStatus);
+    when(filingStatus.getEarnedIncomeTaxCredit()).thenReturn(earnedIncomeTaxCredit);
+
+    // Call the method to test
+    TaxReturnDto result = taxCalculatorService.calculateEarnedIncomeTaxCredit(taxReturn);
+
+    // Calculate expected values
+    BigDecimal expectedFederalRefund = BigDecimal.valueOf(1000).add(BigDecimal.valueOf(3000));
+    BigDecimal expectedTotalCredits = BigDecimal.valueOf(3000);
+
+    // Assert the result
+    assertEquals(expectedFederalRefund.setScale(2, RoundingMode.HALF_UP), result.getFederalRefund().setScale(2, RoundingMode.HALF_UP));
+    assertEquals(expectedTotalCredits.setScale(2, RoundingMode.HALF_UP), result.getTotalCredits().setScale(2, RoundingMode.HALF_UP));
+  }
+
+  @Test
+  void testCalculateEducationTaxCreditAotc() {
+    // Set up test data
+    taxReturn.setAdjustedGrossIncome(BigDecimal.valueOf(80000));
+    taxReturn.setFederalRefund(BigDecimal.valueOf(1000));
+    taxReturn.setTotalCredits(BigDecimal.ZERO);
+
+    TaxReturnCreditDto taxReturnCredit = new TaxReturnCreditDto();
+    taxReturnCredit.setNumDependentsAotc(2);
+    taxReturnCredit.setEducationExpenses(BigDecimal.valueOf(5000));
+    taxReturn.setTaxCredit(taxReturnCredit);
+
+    FilingStatus filingStatusEnum = FilingStatus.SINGLE;
+    taxReturn.setFilingStatus(filingStatusEnum);
+
+    // Mocking FilingStatus and EducationTaxCreditAotc
+    com.skillstorm.taxservice.models.FilingStatus filingStatus = mock(com.skillstorm.taxservice.models.FilingStatus.class);
+    EducationTaxCreditAotc educationTaxCreditAotc = new EducationTaxCreditAotc();
+    educationTaxCreditAotc.setFullCreditIncomeThreshold(80000);
+    educationTaxCreditAotc.setPartialCreditIncomeThreshold(90000);
+    educationTaxCreditAotc.setIncomePartialCreditRate(BigDecimal.valueOf(0.5));
+    educationTaxCreditAotc.setExpensesThresholdFullCredit(4000);
+    educationTaxCreditAotc.setExpensesPartialCreditRate(BigDecimal.valueOf(0.25));
+    educationTaxCreditAotc.setMaxCreditAmountPerStudent(2500);
+
+    // Mocking FilingStatusService to return our sample filing status and education tax credit
+    when(filingStatusService.findById(filingStatusEnum.getValue())).thenReturn(filingStatus);
+    when(filingStatus.getEducationTaxCreditAotc()).thenReturn(educationTaxCreditAotc);
+    when(filingStatus.getStatus()).thenReturn("Single");
+
+    // Call the method to test
+    TaxReturnDto result = taxCalculatorService.calculateEducationTaxCreditAotc(taxReturn);
+
+    // Calculate expected values
+    BigDecimal expectedCreditAmountPerDependent = BigDecimal.valueOf(4000).min(BigDecimal.valueOf(2500));
+    BigDecimal expectedCreditAmount = expectedCreditAmountPerDependent.multiply(BigDecimal.valueOf(2));
+    BigDecimal expectedFederalRefund = BigDecimal.valueOf(1000).add(expectedCreditAmount);
+    BigDecimal expectedTotalCredits = expectedCreditAmount;
+
+    // Assert the result
+    assertEquals(expectedFederalRefund.setScale(2, RoundingMode.HALF_UP), result.getFederalRefund().setScale(2, RoundingMode.HALF_UP));
+    assertEquals(expectedTotalCredits.setScale(2, RoundingMode.HALF_UP), result.getTotalCredits().setScale(2, RoundingMode.HALF_UP));
+  }
+
+  @Test
+  void testCalculateEducationTaxCreditLlc() {
+    // Set up test data
+    taxReturn.setAdjustedGrossIncome(BigDecimal.valueOf(50000));
+    taxReturn.setFederalRefund(BigDecimal.valueOf(-3000));
+    taxReturn.setTotalCredits(BigDecimal.ZERO);
+
+    TaxReturnCreditDto taxReturnCredit = new TaxReturnCreditDto();
+    taxReturnCredit.setClaimLlcCredit(true);
+    taxReturnCredit.setLlcEducationExpenses(BigDecimal.valueOf(3000));
+    taxReturn.setTaxCredit(taxReturnCredit);
+
+    FilingStatus filingStatusEnum = FilingStatus.SINGLE;
+    taxReturn.setFilingStatus(filingStatusEnum);
+
+    // Mocking FilingStatus and EducationTaxCreditLlc
+    com.skillstorm.taxservice.models.FilingStatus filingStatus = mock(com.skillstorm.taxservice.models.FilingStatus.class);
+    EducationTaxCreditLlc educationTaxCreditLlc = new EducationTaxCreditLlc();
+    educationTaxCreditLlc.setFullCreditIncomeThreshold(60000);
+    educationTaxCreditLlc.setPartialCreditIncomeThreshold(70000);
+    educationTaxCreditLlc.setIncomePartialCreditRate(BigDecimal.valueOf(0.5));
+    educationTaxCreditLlc.setExpensesThreshold(2000);
+    educationTaxCreditLlc.setCreditRate(BigDecimal.valueOf(0.2));
+
+    // Mocking FilingStatusService to return our sample filing status and education tax credit
+    when(filingStatusService.findById(filingStatusEnum.getValue())).thenReturn(filingStatus);
+    when(filingStatus.getEducationTaxCreditLlc()).thenReturn(educationTaxCreditLlc);
+
+    // Call the method to test
+    TaxReturnDto result = taxCalculatorService.calculateEducationTaxCreditLlc(taxReturn);
+
+    // Calculate expected values
+    BigDecimal expectedEducationExpenses = BigDecimal.valueOf(2000);
+    BigDecimal expectedCreditAmount = expectedEducationExpenses.multiply(BigDecimal.valueOf(0.2));
+    BigDecimal expectedFederalRefund = BigDecimal.valueOf(-3000).add(expectedCreditAmount);
+    BigDecimal expectedTotalCredits = expectedCreditAmount;
+
+    // Assert the result
+    assertEquals(expectedFederalRefund.setScale(2, RoundingMode.HALF_UP), result.getFederalRefund().setScale(2, RoundingMode.HALF_UP));
+    assertEquals(expectedTotalCredits.setScale(2, RoundingMode.HALF_UP), result.getTotalCredits().setScale(2, RoundingMode.HALF_UP));
+  }
+
+  @Test
+  void testCalculateEducationTaxCreditLlc_NotEligible() {
+    // Set up test data
+    taxReturn.setAdjustedGrossIncome(BigDecimal.valueOf(50000));
+    taxReturn.setFederalRefund(BigDecimal.valueOf(1000));
+    taxReturn.setTotalCredits(BigDecimal.ZERO);
+
+    TaxReturnCreditDto taxReturnCredit = new TaxReturnCreditDto();
+    taxReturnCredit.setClaimLlcCredit(false);
+    taxReturn.setTaxCredit(taxReturnCredit);
+
+    FilingStatus filingStatusEnum = FilingStatus.SINGLE;
+    taxReturn.setFilingStatus(filingStatusEnum);
+
+    // Call the method to test
+    TaxReturnDto result = taxCalculatorService.calculateEducationTaxCreditLlc(taxReturn);
+
+    // Assert the result (should be unchanged)
+    assertEquals(BigDecimal.valueOf(1000).setScale(2, RoundingMode.HALF_UP), result.getFederalRefund().setScale(2, RoundingMode.HALF_UP));
+    assertEquals(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP), result.getTotalCredits().setScale(2, RoundingMode.HALF_UP));
+  }
+
+  @Test
+  void testCalculateEducationTaxCreditLlc_IncomeThresholdExceeded() {
+    // Set up test data
+    taxReturn.setAdjustedGrossIncome(BigDecimal.valueOf(80000));
+    taxReturn.setFederalRefund(BigDecimal.valueOf(1000));
+    taxReturn.setTotalCredits(BigDecimal.ZERO);
+
+    TaxReturnCreditDto taxReturnCredit = new TaxReturnCreditDto();
+    taxReturnCredit.setClaimLlcCredit(true);
+    taxReturnCredit.setLlcEducationExpenses(BigDecimal.valueOf(3000));
+    taxReturn.setTaxCredit(taxReturnCredit);
+
+    FilingStatus filingStatusEnum = FilingStatus.SINGLE;
+    taxReturn.setFilingStatus(filingStatusEnum);
+
+    // Mocking FilingStatus and EducationTaxCreditLlc
+    com.skillstorm.taxservice.models.FilingStatus filingStatus = mock(com.skillstorm.taxservice.models.FilingStatus.class);
+    EducationTaxCreditLlc educationTaxCreditLlc = new EducationTaxCreditLlc();
+    educationTaxCreditLlc.setFullCreditIncomeThreshold(60000);
+    educationTaxCreditLlc.setPartialCreditIncomeThreshold(70000);
+    educationTaxCreditLlc.setIncomePartialCreditRate(BigDecimal.valueOf(0.5));
+    educationTaxCreditLlc.setExpensesThreshold(2000);
+    educationTaxCreditLlc.setCreditRate(BigDecimal.valueOf(0.2));
+
+    // Mocking FilingStatusService to return our sample filing status and education tax credit
+    when(filingStatusService.findById(filingStatusEnum.getValue())).thenReturn(filingStatus);
+    when(filingStatus.getEducationTaxCreditLlc()).thenReturn(educationTaxCreditLlc);
+
+    // Call the method to test
+    TaxReturnDto result = taxCalculatorService.calculateEducationTaxCreditLlc(taxReturn);
+
+    // Assert the result (should be unchanged due to income threshold exceeded)
+    assertEquals(BigDecimal.valueOf(1000).setScale(2, RoundingMode.HALF_UP), result.getFederalRefund().setScale(2, RoundingMode.HALF_UP));
+    assertEquals(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP), result.getTotalCredits().setScale(2, RoundingMode.HALF_UP));
+  }
+
+  @Test
+  void calculateSaversTaxCredit_Test() {
+    // Set up test data
+    taxReturn.setAdjustedGrossIncome(BigDecimal.valueOf(25000)); // Sample AGI
+    taxReturn.setFederalRefund(BigDecimal.valueOf(-2000)); // Sample federal refund
+    taxReturn.setTotalCredits(BigDecimal.ZERO); // Initial total credits
+
+    TaxReturnCreditDto taxReturnCredit = new TaxReturnCreditDto();
+    taxReturnCredit.setClaimedAsDependent(false); // User is not claimed as dependent
+    taxReturnCredit.setIraContributions(BigDecimal.valueOf(2000)); // Sample IRA contributions
+    taxReturn.setTaxCredit(taxReturnCredit);
+
+    FilingStatus filingStatusEnum = FilingStatus.SINGLE;
+    taxReturn.setFilingStatus(filingStatusEnum);
+
+    // Mocking FilingStatus and SaversTaxCredit
+    com.skillstorm.taxservice.models.FilingStatus filingStatus = mock(com.skillstorm.taxservice.models.FilingStatus.class);
+    SaversTaxCredit saversTaxCredit = new SaversTaxCredit();
+    saversTaxCredit.setAgiThresholdFirstContributionLimit(19000); // Sample first AGI threshold
+    saversTaxCredit.setAgiThresholdSecondContributionLimit(10000); // Sample second AGI threshold
+    saversTaxCredit.setAgiThresholdThirdContributionLimit(20000); // Sample third AGI threshold
+    saversTaxCredit.setFirstContributionRate(BigDecimal.valueOf(0.5)); // Sample first contribution rate
+    saversTaxCredit.setSecondContributionRate(BigDecimal.valueOf(0.2)); // Sample second contribution rate
+    saversTaxCredit.setThirdContributionRate(BigDecimal.valueOf(0.1)); // Sample third contribution rate
+    saversTaxCredit.setMaxContributionAmount(2000); // Sample max contribution amount
+
+    // Mocking FilingStatusService to return our sample filing status and savers tax credit
+    when(filingStatusService.findById(filingStatusEnum.getValue())).thenReturn(filingStatus);
+    when(filingStatus.getSaversTaxCredit()).thenReturn(saversTaxCredit);
+
+    // Call the method to test
+    TaxReturnDto result = taxCalculatorService.calculateSaversTaxCredit(taxReturn);
+
+    // Calculate expected values
+    BigDecimal expectedIraContributions = BigDecimal.valueOf(2000).min(BigDecimal.valueOf(2000)); // Min of user contribution and max allowed
+    BigDecimal expectedCreditAmount = expectedIraContributions.multiply(BigDecimal.valueOf(0.2)); // Credit rate of 20%
+    BigDecimal expectedFederalRefund = BigDecimal.valueOf(-2000).add(expectedCreditAmount);
+    BigDecimal expectedTotalCredits = expectedCreditAmount;
+
+    // Assert the result
+    assertEquals(expectedFederalRefund.setScale(2, RoundingMode.HALF_UP), result.getFederalRefund().setScale(2, RoundingMode.HALF_UP));
+    assertEquals(expectedTotalCredits.setScale(2, RoundingMode.HALF_UP), result.getTotalCredits().setScale(2, RoundingMode.HALF_UP));
+  }
+
+  @Test
+  void calculateSaversTaxCredit_NotEligible_Test() {
+    // Set up test data
+    taxReturn.setAdjustedGrossIncome(BigDecimal.valueOf(25000)); // Sample AGI
+    taxReturn.setFederalRefund(BigDecimal.valueOf(1000)); // Sample federal refund
+    taxReturn.setTotalCredits(BigDecimal.ZERO); // Initial total credits
+
+    TaxReturnCreditDto taxReturnCredit = new TaxReturnCreditDto();
+    taxReturnCredit.setClaimedAsDependent(true); // User is claimed as dependent
+    taxReturnCredit.setIraContributions(BigDecimal.valueOf(2000)); // Sample IRA contributions
+    taxReturn.setTaxCredit(taxReturnCredit);
+
+    FilingStatus filingStatusEnum = FilingStatus.SINGLE;
+    taxReturn.setFilingStatus(filingStatusEnum);
+
+    // Call the method to test
+    TaxReturnDto result = taxCalculatorService.calculateSaversTaxCredit(taxReturn);
+
+    // Assert the result (should be unchanged)
+    assertEquals(BigDecimal.valueOf(1000).setScale(2, RoundingMode.HALF_UP), result.getFederalRefund().setScale(2, RoundingMode.HALF_UP));
+    assertEquals(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP), result.getTotalCredits().setScale(2, RoundingMode.HALF_UP));
+  }
+
+  @Test
+  void calculateSaversTaxCredit_IncomeThresholdExceeded_Test() {
+    // Set up test data
+    taxReturn.setAdjustedGrossIncome(BigDecimal.valueOf(60000)); // Sample AGI above the third threshold
+    taxReturn.setFederalRefund(BigDecimal.valueOf(1000)); // Sample federal refund
+    taxReturn.setTotalCredits(BigDecimal.ZERO); // Initial total credits
+
+    TaxReturnCreditDto taxReturnCredit = new TaxReturnCreditDto();
+    taxReturnCredit.setClaimedAsDependent(false); // User is not claimed as dependent
+    taxReturnCredit.setIraContributions(BigDecimal.valueOf(2000)); // Sample IRA contributions
+    taxReturn.setTaxCredit(taxReturnCredit);
+
+    FilingStatus filingStatusEnum = FilingStatus.SINGLE;
+    taxReturn.setFilingStatus(filingStatusEnum);
+
+    // Mocking FilingStatus and SaversTaxCredit
+    com.skillstorm.taxservice.models.FilingStatus filingStatus = mock(com.skillstorm.taxservice.models.FilingStatus.class);
+    SaversTaxCredit saversTaxCredit = new SaversTaxCredit();
+    saversTaxCredit.setAgiThresholdFirstContributionLimit(19000); // Sample first AGI threshold
+    saversTaxCredit.setAgiThresholdSecondContributionLimit(29000); // Sample second AGI threshold
+    saversTaxCredit.setAgiThresholdThirdContributionLimit(49000); // Sample third AGI threshold
+    saversTaxCredit.setFirstContributionRate(BigDecimal.valueOf(0.5)); // Sample first contribution rate
+    saversTaxCredit.setSecondContributionRate(BigDecimal.valueOf(0.2)); // Sample second contribution rate
+    saversTaxCredit.setThirdContributionRate(BigDecimal.valueOf(0.1)); // Sample third contribution rate
+    saversTaxCredit.setMaxContributionAmount(2000); // Sample max contribution amount
+
+    // Mocking FilingStatusService to return our sample filing status and savers tax credit
+    when(filingStatusService.findById(filingStatusEnum.getValue())).thenReturn(filingStatus);
+    when(filingStatus.getSaversTaxCredit()).thenReturn(saversTaxCredit);
+
+    // Call the method to test
+    TaxReturnDto result = taxCalculatorService.calculateSaversTaxCredit(taxReturn);
+
+    // Assert the result (should be unchanged due to income threshold exceeded)
+    assertEquals(BigDecimal.valueOf(1000).setScale(2, RoundingMode.HALF_UP), result.getFederalRefund().setScale(2, RoundingMode.HALF_UP));
+    assertEquals(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP), result.getTotalCredits().setScale(2, RoundingMode.HALF_UP));
+  }
+
+  @Test
+  void calculateDependentCareTaxCredit_Test() {
+    // Set up test data
+    taxReturn.setAdjustedGrossIncome(BigDecimal.valueOf(40000)); // Sample AGI
+    taxReturn.setFederalRefund(BigDecimal.valueOf(-2000)); // Sample federal refund
+    taxReturn.setTotalCredits(BigDecimal.ZERO); // Initial total credits
+
+    TaxReturnCreditDto taxReturnCredit = new TaxReturnCreditDto();
+    taxReturnCredit.setNumChildren(2); // Sample number of children
+    taxReturnCredit.setChildCareExpenses(BigDecimal.valueOf(5000)); // Sample child care expenses
+    taxReturn.setTaxCredit(taxReturnCredit);
+
+    // Mocking DependentCareTaxCredit and DependentCareTaxCreditLimit
+    DependentCareTaxCredit credit1 = new DependentCareTaxCredit();
+    credit1.setIncomeRange(15000); // Sample income range for first bracket
+    credit1.setRate(BigDecimal.valueOf(0.35)); // Sample rate for first bracket
+
+    DependentCareTaxCredit credit2 = new DependentCareTaxCredit();
+    credit2.setIncomeRange(30000); // Sample income range for second bracket
+    credit2.setRate(BigDecimal.valueOf(0.20)); // Sample rate for second bracket
+
+    List<DependentCareTaxCredit> dependentCareTaxCredit = Arrays.asList(credit1, credit2);
+    
+    DependentCareTaxCreditLimit creditLimit = new DependentCareTaxCreditLimit();
+    creditLimit.setCreditLimit(3000); // Sample credit limit for number of dependents
+
+    // Mocking TaxCreditService to return our sample data
+    when(taxCreditService.getDependentCareTaxCreditBrackets()).thenReturn(dependentCareTaxCredit);
+    when(taxCreditService.getDependentCareTaxCreditLimitByNumDependents(2)).thenReturn(creditLimit);
+
+    // Call the method to test
+    TaxReturnDto result = taxCalculatorService.calculateDependentCareTaxCredit(taxReturn);
+
+    // Calculate expected values
+    BigDecimal expectedRate = BigDecimal.valueOf(0.20); // Rate based on AGI falling in the second bracket
+    BigDecimal expectedCreditAmount = BigDecimal.valueOf(5000).multiply(expectedRate); // Calculate credit amount
+    expectedCreditAmount = expectedCreditAmount.min(BigDecimal.valueOf(3000)); // Restrict credit amount based on credit limit
+
+    BigDecimal expectedFederalRefund = BigDecimal.valueOf(-2000).add(expectedCreditAmount);
+    BigDecimal expectedTotalCredits = expectedCreditAmount;
+
+    // Assert the result
+    assertEquals(expectedFederalRefund.setScale(2, RoundingMode.HALF_UP), result.getFederalRefund().setScale(2, RoundingMode.HALF_UP));
+    assertEquals(expectedTotalCredits.setScale(2, RoundingMode.HALF_UP), result.getTotalCredits().setScale(2, RoundingMode.HALF_UP));
+  }
 }

@@ -595,7 +595,7 @@ public class TaxCalculatorService {
           if (remainingAgi.compareTo(agiThirdThreshold) > 0) {
             return taxReturn;
           } else {
-            rate = saversTaxCredit.getThirdontributionRate();
+            rate = saversTaxCredit.getThirdContributionRate();
           }
         } else {
           rate = saversTaxCredit.getSecondContributionRate();
@@ -661,7 +661,7 @@ public class TaxCalculatorService {
       BigDecimal creditAmount = childCareExpenses.multiply(rate);
 
       // Restrict creditAmount based on credit limit
-      creditAmount = creditAmount.max(BigDecimal.valueOf(creditLimit.getCreditLimit()));
+      creditAmount = creditAmount.min(BigDecimal.valueOf(creditLimit.getCreditLimit()));
 
       // Calculate the amount needed to bring federalRefund to zero
       BigDecimal neededToZero = taxReturn.getFederalRefund().negate();
