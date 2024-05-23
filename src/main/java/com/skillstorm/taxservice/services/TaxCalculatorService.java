@@ -83,14 +83,14 @@ public class TaxCalculatorService {
 
     public TaxReturnDto calculateTotalIncome(TaxReturnDto taxReturn) throws IllegalAccessException {
       List<W2Dto> w2s = taxReturn.getW2s();
-      BigDecimal w2Income =  w2s.stream().map(W2Dto::getWages)
-                              .reduce(BigDecimal.ZERO, BigDecimal::add)
-                              .setScale(2, RoundingMode.HALF_UP);
-      
-      OtherIncomeDto otherIncome = otherIncomeService.findByTaxReturnId(taxReturn.getId());
-      BigDecimal totalOtherIncome = otherIncomeService.sumOtherIncome(otherIncome);
+      BigDecimal totalIncome = BigDecimal.ZERO;
+      totalIncome =  totalIncome.add(w2s.stream().map(W2Dto::getWages)
+                                .reduce(BigDecimal.ZERO, BigDecimal::add));
 
-      BigDecimal totalIncome = w2Income.add(totalOtherIncome);
+      if (taxReturn.getOtherIncome() != null) {
+        BigDecimal totalOtherIncome = otherIncomeService.sumOtherIncome(taxReturn.getOtherIncome());
+        totalIncome = totalIncome.add(totalOtherIncome);
+      }
 
       taxReturn.setTotalIncome(totalIncome);
 

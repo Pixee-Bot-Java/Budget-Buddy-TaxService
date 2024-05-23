@@ -72,6 +72,17 @@ public class TaxCalculatorServiceTest {
   }
 
   @Test
+  public void testCalculateAll_DefaultValues() throws IllegalAccessException {
+
+    TaxReturnDto result = taxCalculatorService.calculateAll(taxReturn);
+
+    BigDecimal expectedResult = BigDecimal.ZERO.setScale(2);
+
+    assertEquals(expectedResult, result.getFederalRefund());
+    assertEquals(expectedResult, result.getStateRefund());
+  }
+
+  @Test
   public void testCalculateTotalIncome() throws IllegalAccessException {
     // Arrange
     W2Dto w2Dto1 = new W2Dto();
@@ -84,8 +95,9 @@ public class TaxCalculatorServiceTest {
     
     OtherIncomeDto otherIncomeDto = new OtherIncomeDto();
     BigDecimal totalOtherIncome = new BigDecimal("10000.00");
+
+    taxReturn.setOtherIncome(otherIncomeDto);
     
-    when(otherIncomeService.findByTaxReturnId(1)).thenReturn(otherIncomeDto);
     when(otherIncomeService.sumOtherIncome(otherIncomeDto)).thenReturn(totalOtherIncome);
     
     // Act
@@ -95,7 +107,6 @@ public class TaxCalculatorServiceTest {
     BigDecimal expectedTotalIncome = new BigDecimal("60000.00").setScale(2, RoundingMode.HALF_UP);
     assertEquals(expectedTotalIncome, result.getTotalIncome());
     
-    verify(otherIncomeService, times(1)).findByTaxReturnId(1);
     verify(otherIncomeService, times(1)).sumOtherIncome(otherIncomeDto);
   }
 
