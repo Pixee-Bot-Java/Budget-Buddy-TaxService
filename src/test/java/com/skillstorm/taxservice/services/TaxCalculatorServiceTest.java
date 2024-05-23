@@ -80,6 +80,13 @@ public class TaxCalculatorServiceTest {
 
     assertEquals(expectedResult, result.getFederalRefund());
     assertEquals(expectedResult, result.getStateRefund());
+    assertEquals(expectedResult, result.getTotalIncome());
+    assertEquals(expectedResult, result.getAdjustedGrossIncome());
+    assertEquals(expectedResult, result.getTaxableIncome());
+    assertEquals(expectedResult, result.getTotalCredits());
+    assertEquals(expectedResult, result.getFedTaxWithheld());
+    assertEquals(expectedResult, result.getSocialSecurityTaxWithheld());
+    assertEquals(expectedResult, result.getMedicareTaxWithheld());
   }
 
   @Test
