@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import com.skillstorm.taxservice.constants.State;
 import com.skillstorm.taxservice.dtos.OtherIncomeDto;
 import com.skillstorm.taxservice.dtos.TaxReturnCreditDto;
+import com.skillstorm.taxservice.dtos.TaxReturnDeductionDto;
 import com.skillstorm.taxservice.dtos.TaxReturnDto;
 import com.skillstorm.taxservice.dtos.W2Dto;
 import com.skillstorm.taxservice.models.CapitalGainsTax;
@@ -51,7 +52,12 @@ public class TaxCalculatorService {
 
     public TaxReturnDto calculateAll(TaxReturnDto taxReturn) throws IllegalAccessException {
 
-      // First, perform any income related calculations; calculating total income, agi, and taxable income
+      // Reset any previous calculations
+      taxReturn.setFederalRefund(BigDecimal.ZERO);
+      taxReturn.setStateRefund(BigDecimal.ZERO);
+      taxReturn.setTotalCredits(BigDecimal.ZERO);
+
+      // First, perform any income related calculations; calculating total income, then agi, then taxable income
       calculateTotalIncome(taxReturn);
       calculateAgi(taxReturn);
       calculateTaxableIncome(taxReturn);
@@ -92,15 +98,48 @@ public class TaxCalculatorService {
     }
 
 
-    // Placeholder for now
     public TaxReturnDto calculateAgi(TaxReturnDto taxReturn) throws IllegalAccessException {
-      return calculateTotalIncome(taxReturn);
+      
+      // If there are no deductions to calculate, simply set AGI to the total income
+      if (taxReturn.getDeductions() == null || taxReturn.getDeductions().isEmpty()) {
+        taxReturn.setAdjustedGrossIncome(taxReturn.getTotalIncome());
+        return taxReturn;
+      }
+
+      // If there are deductions, subtract deductions from total income and set result to tax return's AGI
+      BigDecimal agi = taxReturn.getTotalIncome();
+
+      List<TaxReturnDeductionDto> deductions = taxReturn.getDeductions();
+      for (TaxReturnDeductionDto deduction : deductions) {
+        agi = agi.subtract(deduction.getAmountSpent());   // or deduction.getNetDeduction()
+      }
+
+      // Restrict agi to be >= 0
+      taxReturn.setAdjustedGrossIncome(agi.max(BigDecimal.ZERO));
+
+      return taxReturn;
     }
 
 
-    // Placeholder for now
     public TaxReturnDto calculateTaxableIncome(TaxReturnDto taxReturn) throws IllegalAccessException {
-      return calculateTotalIncome(taxReturn);
+      // If there are no deductions to calculate, simply set taxable income to the total income
+      if (taxReturn.getDeductions() == null || taxReturn.getDeductions().isEmpty()) {
+        taxReturn.setTaxableIncome(taxReturn.getAdjustedGrossIncome());
+        return taxReturn;
+      }
+
+      // If there are deductions, subtract deductions from total income and set result to tax return's taxable income
+      BigDecimal taxableIncome = taxReturn.getTotalIncome();
+
+      List<TaxReturnDeductionDto> deductions = taxReturn.getDeductions();
+      for (TaxReturnDeductionDto deduction : deductions) {
+        taxableIncome = taxableIncome.subtract(deduction.getAmountSpent());   // or deduction.getNetDeduction()
+      }
+
+      // Restrict taxable income to be >= 0
+      taxReturn.setTaxableIncome(taxableIncome.max(BigDecimal.ZERO));
+
+      return taxReturn;
     }
 
 
@@ -268,8 +307,8 @@ public class TaxCalculatorService {
       // Get total taxable income
       BigDecimal taxableIncome = taxReturn.getTaxableIncome();
 
-      // If user hasn't input any other income, simply return
-      if (taxReturn.getOtherIncome() == null) {
+      // If user hasn't input any other income, or if long term cap gains is 0 simply return
+      if (taxReturn.getOtherIncome() == null || taxReturn.getOtherIncome().getLongTermCapitalGains().compareTo(BigDecimal.ZERO) <= 0) {
         return taxReturn;
       }
 
@@ -361,6 +400,11 @@ public class TaxCalculatorService {
       int numDependents = taxReturnCredit.getNumDependents();
       BigDecimal agi = taxReturn.getAdjustedGrossIncome();
 
+      // If no qualifying dependents, simply return tax return
+      if (numDependents <= 0) {
+        return taxReturn;
+      }
+
       BigDecimal potentialCreditAmount = BigDecimal.valueOf(numDependents * childTaxCredit.getPerQualifyingChild());
 
       // Convert int income threshold to BigDecimal
@@ -410,7 +454,8 @@ public class TaxCalculatorService {
       BigDecimal agi = taxReturn.getAdjustedGrossIncome();
 
       // If user's investment income is greater than the investment income limit: not eligible for this credit; return
-      if (taxReturn.getOtherIncome().getOtherInvestmentIncome().doubleValue() >= earnedIncomeTaxCredit.getInvestmentIncomeLimit()) {
+      if (taxReturn.getOtherIncome().getOtherInvestmentIncome().doubleValue() >= earnedIncomeTaxCredit.getInvestmentIncomeLimit() ||
+          agi.compareTo(BigDecimal.ZERO) <= 0) {
         return taxReturn;
       }
 
@@ -455,6 +500,15 @@ public class TaxCalculatorService {
       FilingStatus filingStatus = filingStatusService.findById(taxReturn.getFilingStatus().getValue());
       EducationTaxCreditAotc educationTaxCreditAotc = filingStatus.getEducationTaxCreditAotc();
 
+      // Get relevant variables
+      int numDependents = taxReturnCredit.getNumDependentsAotc();
+      BigDecimal educationExpenses = taxReturnCredit.getEducationExpenses();
+
+      // If no dependents qualify for aotc, or no education expenses, simply return
+      if (numDependents <= 0 || educationExpenses.compareTo(BigDecimal.ZERO) <= 0) {
+        return taxReturn;
+      }
+
       // Get user's agi
       BigDecimal agi = taxReturn.getAdjustedGrossIncome();
 
@@ -476,10 +530,6 @@ public class TaxCalculatorService {
 
       // Initialize credit amount
       BigDecimal creditAmount = BigDecimal.ZERO;
-
-      // Get relevant variables
-      int numDependents = taxReturnCredit.getNumDependentsAotc();
-      BigDecimal educationExpenses = taxReturnCredit.getEducationExpenses();
 
       // Calculate education expenses per student
       BigDecimal expensesPerDependent = educationExpenses.divide(BigDecimal.valueOf(numDependents), 2, RoundingMode.HALF_UP);
@@ -515,8 +565,11 @@ public class TaxCalculatorService {
     public TaxReturnDto calculateEducationTaxCreditLlc(TaxReturnDto taxReturn) {
       TaxReturnCreditDto taxReturnCredit = taxReturn.getTaxCredit();
 
+      // Get education expenses
+      BigDecimal educationExpenses = taxReturnCredit.getLlcEducationExpenses();
+
       // if user is not eligible, return
-      if (!taxReturnCredit.isClaimLlcCredit()) {
+      if (!taxReturnCredit.isClaimLlcCredit() || taxReturnCredit.getLlcEducationExpenses().compareTo(BigDecimal.ZERO) <= 0) {
         return taxReturn;
       }
 
@@ -539,9 +592,6 @@ public class TaxCalculatorService {
           rate = educationTaxCreditLlc.getIncomePartialCreditRate();
         }
       }
-
-      // Get education expenses
-      BigDecimal educationExpenses = taxReturnCredit.getLlcEducationExpenses();
       
       // Bound expenses to the maximum allowed consideration for tax credit
       educationExpenses = educationExpenses.min(BigDecimal.valueOf(educationTaxCreditLlc.getExpensesThreshold()));
@@ -569,8 +619,11 @@ public class TaxCalculatorService {
     public TaxReturnDto calculateSaversTaxCredit(TaxReturnDto taxReturn) {
       TaxReturnCreditDto taxReturnCredit = taxReturn.getTaxCredit();
 
-      // if user can be claimed as a dependent on another's tax return: not eligible; return
-      if (taxReturnCredit.isClaimedAsDependent()) {
+      // Get user's IRA contribution amount
+      BigDecimal iraContributions = taxReturnCredit.getIraContributions();
+
+      // if user can be claimed as a dependent on another's tax return or if no ira contributions: not eligible; return
+      if (taxReturnCredit.isClaimedAsDependent() || iraContributions.compareTo(BigDecimal.ZERO) <= 0) {
         return taxReturn;
       }
 
@@ -602,9 +655,6 @@ public class TaxCalculatorService {
         }
       }
 
-      // Get user's IRA contribution amount
-      BigDecimal iraContributions = taxReturnCredit.getIraContributions();
-
       // Restrict amount of contributions that are considered for tax credit
       iraContributions = iraContributions.min(BigDecimal.valueOf(saversTaxCredit.getMaxContributionAmount()));
 
@@ -629,11 +679,19 @@ public class TaxCalculatorService {
     public TaxReturnDto calculateDependentCareTaxCredit(TaxReturnDto taxReturn) {
       TaxReturnCreditDto taxReturnCredit = taxReturn.getTaxCredit();
 
-      // Get tax credit static data
-      List<DependentCareTaxCredit> dependentCareTaxCredit = taxCreditService.getDependentCareTaxCreditBrackets();
+      // Get child care expenses
+      BigDecimal childCareExpenses = taxReturnCredit.getChildCareExpenses();
 
       // Get user's number of qualifying children
       int numChildren = taxReturnCredit.getNumChildren();
+
+      // If no children or no child care expenses, simply return
+      if (numChildren <= 0 || childCareExpenses.compareTo(BigDecimal.ZERO) <= 0) {
+        return taxReturn;
+      }
+
+      // Get tax credit static data
+      List<DependentCareTaxCredit> dependentCareTaxCredit = taxCreditService.getDependentCareTaxCreditBrackets();
 
       DependentCareTaxCreditLimit creditLimit = taxCreditService.getDependentCareTaxCreditLimitByNumDependents(numChildren);
 
@@ -653,9 +711,6 @@ public class TaxCalculatorService {
           break;
         }
       }
-
-      // Get child care expenses
-      BigDecimal childCareExpenses = taxReturnCredit.getChildCareExpenses();
 
       // Calculate credit amount based on rate
       BigDecimal creditAmount = childCareExpenses.multiply(rate);
