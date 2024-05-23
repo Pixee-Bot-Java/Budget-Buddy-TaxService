@@ -64,7 +64,7 @@ public class TaxCreditCalculator {
     
             // Determine AGI limit based on filing status and number of children
             double agiLimit;
-            if (filingStatus.equalsIgnoreCase("joint")) {
+            if ("joint".equalsIgnoreCase(filingStatus)) {
                 agiLimit = (numQualifyingChildren >= 3) ? 63398 :
                           (numQualifyingChildren == 2) ? 59478 :
                           (numQualifyingChildren == 1) ? 53120 :
@@ -143,7 +143,7 @@ public class TaxCreditCalculator {
 
 
         public static double calculateAOTC(double qualifiedExpenses, double agi, String filingStatus) {
-            if (filingStatus.equalsIgnoreCase("separate")) {
+            if ("separate".equalsIgnoreCase(filingStatus)) {
                 return 0; // Married filing separately cannot claim AOTC
             }
 
@@ -233,7 +233,7 @@ public class TaxCreditCalculator {
 
             // Determine credit rate based on AGI and filing status
             double creditRate = 0; 
-            if (filingStatus.equalsIgnoreCase("joint")) {
+            if ("joint".equalsIgnoreCase(filingStatus)) {
                 if (agi <= 43500) {
                     creditRate = 0.50;
                 } else if (agi <= 47500) {
@@ -241,7 +241,7 @@ public class TaxCreditCalculator {
                 } else if (agi <= 73000) {
                     creditRate = 0.10;
                 }
-            } else if (filingStatus.equalsIgnoreCase("head")) {
+            } else if ("head".equalsIgnoreCase(filingStatus)) {
                 if (agi <= 32625) {
                     creditRate = 0.50;
                 } else if (agi <= 35625) {
@@ -249,7 +249,7 @@ public class TaxCreditCalculator {
                 } else if (agi <= 54750) {
                     creditRate = 0.10;
                 }
-            } else if (filingStatus.equalsIgnoreCase("single")) {  // Specific check for "single"
+            } else if ("single".equalsIgnoreCase(filingStatus)) {  // Specific check for "single"
                 if (agi <= 21750) {
                     creditRate = 0.50;
                 } else if (agi <= 23750) {
