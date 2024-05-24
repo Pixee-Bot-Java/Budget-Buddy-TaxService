@@ -101,4 +101,10 @@ public class TaxReturnController {
         taxReturnService.deleteAllByUserId(userId);
         return ResponseEntity.noContent().build();
     }
+
+    // View all possible Filing Statuses:
+    @GetMapping("/filingStatuses")
+    public ResponseEntity<List<String>> getFilingStatuses() {
+        return ResponseEntity.ok(taxReturnService.getFilingStatuses());
+    }
 }

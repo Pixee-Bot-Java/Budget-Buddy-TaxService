@@ -1,5 +1,6 @@
 package com.skillstorm.taxservice.services;
 
+import com.skillstorm.taxservice.constants.FilingStatus;
 import com.skillstorm.taxservice.dtos.RefundDto;
 import com.skillstorm.taxservice.dtos.TaxReturnDeductionDto;
 import com.skillstorm.taxservice.dtos.TaxReturnDto;
@@ -228,5 +229,9 @@ public class TaxReturnService {
     @Transactional
     public void deleteAllByUserId(int userId) {
         taxReturnRepository.deleteAllByUserId(userId);
+    }
+
+    public List<String> getFilingStatuses() {
+        return FilingStatus.getFilingStatuses();
     }
 }
