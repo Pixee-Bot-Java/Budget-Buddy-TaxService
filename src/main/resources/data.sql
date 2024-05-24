@@ -567,8 +567,8 @@ INSERT INTO state_tax (state_id, rate, income_range) VALUES (50, 0.00, 0);
 COMMIT;
 
 BEGIN;
-INSERT INTO deduction (name) VALUES ('Health Savings Account');
-INSERT INTO deduction (name) VALUES ('IRA Contributions');
-INSERT INTO deduction (name) VALUES ('Student Loan Interest');
-INSERT INTO deduction (name) VALUES ('Educator Expenses');
+INSERT INTO deduction (name, agi_limit, itemized) VALUES ('Health Savings Account', 1.00, false);
+INSERT INTO deduction (name, agi_limit, itemized) VALUES ('IRA Contributions', 1.00, false);
+INSERT INTO deduction (name, agi_limit, itemized) VALUES ('Student Loan Interest', 1.00, false);
+INSERT INTO deduction (name, agi_limit, itemized) VALUES ('Educator Expenses', 1.00, false);
 COMMIT;

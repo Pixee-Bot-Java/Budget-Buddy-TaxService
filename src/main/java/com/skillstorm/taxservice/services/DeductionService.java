@@ -1,7 +1,7 @@
 package com.skillstorm.taxservice.services;
 
+import com.skillstorm.taxservice.dtos.DeductionDto;
 import com.skillstorm.taxservice.exceptions.NotFoundException;
-import com.skillstorm.taxservice.models.Deduction;
 import com.skillstorm.taxservice.repositories.DeductionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,13 +19,14 @@ public class DeductionService {
     }
 
     // Find Deduction by ID:
-    public Deduction findById(int id) {
-        return deductionRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("deduction.not.found"));
+    public DeductionDto findById(int id) {
+        return new DeductionDto(deductionRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("deduction.not.found")));
     }
 
-    // Find list of all Deductions:
-    public List<Deduction> findAll() {
-        return deductionRepository.findAll();
+    // Find list of all Above the Line Deductions:
+    public List<DeductionDto> findAll() {
+        return deductionRepository.findAll().stream()
+                .filter(deduction -> !deduction.isItemized()).map(DeductionDto::new).toList();
     }
 }

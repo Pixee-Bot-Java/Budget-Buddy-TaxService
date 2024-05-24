@@ -69,7 +69,7 @@ public class OtherIncomeServiceTest {
         otherIncomeDto.setNetBusinessIncome(BigDecimal.valueOf(400));
         otherIncomeDto.setAdditionalIncome(BigDecimal.valueOf(500));
 
-        BigDecimal sum = otherIncomeService.sumOtherIncome(otherIncomeDto);
+        BigDecimal sum = otherIncomeDto.getSum();
 
         assertEquals(BigDecimal.valueOf(1500), sum);
     }

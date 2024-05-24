@@ -9,7 +9,8 @@ import java.math.BigDecimal;
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name = "taxreturn_deduction")
+@Table(name = "taxreturn_deduction",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"taxreturn_id", "deduction_id"}))
 public class TaxReturnDeduction {
 
     @Id

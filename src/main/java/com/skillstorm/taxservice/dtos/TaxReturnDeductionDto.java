@@ -15,6 +15,7 @@ public class TaxReturnDeductionDto {
     private int taxReturn;
     private int deduction;
     private String deductionName;
+    private boolean itemized;
     private BigDecimal amountSpent;
     private BigDecimal netDeduction;
 
@@ -28,6 +29,7 @@ public class TaxReturnDeductionDto {
         this.taxReturn = taxReturnDeduction.getTaxReturn().getId();
         this.deduction = taxReturnDeduction.getDeduction().getId();
         this.deductionName = taxReturnDeduction.getDeduction().getName();
+        this.itemized = taxReturnDeduction.getDeduction().isItemized();
         this.amountSpent = taxReturnDeduction.getAmountSpent();
         this.netDeduction = taxReturnDeduction.getNetDeduction();
     }

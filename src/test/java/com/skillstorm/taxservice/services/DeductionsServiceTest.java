@@ -1,5 +1,6 @@
 package com.skillstorm.taxservice.services;
 
+import com.skillstorm.taxservice.dtos.DeductionDto;
 import com.skillstorm.taxservice.exceptions.NotFoundException;
 import com.skillstorm.taxservice.models.Deduction;
 import com.skillstorm.taxservice.repositories.DeductionRepository;
@@ -44,9 +45,9 @@ class DeductionsServiceTest {
         returnedDeduction.setName("Test Deduction");
 
         deductionList = List.of(
-                new Deduction(1, "Test Deduction 1"),
-                new Deduction(2, "Test Deduction 2"),
-                new Deduction(3, "Test Deduction 3")
+                new Deduction(1, "Test Deduction 1", BigDecimal.valueOf(1), false ),
+                new Deduction(2, "Test Deduction 2", BigDecimal.valueOf(1), false),
+                new Deduction(3, "Test Deduction 3", BigDecimal.valueOf(1), false)
         );
     }
 
@@ -58,7 +59,7 @@ class DeductionsServiceTest {
         when(deductionRepository.findById(1)).thenReturn(java.util.Optional.of(returnedDeduction));
 
         // Call method to test:
-        Deduction result = deductionService.findById(1);
+        DeductionDto result = deductionService.findById(1);
 
         // Verify:
         assertEquals(1, result.getId(), "Deduction ID should be: 1");
@@ -84,7 +85,7 @@ class DeductionsServiceTest {
         when(deductionRepository.findAll()).thenReturn(deductionList);
 
         // Call method to test:
-        List<Deduction> result = deductionService.findAll();
+        List<DeductionDto> result = deductionService.findAll();
 
         // Verify:
         assertEquals(3, result.size(), "List of Deductions should contain 3 Deductions");
