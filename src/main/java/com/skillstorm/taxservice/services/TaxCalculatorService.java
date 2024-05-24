@@ -8,7 +8,6 @@ import com.skillstorm.taxservice.dtos.TaxReturnDeductionDto;
 import com.skillstorm.taxservice.dtos.TaxReturnDto;
 import com.skillstorm.taxservice.dtos.W2Dto;
 import com.skillstorm.taxservice.models.CapitalGainsTax;
-import com.skillstorm.taxservice.models.Deduction;
 import com.skillstorm.taxservice.models.FilingStatus;
 import com.skillstorm.taxservice.models.StateTax;
 import com.skillstorm.taxservice.models.TaxBracket;
@@ -31,20 +30,17 @@ public class TaxCalculatorService {
 
     private final TaxCreditService taxCreditService;
     private final FilingStatusService filingStatusService;
-    private final OtherIncomeService otherIncomeService;
     private final TaxBracketService taxBracketService;
     private final StateTaxService stateTaxService;
     private final CapitalGainsTaxService capitalGainsTaxService;
 
     public TaxCalculatorService(TaxCreditService taxCreditService,
                                 FilingStatusService filingStatusService,
-                                OtherIncomeService otherIncomeService,
                                 TaxBracketService taxBracketService,
                                 StateTaxService stateTaxService,
                                 CapitalGainsTaxService capitalGainsTaxService) {
       this.taxCreditService = taxCreditService;
       this.filingStatusService = filingStatusService;
-      this.otherIncomeService = otherIncomeService;
       this.taxBracketService = taxBracketService;
       this.stateTaxService = stateTaxService;
       this.capitalGainsTaxService = capitalGainsTaxService;
