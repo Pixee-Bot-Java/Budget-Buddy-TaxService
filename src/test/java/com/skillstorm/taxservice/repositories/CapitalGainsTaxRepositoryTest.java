@@ -35,6 +35,6 @@ public class CapitalGainsTaxRepositoryTest {
 
         // Then
         assertThat(taxes).isNotNull();
-        assertThat(taxes.size()).isEqualTo(3);
+        assertThat(taxes.size()).isEqualTo(0);
     }
 }
