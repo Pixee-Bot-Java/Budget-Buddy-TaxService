@@ -67,7 +67,6 @@ public class TaxReturnController {
     // Claim deductions:
     @PostMapping("/{id}/deductions")
     public ResponseEntity<TaxReturnDeductionDto> claimDeduction(@PathVariable("id") int id, @RequestBody TaxReturnDeductionDto deduction) {
-        System.out.println("TaxReturnController.claimDeductions called with args: " + id + ", " + deduction.toString());
         return ResponseEntity.ok(taxReturnService.claimDeduction(id, deduction));
     }
 

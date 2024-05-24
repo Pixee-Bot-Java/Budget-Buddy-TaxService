@@ -50,7 +50,7 @@ public class TaxCalculatorService {
       this.capitalGainsTaxService = capitalGainsTaxService;
     }
 
-    public TaxReturnDto calculateAll(TaxReturnDto taxReturn) throws IllegalAccessException {
+    public TaxReturnDto calculateAll(TaxReturnDto taxReturn) {
 
       // Reset any previous calculations
       taxReturn.setFederalRefund(BigDecimal.ZERO);
@@ -81,14 +81,14 @@ public class TaxCalculatorService {
       return taxReturn;
     }
 
-    public TaxReturnDto calculateTotalIncome(TaxReturnDto taxReturn) throws IllegalAccessException {
+    public TaxReturnDto calculateTotalIncome(TaxReturnDto taxReturn) {
       List<W2Dto> w2s = taxReturn.getW2s();
       BigDecimal totalIncome = BigDecimal.ZERO;
       totalIncome =  totalIncome.add(w2s.stream().map(W2Dto::getWages)
                                 .reduce(BigDecimal.ZERO, BigDecimal::add));
 
       if (taxReturn.getOtherIncome() != null) {
-        BigDecimal totalOtherIncome = otherIncomeService.sumOtherIncome(taxReturn.getOtherIncome());
+        BigDecimal totalOtherIncome = taxReturn.getOtherIncome().getSum();
         totalIncome = totalIncome.add(totalOtherIncome);
       }
 
@@ -98,7 +98,7 @@ public class TaxCalculatorService {
     }
 
 
-    public TaxReturnDto calculateAgi(TaxReturnDto taxReturn) throws IllegalAccessException {
+    public TaxReturnDto calculateAgi(TaxReturnDto taxReturn) {
       
       // If there are no deductions to calculate, simply set AGI to the total income
       if (taxReturn.getDeductions() == null || taxReturn.getDeductions().isEmpty()) {
@@ -121,7 +121,7 @@ public class TaxCalculatorService {
     }
 
 
-    public TaxReturnDto calculateTaxableIncome(TaxReturnDto taxReturn) throws IllegalAccessException {
+    public TaxReturnDto calculateTaxableIncome(TaxReturnDto taxReturn) {
       // If there are no deductions to calculate, simply set taxable income to the total income
       if (taxReturn.getDeductions() == null || taxReturn.getDeductions().isEmpty()) {
         taxReturn.setTaxableIncome(taxReturn.getAdjustedGrossIncome());

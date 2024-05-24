@@ -11,9 +11,9 @@ public enum FilingStatus {
     public static FilingStatus fromString(String status) {
         return switch (status) {
             case "SINGLE" -> SINGLE;
-            case "MARRIED_FILING_JOINTLY" -> MARRIED_FILING_JOINTLY;
-            case "MARRIED_FILING_SEPARATELY" -> MARRIED_FILING_SEPARATELY;
-            case "HEAD_OF_HOUSEHOLD" -> HEAD_OF_HOUSEHOLD;
+            case "MARRIED: FILING JOINTLY" -> MARRIED_FILING_JOINTLY;
+            case "MARRIED: FILING SEPARATELY" -> MARRIED_FILING_SEPARATELY;
+            case "HEAD OF HOUSEHOLD" -> HEAD_OF_HOUSEHOLD;
             case "WIDOW" -> WIDOW;
             default -> null;
         };

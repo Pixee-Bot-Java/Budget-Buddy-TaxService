@@ -65,25 +65,4 @@ public class OtherIncomeService {
       .orElseThrow(() -> new NotFoundException(env.getProperty("otherincome.not.found") + otherIncomeDto.getTaxReturnId()));
     otherIncomeRepository.delete(existingOtherIncome);
   }
-
-  public BigDecimal sumOtherIncome(OtherIncomeDto otherIncomeDto) throws IllegalAccessException {
-    BigDecimal sum = BigDecimal.ZERO;
-        
-    // Get all declared fields of the class
-    Field[] fields = otherIncomeDto.getClass().getDeclaredFields();
-    
-    for (Field field : fields) {
-        // Check if the field is of type BigDecimal
-        if (field.getType().equals(BigDecimal.class)) {
-            field.setAccessible(true); // Make private fields accessible
-            // Sum valid values
-            BigDecimal value = (BigDecimal) field.get(otherIncomeDto);
-            if (value != null) {
-                sum = sum.add(value);
-            }
-        }
-    }
-    
-    return sum;
-  }
 }
