@@ -2,6 +2,7 @@ package com.skillstorm.taxservice.services;
 
 import com.skillstorm.taxservice.dtos.DeductionDto;
 import com.skillstorm.taxservice.exceptions.NotFoundException;
+import com.skillstorm.taxservice.models.Deduction;
 import com.skillstorm.taxservice.repositories.DeductionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,5 +29,10 @@ public class DeductionService {
     public List<DeductionDto> findAll() {
         return deductionRepository.findAll().stream()
                 .filter(deduction -> !deduction.isItemized()).map(DeductionDto::new).toList();
+    }
+
+    public List<DeductionDto> findAllItemized() {
+        return deductionRepository.findAll().stream()
+                .filter(Deduction::isItemized).map(DeductionDto::new).toList();
     }
 }
