@@ -1,6 +1,6 @@
 package com.skillstorm.taxservice.controllers;
 
-import com.skillstorm.taxservice.models.Deduction;
+import com.skillstorm.taxservice.dtos.DeductionDto;
 import com.skillstorm.taxservice.services.DeductionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,13 +24,19 @@ public class DeductionController {
 
     // Find Deduction by Deduction ID:
     @GetMapping("/{id}")
-    public ResponseEntity<Deduction> findDeductionById(@PathVariable("id") int id) {
+    public ResponseEntity<DeductionDto> findDeductionById(@PathVariable("id") int id) {
         return ResponseEntity.ok(deductionService.findById(id));
     }
 
-    // Retrieve list of all Deductions:
+    // Retrieve list of all non-itemized (Above the Line) Deductions:
     @GetMapping
-    public ResponseEntity<List<Deduction>> findAllDeductions() {
+    public ResponseEntity<List<DeductionDto>> findAllDeductions() {
         return ResponseEntity.ok(deductionService.findAll());
+    }
+
+    // Retrieve list of all itemized (Below the Line) Deductions:
+    @GetMapping("/itemized")
+    public ResponseEntity<List<DeductionDto>> findAllItemizedDeductions() {
+        return ResponseEntity.ok(deductionService.findAllItemized());
     }
 }
