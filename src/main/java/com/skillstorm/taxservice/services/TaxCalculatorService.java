@@ -8,6 +8,7 @@ import com.skillstorm.taxservice.dtos.TaxReturnDeductionDto;
 import com.skillstorm.taxservice.dtos.TaxReturnDto;
 import com.skillstorm.taxservice.dtos.W2Dto;
 import com.skillstorm.taxservice.models.CapitalGainsTax;
+import com.skillstorm.taxservice.models.Deduction;
 import com.skillstorm.taxservice.models.FilingStatus;
 import com.skillstorm.taxservice.models.StateTax;
 import com.skillstorm.taxservice.models.TaxBracket;
@@ -108,10 +109,17 @@ public class TaxCalculatorService {
       // If there are deductions, subtract deductions from total income and set result to tax return's AGI
       BigDecimal agi = taxReturn.getTotalIncome();
 
+      // Get tax return's deductions
       List<TaxReturnDeductionDto> deductions = taxReturn.getDeductions();
-      for (TaxReturnDeductionDto deduction : deductions) {
-        agi = agi.subtract(deduction.getAmountSpent());   // or deduction.getNetDeduction()
-      }
+
+      // Calculate total adjustments to income
+      BigDecimal totalAdjustmentsToIncome = deductions.stream()
+                                                      .filter(deduction -> !deduction.isItemized())
+                                                      .map(TaxReturnDeductionDto::getNetDeduction)
+                                                      .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+      agi = agi.subtract(totalAdjustmentsToIncome);
+
 
       // Restrict agi to be >= 0
       taxReturn.setAdjustedGrossIncome(agi.max(BigDecimal.ZERO));
@@ -130,10 +138,16 @@ public class TaxCalculatorService {
       // If there are deductions, subtract deductions from total income and set result to tax return's taxable income
       BigDecimal taxableIncome = taxReturn.getTotalIncome();
 
+      // Get tax return's deductions
       List<TaxReturnDeductionDto> deductions = taxReturn.getDeductions();
-      for (TaxReturnDeductionDto deduction : deductions) {
-        taxableIncome = taxableIncome.subtract(deduction.getAmountSpent());   // or deduction.getNetDeduction()
-      }
+
+      // Calculate total itemized deductions
+      BigDecimal totalItemizedDeductions = deductions.stream()
+                                                    .filter(TaxReturnDeductionDto::isItemized)
+                                                    .map(TaxReturnDeductionDto::getNetDeduction)
+                                                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+      taxableIncome = taxableIncome.subtract(totalItemizedDeductions);
 
       // Restrict taxable income to be >= 0
       taxReturn.setTaxableIncome(taxableIncome.max(BigDecimal.ZERO));
