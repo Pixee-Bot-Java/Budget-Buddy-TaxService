@@ -5,6 +5,8 @@ import com.skillstorm.taxservice.constants.State;
 import com.skillstorm.taxservice.models.TaxReturn;
 import com.skillstorm.taxservice.models.W2;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -14,32 +16,35 @@ public class W2Dto {
 
     private int id;
 
-    @Min(value = 1, message = "taxreturn.id.min")
+    @Min(value = 1, message = "{taxreturn.id.min}")
     private int taxReturnId;
 
-    @Min(value = 2015, message = "w2.year.min")
+    @Min(value = 2015, message = "{year.must}")
     private int year;
 
-    @Min(value = 1, message = "w2.userId.min")
+    @Min(value = 1, message = "{w2.userId.min}")
     private int userId;
 
+    @NotNull(message = "{w2.employer.must}")
+    @NotEmpty(message = "{w2.employer.must}")
     private String employer;
 
+    @NotNull(message = "{w2.state.must}")
     private State state;
 
-    @Min(value = 0, message = "w2.wages.min")
+    @Min(value = 0, message = "{w2.wages.min}")
     private BigDecimal wages;
 
-    @Min(value = 0, message = "w2.federalIncomeTaxWithheld.min")
+    @Min(value = 0, message = "{w2.federalIncomeTaxWithheld.min}")
     private BigDecimal federalIncomeTaxWithheld;
 
-    @Min(value = 0, message = "w2.stateIncomeTaxWithheld.min")
+    @Min(value = 0, message = "{w2.stateIncomeTaxWithheld.min}")
     private BigDecimal stateIncomeTaxWithheld;
 
-    @Min(value = 0, message = "w2.socialSecurityTaxWithheld.min")
+    @Min(value = 0, message = "{w2.socialSecurityTaxWithheld.min}")
     private BigDecimal socialSecurityTaxWithheld;
 
-    @Min(value = 0, message = "w2.medicareTaxWithheld.min")
+    @Min(value = 0, message = "{w2.medicareTaxWithheld.min}")
     private BigDecimal medicareTaxWithheld;
 
     private String imageKey;

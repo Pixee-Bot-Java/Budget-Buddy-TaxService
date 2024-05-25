@@ -1,5 +1,8 @@
 package com.skillstorm.taxservice.exceptions;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -10,7 +13,15 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
+@PropertySource("classpath:SystemMessages.properties")
 public class GlobalExceptionHandler {
+
+    private final MessageSource messageSource;
+
+    @Autowired
+    public GlobalExceptionHandler(MessageSource messageSource) {
+        this.messageSource = messageSource;
+    }
 
     // Handle NotFoundException from querying dbs for resources that do not exist:
     @ExceptionHandler(NotFoundException.class)
@@ -20,11 +31,13 @@ public class GlobalExceptionHandler {
 
     // Handle Bad Requests from trying to add or update entities with invalid data in the RequestBody:
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<String> handleValidationExceptions(MethodArgumentNotValidException e) {
-        String errorMessage = e.getBindingResult().getFieldErrors().stream()
-                .map(FieldError::getDefaultMessage).collect(Collectors.joining(", "));
+    public ResponseEntity<ErrorMessage> handleValidationExceptions(MethodArgumentNotValidException e) {
+        ErrorMessage error = new ErrorMessage();
+        error.setErrorCode(HttpStatus.BAD_REQUEST.value());
+        error.setMessage(e.getBindingResult().getFieldErrors().stream()
+                .map(FieldError::getDefaultMessage).collect(Collectors.joining(", ")));
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
     // Handle UnauthorizedException from trying to access resources not owned by the user::
