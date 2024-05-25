@@ -213,7 +213,6 @@ public class TaxCalculatorService {
 
   // Calculate taxes already withheld:
   private void calculateWithholdings(TaxReturnDto taxReturn) {
-    BigDecimal federalTaxesWithheld, socialSecurityTaxesWithheld, medicareTaxesWithheld, stateTaxesWithheld;
 
     // Calculate total federal taxes already paid:
     taxReturn.setFedTaxWithheld(taxReturn.getW2s().stream()
@@ -314,15 +313,14 @@ public class TaxCalculatorService {
                                                   .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         // Check if the state matches the tax return's state
-        if (state.equals(taxReturnState)) {
+        if (state.equals(taxReturnState) && taxReturn.getOtherIncome() != null) {
 
           // Include OtherIncome values in the total state wages
-          if (taxReturn.getOtherIncome() != null) {
-              totalWagesForState = totalWagesForState.add(taxReturn.getOtherIncome().getOtherInvestmentIncome()
-                                                      .add(taxReturn.getOtherIncome().getNetBusinessIncome())
-                                                      .add(taxReturn.getOtherIncome().getAdditionalIncome())
-                                                      .add(taxReturn.getOtherIncome().getShortTermCapitalGains()));
-          }
+
+          totalWagesForState = totalWagesForState.add(taxReturn.getOtherIncome().getOtherInvestmentIncome()
+                  .add(taxReturn.getOtherIncome().getNetBusinessIncome())
+                  .add(taxReturn.getOtherIncome().getAdditionalIncome())
+                  .add(taxReturn.getOtherIncome().getShortTermCapitalGains()));
         }
 
         // Calculate state tax for the total wages of the state
@@ -348,8 +346,8 @@ public class TaxCalculatorService {
   
       // Set results in the relevant DTO fields
       taxReturn.setStateRefund(taxReturn.getStateTaxWithheld()
-                                        .subtract(totalTaxAmount)
-                                        .setScale(2, RoundingMode.HALF_UP));
+              .subtract(totalTaxAmount)
+              .setScale(2, RoundingMode.HALF_UP));
   
       // Return updated tax return
       return taxReturn;
