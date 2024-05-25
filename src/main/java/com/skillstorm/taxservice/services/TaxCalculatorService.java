@@ -79,9 +79,8 @@ public class TaxCalculatorService {
 
 
   public TaxReturnDto calculateTotalIncome(TaxReturnDto taxReturn) {
-      BigDecimal totalIncome = BigDecimal.ZERO;
-      totalIncome =  totalIncome.add(taxReturn.getW2s().stream().map(W2Dto::getWages)
-                                .reduce(BigDecimal.ZERO, BigDecimal::add));
+      BigDecimal totalIncome = taxReturn.getW2s().stream().map(W2Dto::getWages)
+                                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
       if (taxReturn.getOtherIncome() != null) {
         BigDecimal totalOtherIncome = taxReturn.getOtherIncome().getSum();
@@ -136,9 +135,11 @@ public class TaxCalculatorService {
     boolean is55OrOlder = age >= 55;
     BigDecimal totalIncome = taxReturn.getTotalIncome();
 
-    taxReturn.getDeductions().forEach(deduction -> {
-      switch (deduction.getDeductionName()) {
-        case "Health Savings Account":
+    // Modify agiLimits for each deduction for users matching the above conditions as applicable:
+    taxReturn.getDeductions().stream().map(deduction -> {
+      switch (deduction.getDeduction()) {
+        // Health Savings Account:
+        case 1:
           if (isMarriedFilingJointly) {
             deduction.setAgiLimit(BigDecimal.valueOf(7750));
           }
@@ -147,13 +148,15 @@ public class TaxCalculatorService {
           }
           break;
 
-        case "IRA Contributions":
+        // IRA Contributions:
+        case 2:
           if (is50OrOlder) {
             deduction.setAgiLimit(deduction.getAgiLimit().add(BigDecimal.valueOf(1000)));
           }
           break;
 
-        case "Student Loan Interest":
+        // Student Loan Interest payments:
+        case 3:
           if (isMarriedFilingJointly) {
             deduction.setAgiLimit(BigDecimal.valueOf(185000));
           }
@@ -166,13 +169,15 @@ public class TaxCalculatorService {
           }
           break;
 
-        case "Educator Expenses":
+        // Educator Expenses:
+        case 4:
           if (isMarriedFilingJointly) {
             deduction.setAgiLimit(deduction.getAgiLimit().multiply(BigDecimal.valueOf(2)));
           }
           break;
 
       }
+      return deduction;
     });
   }
 
