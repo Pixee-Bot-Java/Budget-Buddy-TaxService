@@ -5,6 +5,7 @@ import com.skillstorm.taxservice.dtos.TaxReturnDeductionDto;
 import com.skillstorm.taxservice.dtos.TaxReturnDto;
 import com.skillstorm.taxservice.dtos.UserDataDto;
 import com.skillstorm.taxservice.services.TaxReturnService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,7 +28,7 @@ public class TaxReturnController {
     // Add new TaxReturn. Should at least contain the year and can be updated later. Can also contain all user info but a
     // POST must be done before filing W2s because the TaxReturn ID is needed to associate the W2s with the TaxReturn:
     @PostMapping
-    public ResponseEntity<UserDataDto> addTaxReturn(@RequestBody TaxReturnDto newTaxReturn, @RequestHeader("User-ID") int userId) {
+    public ResponseEntity<UserDataDto> addTaxReturn(@Valid @RequestBody TaxReturnDto newTaxReturn, @RequestHeader("User-ID") int userId) {
         newTaxReturn.setUserId(userId);
         UserDataDto createdTaxReturn = taxReturnService.addTaxReturn(newTaxReturn);
         return ResponseEntity.created(URI.create("/" + createdTaxReturn.getId())).body(createdTaxReturn);
@@ -57,7 +58,7 @@ public class TaxReturnController {
     // Update TaxReturn:
     @PutMapping("/{id}")
     @PreAuthorize("#userId == #updatedTaxReturn.userId")
-    public ResponseEntity<UserDataDto> updateTaxReturn(@PathVariable("id") int id, @RequestBody TaxReturnDto updatedTaxReturn, @RequestHeader("User-ID") int userId) {
+    public ResponseEntity<UserDataDto> updateTaxReturn(@PathVariable("id") int id, @Valid @RequestBody TaxReturnDto updatedTaxReturn, @RequestHeader("User-ID") int userId) {
         return ResponseEntity.ok(taxReturnService.updateTaxReturn(id, updatedTaxReturn));
     }
 
