@@ -147,6 +147,6 @@ CREATE TABLE IF NOT EXISTS state_tax (
 CREATE TABLE IF NOT EXISTS deduction (
     id SERIAL PRIMARY KEY,
     name VARCHAR(50),
-    agi_limit DECIMAL(4, 2),
+    agi_limit DECIMAL(10, 2),
     itemized BOOLEAN
 );

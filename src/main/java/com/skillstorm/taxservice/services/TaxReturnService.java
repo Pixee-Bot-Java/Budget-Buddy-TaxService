@@ -1,16 +1,15 @@
 package com.skillstorm.taxservice.services;
 
 import com.skillstorm.taxservice.constants.FilingStatus;
-import com.skillstorm.taxservice.dtos.RefundDto;
-import com.skillstorm.taxservice.dtos.TaxReturnDeductionDto;
-import com.skillstorm.taxservice.dtos.TaxReturnDto;
-import com.skillstorm.taxservice.dtos.W2Dto;
+import com.skillstorm.taxservice.dtos.*;
 import com.skillstorm.taxservice.exceptions.NotFoundException;
+import com.skillstorm.taxservice.exceptions.UnauthorizedException;
 import com.skillstorm.taxservice.repositories.TaxReturnDeductionRepository;
 import com.skillstorm.taxservice.repositories.TaxReturnRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,13 +36,14 @@ public class TaxReturnService {
     }
 
     // Add new TaxReturn:
-    public TaxReturnDto addTaxReturn(TaxReturnDto newTaxReturn) {
+    public UserDataDto addTaxReturn(TaxReturnDto newTaxReturn) {
         taxCalculatorService.calculateAll(newTaxReturn);
-        return new TaxReturnDto(taxReturnRepository.saveAndFlush(newTaxReturn.mapToEntity()));
+        return new UserDataDto(taxReturnRepository.saveAndFlush(newTaxReturn.mapToEntity()));
     }
 
     // Get TaxReturn by id:
-    public TaxReturnDto findById(int id) {
+    @PostAuthorize("returnObject.userId == #userId")
+    public TaxReturnDto findById(int id, int userId) {
         TaxReturnDto taxReturnDto = new TaxReturnDto(taxReturnRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(environment.getProperty("taxreturn.not.found") + " " + id)));
         taxCalculatorService.calculateAll(taxReturnDto);
@@ -63,134 +63,43 @@ public class TaxReturnService {
     }
 
     // Update TaxReturn. Just the User Info. Other fields are determined by its components:
-    public TaxReturnDto updateTaxReturn(int id, TaxReturnDto updatedTaxReturn) {
-        // Verify that the TaxReturn exists:
-        findById(id);
+    public UserDataDto updateTaxReturn(int id, TaxReturnDto updatedTaxReturn) {
 
-        // Set the ID of the updated TaxReturn in case it was not set in the request body:
+        // Verify that the TaxReturn exists:
+        TaxReturnDto oldTaxReturn = findById(id, updatedTaxReturn.getUserId());
+
+        // Set the ID of the updated TaxReturn in case it was not set in the request body
+        // and set the W2s, Deductions, OtherIncome, and TaxCredit to the old values:
         updatedTaxReturn.setId(id);
+        updatedTaxReturn.setW2s(oldTaxReturn.getW2s());
+        updatedTaxReturn.setDeductions(oldTaxReturn.getDeductions());
+        updatedTaxReturn.setOtherIncome(oldTaxReturn.getOtherIncome());
+        updatedTaxReturn.setTaxCredit(oldTaxReturn.getTaxCredit());
 
         // Save the updated TaxReturn to the database:
-        return new TaxReturnDto(taxReturnRepository.saveAndFlush(updatedTaxReturn.mapToEntity()));
+        return new UserDataDto(taxReturnRepository.saveAndFlush(updatedTaxReturn.mapToEntity()));
     }
 
     // Delete TaxReturn:
-    public void deleteTaxReturn(int id) {
+    public void deleteTaxReturn(int id, int userId) {
         // Verify that the TaxReturn exists:
-        findById(id);
+        TaxReturnDto taxReturnDto = findById(id, userId);
+        if (userId != taxReturnDto.getUserId()) {
+            throw new UnauthorizedException(environment.getProperty("user.unauthorized"));
+        }
         taxReturnRepository.deleteById(id);
     }
 
-    // Calculate the Tax Refund for a TaxReturn:
-    private void calculateRefundAmount(TaxReturnDto taxReturn) {
-
-        // Set financial values for the TaxReturn:
-        setFinancialValues(taxReturn);
-
-        // With all of our fields set, let's run the TaxCalculator. Placeholder for now:
-        taxCalculatorService.calculateAll(taxReturn);
-        taxReturn.setFederalRefund(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP));
-
-        // Also calculate the state refund. Placeholder for now:
-        taxReturn.setStateRefund(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP));
-    }
-
-    // Populate the monetary values for a TaxReturn:
-    private void setFinancialValues(TaxReturnDto taxReturn) {
-        // Calculate the total income for the TaxReturn:
-        taxReturn.setTotalIncome(getTotalIncome(taxReturn));
-
-        // Calculate all taxes withheld for the TaxReturn:
-        calculateTaxesWithheld(taxReturn);
-
-        // Calculate total credits and deductions for the TaxReturn:
-        //calculateCreditsAndDeductions(taxReturn);
-
-        // Calculate the adjusted gross income for the TaxReturn:
-        //calculateAgi(taxReturn);
-
-        // Calculate the taxable income for the TaxReturn:
-        //calculateTaxableIncome(taxReturn);
-    }
-
-    // Calculate the taxable income for a TaxReturn:
-    private void calculateTaxableIncome(TaxReturnDto taxReturn) {
-        // Placeholder for now:
-        taxReturn.setTaxableIncome(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP));
-    }
-
-    // Calculate the adjusted gross income for a TaxReturn:
-    private void calculateAgi(TaxReturnDto taxReturn) {
-        // Placeholder for now:
-        taxReturn.setAdjustedGrossIncome(taxReturn
-                .getTotalIncome()
-                .subtract(taxReturn.getDeductions().stream().map(TaxReturnDeductionDto::getNetDeduction)
-                        .reduce(BigDecimal.ZERO, BigDecimal::add))
-                .setScale(2, RoundingMode.HALF_UP));
-    }
-
-    // Calculate the total credits and deductions for a TaxReturn:
-    private void calculateCreditsAndDeductions(TaxReturnDto taxReturn) {
-        // Will need to sum up all the TaxReturnCredits associated with the TaxReturn. Placeholder for now:
-        taxReturn.setTotalCredits(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP));
-
-        // Will need to sum up all the TaxReturnDeductions associated with the TaxReturn. Placeholder for now:
-        //taxReturn.setTotalDeductions(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP));
-    }
-
-    // Calculate the total of all taxes already withheld for a TaxReturn:
-    private void calculateTaxesWithheld(TaxReturnDto taxReturn) {
-        taxReturn.setFedTaxWithheld(getFederalTaxesWithheld(taxReturn));
-        taxReturn.setStateTaxWithheld(getStateTaxesWithheld(taxReturn));
-        taxReturn.setSocialSecurityTaxWithheld(getSocialSecurityTaxesWithheld(taxReturn));
-        taxReturn.setMedicareTaxWithheld(getMedicareTaxesWithheld(taxReturn));
-    }
-
-    // Calculate total medicare taxes already withheld for a TaxReturn:
-    private BigDecimal getMedicareTaxesWithheld(TaxReturnDto taxReturn) {
-        return taxReturn.getW2s().stream().map(W2Dto::getMedicareTaxWithheld)
-                .reduce(BigDecimal.ZERO, BigDecimal::add)
-                .setScale(2, RoundingMode.HALF_UP);
-    }
-
-    // Calculate total social security taxes already withheld for a TaxReturn:
-    private BigDecimal getSocialSecurityTaxesWithheld(TaxReturnDto taxReturn) {
-        return taxReturn.getW2s().stream().map(W2Dto::getSocialSecurityTaxWithheld)
-                .reduce(BigDecimal.ZERO, BigDecimal::add)
-                .setScale(2, RoundingMode.HALF_UP);
-    }
-
-    // Calculate total state income taxes already withheld for a TaxReturn:
-    private BigDecimal getStateTaxesWithheld(TaxReturnDto taxReturn) {
-        return taxReturn.getW2s().stream().map(W2Dto::getStateIncomeTaxWithheld)
-                .reduce(BigDecimal.ZERO, BigDecimal::add)
-                .setScale(2, RoundingMode.HALF_UP);
-    }
-
-    // Calculate total federal income taxes already withheld for a TaxReturn:
-    private BigDecimal getFederalTaxesWithheld(TaxReturnDto taxReturn) {
-        return taxReturn.getW2s().stream().map(W2Dto::getFederalIncomeTaxWithheld)
-                .reduce(BigDecimal.ZERO, BigDecimal::add)
-                .setScale(2, RoundingMode.HALF_UP);
-    }
-
-    // Iterate through the W2s and sum the wages to get the total income:
-    private BigDecimal getTotalIncome(TaxReturnDto taxReturn) {
-        return taxReturn.getW2s().stream().map(W2Dto::getWages)
-                .reduce(BigDecimal.ZERO, BigDecimal::add)
-                .setScale(2, RoundingMode.HALF_UP);
-    }
-
-    // Claim a deductions for a TaxReturn:
+    // Claim a deduction for a TaxReturn:
     public TaxReturnDeductionDto claimDeduction(int id, TaxReturnDeductionDto deduction) {
         deduction.setTaxReturn(id);
         return new TaxReturnDeductionDto(taxReturnDeductionRepository.saveAndFlush(deduction.mapToEntity()));
 
     }
 
-    // Get the current tax refund for a TaxReturn:
-    public RefundDto getRefund(int id) {
-        TaxReturnDto taxReturnDto = findById(id);
+    // Get the current tax refund for a TaxReturn. Used for front end to keep a running total of the refund amount:
+    public RefundDto getRefund(int id, int userId) {
+        TaxReturnDto taxReturnDto = findById(id, userId);
         return new RefundDto(taxReturnDto.getFederalRefund(), taxReturnDto.getStateRefund());
     }
 
@@ -231,6 +140,7 @@ public class TaxReturnService {
         taxReturnRepository.deleteAllByUserId(userId);
     }
 
+    // Get all filing statuses::
     public List<String> getFilingStatuses() {
         return FilingStatus.getFilingStatuses();
     }
