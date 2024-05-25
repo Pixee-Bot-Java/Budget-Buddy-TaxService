@@ -213,7 +213,6 @@ public class TaxCalculatorService {
 
   // Calculate taxes already withheld:
   private void calculateWithholdings(TaxReturnDto taxReturn) {
-    BigDecimal federalTaxesWithheld, socialSecurityTaxesWithheld, medicareTaxesWithheld, stateTaxesWithheld;
 
     // Calculate total federal taxes already paid:
     taxReturn.setFedTaxWithheld(taxReturn.getW2s().stream()
