@@ -35,17 +35,20 @@ public class TaxCalculatorService {
     private final TaxBracketService taxBracketService;
     private final StateTaxService stateTaxService;
     private final CapitalGainsTaxService capitalGainsTaxService;
+    private final StandardDeductionService standardDeductionService;
 
     public TaxCalculatorService(TaxCreditService taxCreditService,
                                 FilingStatusService filingStatusService,
                                 TaxBracketService taxBracketService,
                                 StateTaxService stateTaxService,
-                                CapitalGainsTaxService capitalGainsTaxService) {
+                                CapitalGainsTaxService capitalGainsTaxService,
+                                StandardDeductionService standardDeductionService) {
       this.taxCreditService = taxCreditService;
       this.filingStatusService = filingStatusService;
       this.taxBracketService = taxBracketService;
       this.stateTaxService = stateTaxService;
       this.capitalGainsTaxService = capitalGainsTaxService;
+      this.standardDeductionService = standardDeductionService;
     }
 
     public TaxReturnDto calculateAll(TaxReturnDto taxReturn) {
@@ -201,8 +204,17 @@ public class TaxCalculatorService {
               })
               .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-      // TaxableIncome = AdjustedGrossIncome - ItemizedDeductions:
-      BigDecimal taxableIncome = taxReturn.getAdjustedGrossIncome().subtract(totalItemizedDeductions);
+      // Get the standard deduction amount based on user's filing status:
+      BigDecimal standardDeduction =
+              BigDecimal.valueOf(standardDeductionService.getByFilingStatusId(taxReturn.getFilingStatus().getValue())
+                      .getDeductionAmount());
+
+      // Note: We choose the greater of standard deduction vs itemized deductions. We may want to find a way to
+      // communicate which choice was made to the user in the future:
+      BigDecimal totalDeductions = totalItemizedDeductions.max(standardDeduction);
+
+      // TaxableIncome = AdjustedGrossIncome - TotalDeductions:
+      BigDecimal taxableIncome = taxReturn.getAdjustedGrossIncome().subtract(totalDeductions);
 
       // Restrict taxable income to be >= 0
       taxReturn.setTaxableIncome(taxableIncome.max(BigDecimal.ZERO));
@@ -243,12 +255,10 @@ public class TaxCalculatorService {
     // Calculate total federal tax liability
     public TaxReturnDto calculateFederalTaxes(TaxReturnDto taxReturn) {
 
-      // Calculate total federal taxes already paid:
-      BigDecimal taxesPaid = taxReturn.getFedTaxWithheld()
-                                      .add(taxReturn.getSocialSecurityTaxWithheld()
-                                      .add(taxReturn.getMedicareTaxWithheld()));
+      // Calculate total federal income taxes already paid:
+      BigDecimal taxesPaid = taxReturn.getFedTaxWithheld();
 
-      // If taxable income is 0, refund all taxes paid:
+      // If taxable income is 0, refund all income taxes paid:
       if (taxReturn.getTaxableIncome().compareTo(BigDecimal.ZERO) <= 0) {
         taxReturn.setFederalRefund(taxesPaid);
         return taxReturn;
