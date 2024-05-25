@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class OtherIncomeDto {
   
-  private int taxReturnId;
+  private Integer taxReturnId;
   private BigDecimal longTermCapitalGains = BigDecimal.ZERO;
   private BigDecimal shortTermCapitalGains = BigDecimal.ZERO;
   private BigDecimal otherInvestmentIncome = BigDecimal.ZERO;

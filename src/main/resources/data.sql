@@ -568,10 +568,10 @@ COMMIT;
 
 BEGIN;
 -- Non-itemized deductions
-INSERT INTO deduction (name, agi_limit, itemized) VALUES ('Health Savings Account', 1.00, false);
-INSERT INTO deduction (name, agi_limit, itemized) VALUES ('IRA Contributions', 1.00, false);
-INSERT INTO deduction (name, agi_limit, itemized) VALUES ('Student Loan Interest', 1.00, false);
-INSERT INTO deduction (name, agi_limit, itemized) VALUES ('Educator Expenses', 1.00, false);
+INSERT INTO deduction (name, agi_limit, itemized) VALUES ('Health Savings Account', 3850, false);
+INSERT INTO deduction (name, agi_limit, itemized) VALUES ('IRA Contributions', 6500, false);
+INSERT INTO deduction (name, agi_limit, itemized) VALUES ('Student Loan Interest', 90000, false);
+INSERT INTO deduction (name, agi_limit, itemized) VALUES ('Educator Expenses', 300, false);
 
 -- Itemized deductions
 INSERT INTO deduction (name, agi_limit, itemized) VALUES ('Medical Expenses', 0.075, true);

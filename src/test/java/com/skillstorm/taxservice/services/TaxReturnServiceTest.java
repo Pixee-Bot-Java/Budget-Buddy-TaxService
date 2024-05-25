@@ -3,6 +3,7 @@ package com.skillstorm.taxservice.services;
 import com.skillstorm.taxservice.constants.FilingStatus;
 import com.skillstorm.taxservice.constants.State;
 import com.skillstorm.taxservice.dtos.TaxReturnDto;
+import com.skillstorm.taxservice.dtos.UserDataDto;
 import com.skillstorm.taxservice.exceptions.NotFoundException;
 import com.skillstorm.taxservice.models.TaxReturn;
 import com.skillstorm.taxservice.repositories.TaxReturnDeductionRepository;
@@ -112,7 +113,7 @@ class TaxReturnServiceTest {
         when(taxReturnRepository.saveAndFlush(newTaxReturn.mapToEntity())).thenReturn(returnedNewTaxReturn);
 
         // Call the method to be tested:
-        TaxReturnDto result = taxReturnService.addTaxReturn(request);
+        UserDataDto result = taxReturnService.addTaxReturn(request);
 
         // Verify the result:
         assertEquals(1, result.getId(), "The TaxReturn ID should be 1.");
@@ -128,7 +129,7 @@ class TaxReturnServiceTest {
         when(taxReturnRepository.findById(1)).thenReturn(Optional.of(returnedNewTaxReturn));
 
         // Call the method to be tested:
-        TaxReturnDto result = taxReturnService.findById(1);
+        TaxReturnDto result = taxReturnService.findById(1, 1);
 
         // Verify the result:
         assertEquals(1, result.getId(), "The TaxReturn ID should be 1.");
@@ -144,7 +145,7 @@ class TaxReturnServiceTest {
         when(taxReturnRepository.findById(1)).thenReturn(Optional.empty());
 
         // Verify the exception
-        assertThrows(NotFoundException.class, () -> taxReturnService.findById(1), "NotFoundException should be thrown.");
+        assertThrows(NotFoundException.class, () -> taxReturnService.findById(1, 1), "NotFoundException should be thrown.");
     }
 
     // Find all TaxReturns by userId:
@@ -186,11 +187,11 @@ class TaxReturnServiceTest {
     void updateTaxReturn() {
 
         // Define stubbing:
-        when(taxReturnRepository.findById(1)).thenReturn(Optional.of(returnedNewTaxReturn));
+        when(taxReturnRepository.findById(1)).thenReturn(Optional.of(updatedTaxReturn.mapToEntity()));
         when(taxReturnRepository.saveAndFlush(updatedTaxReturn.mapToEntity())).thenReturn(updatedTaxReturn.mapToEntity());
 
         // Call the method to be tested:
-        TaxReturnDto result = taxReturnService.updateTaxReturn(1, updatedTaxReturn);
+        UserDataDto result = taxReturnService.updateTaxReturn(1, updatedTaxReturn);
 
         // Verify the result:
         assertEquals(1, result.getId(), "The TaxReturn ID should be 1.");
@@ -202,7 +203,6 @@ class TaxReturnServiceTest {
         assertEquals("TestCity", result.getCity(), "The TaxReturn city should be TestCity.");
         assertEquals(State.AL, result.getState(), "The TaxReturn state should be Alabama.");
         assertEquals("TestZipCode", result.getZip(), "The TaxReturn zip code should be TestZipCode.");
-        assertEquals(BigDecimal.ZERO.setScale(2), result.getFederalRefund(), "The TaxReturn refund should be 0.00.");
     }
 
     // Delete TaxReturn:
@@ -216,7 +216,7 @@ class TaxReturnServiceTest {
         ArgumentCaptor<Integer> idCaptor = ArgumentCaptor.forClass(Integer.class);
 
         // Call the method to be tested:
-        taxReturnService.deleteTaxReturn(1);
+        taxReturnService.deleteTaxReturn(1, 1);
 
         // Capture the argument passed to the deleteById method
         verify(taxReturnRepository).deleteById(idCaptor.capture());
